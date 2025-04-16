@@ -1,4 +1,4 @@
-import { MaterialCategory, MaterialCategoryIdEnum, MaterialType, Rarity } from '../craftModel'
+import { MaterialCategory, MaterialCategoryIdEnum, MaterialType, Rarity } from '../../craftModel'
 
 // Initial material categories
 export const initialMaterialCategories: MaterialCategory[] = [

@@ -6,7 +6,7 @@ import {
     MaterialType,
     MaterialTypeId,
     Rarity,
-} from '../craftModel'
+} from '../../craftModel'
 import { customOverrides, initialMaterialCategories, initialMaterialTypes } from './craftMaterialDataInit'
 
 // ======= DATA STORE =======

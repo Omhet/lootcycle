@@ -19,7 +19,7 @@ import {
     TemperatureFailureReason,
     TemperatureRange,
 } from './craftModel'
-import { craftMaterialData } from './data/craftMaterialDataHelpers'
+import { craftMaterialData } from './data/material/craftMaterialDataHelpers'
 
 /**
  * Main item crafting function
