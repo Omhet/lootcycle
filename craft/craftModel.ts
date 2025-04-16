@@ -329,3 +329,7 @@ export type LootPartObject = {
     materials: MaterialComposition[]
     assetPath: string
 }
+
+export type LootJunkObject = LootPartObject & {
+    overrideAssetPath?: string
+}
