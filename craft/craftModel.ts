@@ -9,9 +9,9 @@ export type MaterialId = string
 export type ItemCategoryId = ItemCategoryIdEnum
 export type ItemSubCategoryId = ItemSubCategoryIdEnum
 export type ItemTemplateId = ItemTemplateIdEnum
-export type PartId = string
 export type JunkItemId = string
 export type LootItemId = string
+export type LootPartId = string
 
 // System enumerations
 export enum Rarity {
@@ -311,4 +311,21 @@ const configLootMolecules: Record<LootMoleculeType, LootMolecule> = {
     [LootMoleculeType.SwordBlade]: swordBladeMolecule,
     [LootMoleculeType.AxeHandle]: axeHandleMolecule,
     [LootMoleculeType.AxeBlade]: axeBladeMolecule,
+}
+
+// ======= LOOT OBJECTS TYPES (that will be generated in build time and then used in runtime) =======
+
+export type LootObject = {
+    id: LootItemId
+    template: LootItemTemplateType
+    subparts: LootPartId[]
+    materials: MaterialComposition[]
+}
+
+export type LootPartObject = {
+    id: LootPartId
+    templateId: LootMoleculeType | LootAtomType
+    subparts: LootPartObject[]
+    materials: MaterialComposition[]
+    assetPath: string
 }
