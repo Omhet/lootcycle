@@ -7,6 +7,7 @@ import {
     MaterialTypeId,
     Rarity,
 } from '../../craftModel'
+import { applyOverrides } from '../craftDataUtils'
 import { customOverrides, initialMaterialCategories, initialMaterialTypes } from './craftMaterialDataInit'
 
 // ======= DATA STORE =======
@@ -26,12 +27,6 @@ export const craftMaterialData = new CraftMaterialDataStore()
 // Function to generate a unique ID for materials
 export function generateMaterialId(typeId: MaterialTypeId): MaterialId {
     return `material_${typeId}`
-}
-
-// Apply custom overrides to data
-export function applyOverrides<T>(item: T, overrides: Partial<T> | undefined): T {
-    if (!overrides) return item
-    return { ...item, ...overrides }
 }
 
 // Initialize all data

@@ -1,4 +1,11 @@
-import { MaterialCategory, MaterialCategoryIdEnum, MaterialType, Rarity } from '../../craftModel'
+import { MaterialCategory, MaterialType, Rarity } from '../../craftModel'
+
+// Material category enum
+export enum MaterialCategoryIdEnum {
+    Metal = 'metal',
+    Wood = 'wood',
+    // Can be easily extended with new categories
+}
 
 // Initial material categories
 export const initialMaterialCategories: MaterialCategory[] = [
@@ -115,7 +122,7 @@ export const initialMaterialTypes: Partial<MaterialType>[] = [
 
 // Custom overrides that can be applied before data generation
 export const customOverrides: {
-    materialCategories?: Partial<Record<MaterialCategoryIdEnum, Partial<MaterialCategory>>>
+    materialCategories?: Partial<Record<string, Partial<MaterialCategory>>>
     materialTypes?: Partial<Record<string, Partial<MaterialType>>>
 } = {
     materialTypes: {

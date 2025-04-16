@@ -1,20 +1,20 @@
 // ======= BASIC TYPES AND ENUMERATIONS =======
 
-// Material category enum
-export enum MaterialCategoryIdEnum {
-    Metal = 'metal',
-    Wood = 'wood',
-    // Can be easily extended with new categories
-}
+import type {
+    ItemCategoryIdEnum,
+    ItemSubCategoryIdEnum,
+    ItemTypeIdEnum,
+    ItemVariantIdEnum,
+} from './data/item/craftItemDataInit'
 
 // Typed identifiers
-export type MaterialCategoryId = MaterialCategoryIdEnum
+export type MaterialCategoryId = string
 export type MaterialTypeId = string
 export type MaterialId = string
-export type ItemCategoryId = string
-export type ItemSubCategoryId = string
-export type ItemTypeId = string
-export type ItemVariantId = string
+export type ItemCategoryId = ItemCategoryIdEnum
+export type ItemSubCategoryId = ItemSubCategoryIdEnum
+export type ItemTypeId = ItemTypeIdEnum
+export type ItemVariantId = ItemVariantIdEnum
 export type PartId = string
 export type JunkItemId = string
 export type LootItemId = string
@@ -59,8 +59,8 @@ export interface MaterialCategory {
 // Material type
 export interface MaterialType {
     id: MaterialTypeId
-    name: string
     categoryId: MaterialCategoryId
+    name: string
     rarity: Rarity
     basePrice: number // Price for 1% content in an item part
     heatValue: number // Heat per 1 second of burning
@@ -114,30 +114,30 @@ export interface ItemCategory {
 // Item sub-category
 export interface ItemSubCategory {
     id: ItemSubCategoryId
-    name: string
     categoryId: ItemCategoryId
+    name: string
 }
 
 // Item type
 export interface ItemType {
     id: ItemTypeId
-    name: string
     subCategoryId: ItemSubCategoryId
+    name: string
 }
 
 // Item variant
 export interface ItemVariant {
     id: ItemVariantId
-    name: string
     typeId: ItemTypeId
+    name: string
     requiredParts: PartId[] // List of required parts
 }
 
 // Finished loot item (crafting result)
 export interface LootItem {
     id: LootItemId
-    name: string
     variantId: ItemVariantId
+    name: string
     rarity: Rarity
     parts: ItemPart[]
     isMasterwork: boolean
@@ -170,8 +170,8 @@ export interface CraftingResult {
 // Recipe book entry (separate model)
 export interface RecipeBookEntry {
     recipeId: string
+    resultId: LootItemId
     inputs: JunkItemId[]
     temperatureRange: TemperatureRange
-    resultId: LootItemId
     discovered: boolean
 }
