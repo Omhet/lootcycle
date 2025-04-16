@@ -12,6 +12,7 @@ export type MaterialCategoryId = MaterialCategoryIdEnum
 export type MaterialTypeId = string
 export type MaterialId = string
 export type ItemCategoryId = string
+export type ItemSubCategoryId = string
 export type ItemTypeId = string
 export type ItemVariantId = string
 export type PartId = string
@@ -110,11 +111,18 @@ export interface ItemCategory {
     name: string
 }
 
+// Item sub-category
+export interface ItemSubCategory {
+    id: ItemSubCategoryId
+    name: string
+    categoryId: ItemCategoryId
+}
+
 // Item type
 export interface ItemType {
     id: ItemTypeId
     name: string
-    categoryId: ItemCategoryId
+    subCategoryId: ItemSubCategoryId
 }
 
 // Item variant
