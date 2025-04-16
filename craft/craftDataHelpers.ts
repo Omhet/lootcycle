@@ -54,12 +54,10 @@ export function initializeCraftData(): CraftDataStore {
     initialMaterialTypes.forEach((partialType) => {
         const overrides = customOverrides.materialTypes?.[partialType.id!]
 
-        // Use the category directly from the initialMaterialTypes
         // Apply overrides to the material type
         const materialType = applyOverrides(
             {
                 ...partialType,
-                // Note: category is already set in initialMaterialTypes
             } as MaterialType,
             overrides
         )
@@ -88,7 +86,7 @@ export function getMaterialTypesByRarity(rarity: Rarity): MaterialType[] {
 
 // Helper to get all material types by category
 export function getMaterialTypesByCategory(categoryId: MaterialCategoryId): MaterialType[] {
-    return Array.from(craftData.materialTypes.values()).filter((type) => type.category.id === categoryId)
+    return Array.from(craftData.materialTypes.values()).filter((type) => type.categoryId === categoryId)
 }
 
 // Helper to create a new material instance

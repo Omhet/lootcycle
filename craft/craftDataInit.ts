@@ -6,19 +6,13 @@ export const initialMaterialCategories: MaterialCategory[] = [
     { id: MaterialCategoryIdEnum.Wood, name: 'Wood' },
 ]
 
-// Create a lookup map for easy category access
-const categoryMap: Record<MaterialCategoryIdEnum, MaterialCategory> = {
-    [MaterialCategoryIdEnum.Metal]: initialMaterialCategories[0],
-    [MaterialCategoryIdEnum.Wood]: initialMaterialCategories[1],
-}
-
 // Initial material types with one of each rarity per category
 export const initialMaterialTypes: Partial<MaterialType>[] = [
     // Metal types
     {
         id: 'copper',
         name: 'Copper',
-        category: categoryMap[MaterialCategoryIdEnum.Metal],
+        categoryId: MaterialCategoryIdEnum.Metal,
         rarity: Rarity.Common,
         basePrice: 10,
         heatValue: 5,
@@ -28,7 +22,7 @@ export const initialMaterialTypes: Partial<MaterialType>[] = [
     {
         id: 'iron',
         name: 'Iron',
-        category: categoryMap[MaterialCategoryIdEnum.Metal],
+        categoryId: MaterialCategoryIdEnum.Metal,
         rarity: Rarity.Uncommon,
         basePrice: 25,
         heatValue: 8,
@@ -38,7 +32,7 @@ export const initialMaterialTypes: Partial<MaterialType>[] = [
     {
         id: 'steel',
         name: 'Steel',
-        category: categoryMap[MaterialCategoryIdEnum.Metal],
+        categoryId: MaterialCategoryIdEnum.Metal,
         rarity: Rarity.Rare,
         basePrice: 50,
         heatValue: 12,
@@ -48,7 +42,7 @@ export const initialMaterialTypes: Partial<MaterialType>[] = [
     {
         id: 'mithril',
         name: 'Mithril',
-        category: categoryMap[MaterialCategoryIdEnum.Metal],
+        categoryId: MaterialCategoryIdEnum.Metal,
         rarity: Rarity.Epic,
         basePrice: 100,
         heatValue: 15,
@@ -58,7 +52,7 @@ export const initialMaterialTypes: Partial<MaterialType>[] = [
     {
         id: 'adamantium',
         name: 'Adamantium',
-        category: categoryMap[MaterialCategoryIdEnum.Metal],
+        categoryId: MaterialCategoryIdEnum.Metal,
         rarity: Rarity.Legendary,
         basePrice: 250,
         heatValue: 20,
@@ -70,7 +64,7 @@ export const initialMaterialTypes: Partial<MaterialType>[] = [
     {
         id: 'pine',
         name: 'Pine',
-        category: categoryMap[MaterialCategoryIdEnum.Wood],
+        categoryId: MaterialCategoryIdEnum.Wood,
         rarity: Rarity.Common,
         basePrice: 5,
         heatValue: 3,
@@ -80,7 +74,7 @@ export const initialMaterialTypes: Partial<MaterialType>[] = [
     {
         id: 'oak',
         name: 'Oak',
-        category: categoryMap[MaterialCategoryIdEnum.Wood],
+        categoryId: MaterialCategoryIdEnum.Wood,
         rarity: Rarity.Uncommon,
         basePrice: 15,
         heatValue: 4,
@@ -90,7 +84,7 @@ export const initialMaterialTypes: Partial<MaterialType>[] = [
     {
         id: 'mahogany',
         name: 'Mahogany',
-        category: categoryMap[MaterialCategoryIdEnum.Wood],
+        categoryId: MaterialCategoryIdEnum.Wood,
         rarity: Rarity.Rare,
         basePrice: 35,
         heatValue: 6,
@@ -100,7 +94,7 @@ export const initialMaterialTypes: Partial<MaterialType>[] = [
     {
         id: 'ebony',
         name: 'Ebony',
-        category: categoryMap[MaterialCategoryIdEnum.Wood],
+        categoryId: MaterialCategoryIdEnum.Wood,
         rarity: Rarity.Epic,
         basePrice: 80,
         heatValue: 8,
@@ -110,7 +104,7 @@ export const initialMaterialTypes: Partial<MaterialType>[] = [
     {
         id: 'arcane_wood',
         name: 'Arcane Wood',
-        category: categoryMap[MaterialCategoryIdEnum.Wood],
+        categoryId: MaterialCategoryIdEnum.Wood,
         rarity: Rarity.Legendary,
         basePrice: 200,
         heatValue: 12,

@@ -59,7 +59,7 @@ export interface MaterialCategory {
 export interface MaterialType {
     id: MaterialTypeId
     name: string
-    category: MaterialCategory
+    categoryId: MaterialCategoryId
     rarity: Rarity
     basePrice: number // Price for 1% content in an item part
     heatValue: number // Heat per 1 second of burning
