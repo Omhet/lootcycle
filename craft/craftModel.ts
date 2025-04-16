@@ -1,11 +1,6 @@
 // ======= BASIC TYPES AND ENUMERATIONS =======
 
-import type {
-    ItemCategoryIdEnum,
-    ItemSubCategoryIdEnum,
-    ItemTypeIdEnum,
-    ItemVariantIdEnum,
-} from './data/item/craftItemDataInit'
+import { ItemCategoryIdEnum, ItemSubCategoryIdEnum, ItemTemplateIdEnum } from './data/item/craftItemDataInit'
 
 // Typed identifiers
 export type MaterialCategoryId = string
@@ -13,8 +8,7 @@ export type MaterialTypeId = string
 export type MaterialId = string
 export type ItemCategoryId = ItemCategoryIdEnum
 export type ItemSubCategoryId = ItemSubCategoryIdEnum
-export type ItemTypeId = ItemTypeIdEnum
-export type ItemVariantId = ItemVariantIdEnum
+export type ItemTemplateId = ItemTemplateIdEnum
 export type PartId = string
 export type JunkItemId = string
 export type LootItemId = string
@@ -80,98 +74,241 @@ export interface MaterialComposition {
     percentage: number // 0-100
 }
 
-// ======= ITEM PARTS =======
-
-// Item part (template)
-export interface Part {
-    id: PartId
-    name: string
-    // Part visualization
-    assetPath: string
-}
-
-// Item part with materials
-export interface ItemPart {
-    partId: PartId
-    composition: MaterialComposition[]
-}
-
-// Junk (input material for crafting)
-export interface JunkItem {
-    id: JunkItemId
-    partId: PartId
-    stability: number // 1-5
-}
-
 // ======= ITEMS =======
+// TODO: Refactor to divide exact templates types that will be in config with corresponding molecules and atoms in its own files
+// (for example, sword template with sword molecules and atoms, axe template with axe molecules and atoms)
 
-// Item category
-export interface ItemCategory {
-    id: ItemCategoryId
-    name: string
+export type Pinpoint = {
+    coords: {
+        x: number
+        y: number
+    }
+    localOffset: {
+        x: number
+        y: number
+    }
+    localRotationAngle: number
+    zIndex: number
 }
 
-// Item sub-category
-export interface ItemSubCategory {
-    id: ItemSubCategoryId
-    categoryId: ItemCategoryId
-    name: string
+export enum LootItemTemplateType {
+    Sword = 'sword',
+    Axe = 'axe',
 }
 
-// Item type
-export interface ItemType {
-    id: ItemTypeId
-    subCategoryId: ItemSubCategoryId
-    name: string
+export interface LootItemTemplate {
+    type: LootItemTemplateType
+    sockets: LootMoleculeSocket[]
 }
 
-// Item variant
-export interface ItemVariant {
-    id: ItemVariantId
-    typeId: ItemTypeId
-    name: string
-    requiredParts: PartId[] // List of required parts
+export type LootMoleculeSocket = {
+    acceptType: LootMoleculeType
+    acceptTags: LootMoleculeTag[]
+    pinpoint: Pinpoint
 }
 
-// Finished loot item (crafting result)
-export interface LootItem {
-    id: LootItemId
-    variantId: ItemVariantId
-    name: string
-    rarity: Rarity
-    parts: ItemPart[]
-    isMasterwork: boolean
-    price: number
+export enum LootMoleculeType {
+    SwordHilt = 'sword_hilt',
+    SwordBlade = 'sword_blade',
+    AxeHandle = 'axe_handle',
+    AxeBlade = 'axe_blade',
 }
 
-// ======= ANALYSIS AND OPERATION RESULTS =======
-
-// Material analysis result
-export interface MaterialAnalysis {
-    allMaterials: Record<MaterialId, number> // materialId -> percentage content
-    dominantMaterialType: MaterialType
+export enum LootMoleculeTag {
+    Handheld = 'handheld',
+    Sharp = 'sharp',
 }
 
-// Temperature compatibility check result
-export interface TemperatureCompatibilityResult {
-    compatible: boolean
-    reason?: TemperatureFailureReason
+export type LootMolecule = {
+    type: LootMoleculeType
+    tags: LootMoleculeTag[]
+    sockets: LootAtomSocket[]
 }
 
-// Crafting process result
-export interface CraftingResult {
-    success: boolean
-    reason?: CraftingFailureReason
-    item?: LootItem
+export type LootAtomSocket = {
+    acceptType: LootAtomType
+    pinpoint: Pinpoint
 }
 
-// ======= OTHER SYSTEMS =======
+export enum LootAtomType {
+    Pommel = 'pommel',
+    Grip = 'grip',
+    Guard = 'guard',
+    Blade = 'blade',
+    Handle = 'handle',
+}
 
-// Recipe book entry (separate model)
-export interface RecipeBookEntry {
-    recipeId: string
-    resultId: LootItemId
-    inputs: JunkItemId[]
-    temperatureRange: TemperatureRange
-    discovered: boolean
+export type LootAtom = {
+    type: LootAtomType
+}
+
+// ======= LOOT ITEMS =======
+
+const swordTemplate: LootItemTemplate = {
+    type: LootItemTemplateType.Sword,
+    sockets: [
+        {
+            acceptType: LootMoleculeType.SwordHilt,
+            acceptTags: [LootMoleculeTag.Handheld],
+            pinpoint: {
+                coords: { x: 0, y: 0 },
+                localOffset: { x: 0, y: -0.5 },
+                localRotationAngle: 0,
+                zIndex: 0,
+            },
+        },
+        {
+            acceptType: LootMoleculeType.SwordBlade,
+            acceptTags: [LootMoleculeTag.Sharp],
+            pinpoint: {
+                coords: { x: 0, y: 0 },
+                localOffset: { x: 0, y: 0.5 },
+                localRotationAngle: 0,
+                zIndex: 0,
+            },
+        },
+    ],
+}
+const axeTemplate: LootItemTemplate = {
+    type: LootItemTemplateType.Axe,
+    sockets: [
+        {
+            acceptType: LootMoleculeType.AxeHandle,
+            acceptTags: [LootMoleculeTag.Handheld],
+            pinpoint: {
+                coords: { x: 0, y: 0 },
+                localOffset: { x: 0, y: 0 },
+                localRotationAngle: 0,
+                zIndex: 0,
+            },
+        },
+        {
+            acceptType: LootMoleculeType.AxeBlade,
+            acceptTags: [LootMoleculeTag.Sharp],
+            pinpoint: {
+                coords: { x: 0, y: 0.5 },
+                localOffset: { x: 0.5, y: 0 },
+                localRotationAngle: 90,
+                zIndex: 0,
+            },
+        },
+    ],
+}
+
+const configLootItemTemplates: Record<LootItemTemplateType, LootItemTemplate> = {
+    [LootItemTemplateType.Sword]: swordTemplate,
+    [LootItemTemplateType.Axe]: axeTemplate,
+}
+
+// ======= LOOT MOLECULES =======
+
+// Sword molecules and atoms
+const swordHiltMolecule: LootMolecule = {
+    type: LootMoleculeType.SwordHilt,
+    tags: [LootMoleculeTag.Handheld],
+    sockets: [
+        {
+            acceptType: LootAtomType.Guard,
+            pinpoint: {
+                coords: { x: 0, y: 0.5 },
+                localOffset: { x: 0, y: -0.5 },
+                localRotationAngle: 0,
+                zIndex: 0,
+            },
+        },
+        {
+            acceptType: LootAtomType.Grip,
+            pinpoint: {
+                coords: { x: 0, y: 0 },
+                localOffset: { x: 0, y: 0 },
+                localRotationAngle: 0,
+                zIndex: 0,
+            },
+        },
+        {
+            acceptType: LootAtomType.Pommel,
+            pinpoint: {
+                coords: { x: 0, y: -0.5 },
+                localOffset: { x: 0, y: 0.75 },
+                localRotationAngle: 0,
+                zIndex: 0,
+            },
+        },
+    ],
+}
+
+const swordBladeMolecule: LootMolecule = {
+    type: LootMoleculeType.SwordBlade,
+    tags: [LootMoleculeTag.Sharp],
+    sockets: [
+        {
+            acceptType: LootAtomType.Blade,
+            pinpoint: {
+                coords: { x: 0, y: 0 },
+                localOffset: { x: 0, y: 0 },
+                localRotationAngle: 0,
+                zIndex: 0,
+            },
+        },
+    ],
+}
+
+const swordGuardAtom: LootAtom = {
+    type: LootAtomType.Guard,
+}
+const swordGripAtom: LootAtom = {
+    type: LootAtomType.Grip,
+}
+const swordPommelAtom: LootAtom = {
+    type: LootAtomType.Pommel,
+}
+const swordBladeAtom: LootAtom = {
+    type: LootAtomType.Blade,
+}
+
+// Axe molecules and atoms
+
+const axeHandleMolecule: LootMolecule = {
+    type: LootMoleculeType.AxeHandle,
+    tags: [LootMoleculeTag.Handheld],
+    sockets: [
+        {
+            acceptType: LootAtomType.Handle,
+            pinpoint: {
+                coords: { x: 0, y: 0 },
+                localOffset: { x: 0, y: 0 },
+                localRotationAngle: 0,
+                zIndex: 0,
+            },
+        },
+    ],
+}
+const axeBladeMolecule: LootMolecule = {
+    type: LootMoleculeType.AxeBlade,
+    tags: [LootMoleculeTag.Sharp],
+    sockets: [
+        {
+            acceptType: LootAtomType.Blade,
+            pinpoint: {
+                coords: { x: 0, y: 0 },
+                localOffset: { x: 0, y: 0 },
+                localRotationAngle: 0,
+                zIndex: 0,
+            },
+        },
+    ],
+}
+
+const axeHandleAtom: LootAtom = {
+    type: LootAtomType.Handle,
+}
+const axeBladeAtom: LootAtom = {
+    type: LootAtomType.Blade,
+}
+
+const configLootMolecules: Record<LootMoleculeType, LootMolecule> = {
+    [LootMoleculeType.SwordHilt]: swordHiltMolecule,
+    [LootMoleculeType.SwordBlade]: swordBladeMolecule,
+    [LootMoleculeType.AxeHandle]: axeHandleMolecule,
+    [LootMoleculeType.AxeBlade]: axeBladeMolecule,
 }
