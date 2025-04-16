@@ -140,6 +140,7 @@ export enum LootAtomType {
 
 export type LootAtom = {
     type: LootAtomType
+    assetPath: string
 }
 
 // ======= LOOT ITEMS =======
@@ -253,17 +254,21 @@ const swordBladeMolecule: LootMolecule = {
     ],
 }
 
-const swordGuardAtom: LootAtom = {
+const swordBasicGuardAtom: LootAtom = {
     type: LootAtomType.Guard,
+    assetPath: 'assets/sword/guards/basic-guard.png',
 }
-const swordGripAtom: LootAtom = {
+const swordBasicGripAtom: LootAtom = {
     type: LootAtomType.Grip,
+    assetPath: 'assets/sword/grips/basic-grip.png',
 }
-const swordPommelAtom: LootAtom = {
+const swordBasicPommelAtom: LootAtom = {
     type: LootAtomType.Pommel,
+    assetPath: 'assets/sword/pommels/basic-pommel.png',
 }
-const swordBladeAtom: LootAtom = {
+const swordBasicBladeAtom: LootAtom = {
     type: LootAtomType.Blade,
+    assetPath: 'assets/sword/blades/basic-blade.png',
 }
 
 // Axe molecules and atoms
@@ -299,18 +304,29 @@ const axeBladeMolecule: LootMolecule = {
     ],
 }
 
-const axeHandleAtom: LootAtom = {
+const axeBasicHandleAtom: LootAtom = {
     type: LootAtomType.Handle,
+    assetPath: 'assets/axe/handles/basic-handle.png',
 }
-const axeBladeAtom: LootAtom = {
+const axeBasicBladeAtom: LootAtom = {
     type: LootAtomType.Blade,
+    assetPath: 'assets/axe/blades/basic-blade.png',
 }
 
-const configLootMolecules: Record<LootMoleculeType, LootMolecule> = {
-    [LootMoleculeType.SwordHilt]: swordHiltMolecule,
-    [LootMoleculeType.SwordBlade]: swordBladeMolecule,
-    [LootMoleculeType.AxeHandle]: axeHandleMolecule,
-    [LootMoleculeType.AxeBlade]: axeBladeMolecule,
+// All molecules and atoms available in the game
+const configLootMolecules: Record<LootMoleculeType, LootMolecule[]> = {
+    [LootMoleculeType.SwordHilt]: [swordHiltMolecule],
+    [LootMoleculeType.SwordBlade]: [swordBladeMolecule],
+    [LootMoleculeType.AxeHandle]: [axeHandleMolecule],
+    [LootMoleculeType.AxeBlade]: [axeBladeMolecule],
+}
+
+const configLootAtoms: Record<LootAtomType, LootAtom[]> = {
+    [LootAtomType.Guard]: [swordBasicGuardAtom],
+    [LootAtomType.Grip]: [swordBasicGripAtom],
+    [LootAtomType.Pommel]: [swordBasicPommelAtom],
+    [LootAtomType.Blade]: [swordBasicBladeAtom, axeBasicBladeAtom],
+    [LootAtomType.Handle]: [axeBasicHandleAtom],
 }
 
 // ======= LOOT OBJECTS TYPES (that will be generated in build time and then used in runtime) =======
