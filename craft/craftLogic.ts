@@ -19,6 +19,7 @@ import {
     TemperatureFailureReason,
     TemperatureRange,
 } from './craftModel'
+import { craftMaterialData } from './data/craftMaterialDataHelpers'
 
 /**
  * Main item crafting function
@@ -514,13 +515,11 @@ function getRarityPriceMultiplier(rarity: Rarity): number {
  */
 
 function getMaterialById(materialId: MaterialId): Material {
-    // In a real implementation, this would query the data store
-    return {} as Material
+    return craftMaterialData.materials.get(materialId) || ({} as Material)
 }
 
 function getMaterialTypeById(typeId: MaterialTypeId): MaterialType {
-    // In a real implementation, this would query the data store
-    return {} as MaterialType
+    return craftMaterialData.materialTypes.get(typeId) || ({} as MaterialType)
 }
 
 function getPartById(partId: PartId): Part {

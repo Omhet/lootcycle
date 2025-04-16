@@ -1,4 +1,3 @@
-import { customOverrides, initialMaterialCategories, initialMaterialTypes } from './craftDataInit'
 import {
     Material,
     MaterialCategory,
@@ -7,12 +6,13 @@ import {
     MaterialType,
     MaterialTypeId,
     Rarity,
-} from './craftModel'
+} from '../craftModel'
+import { customOverrides, initialMaterialCategories, initialMaterialTypes } from './craftMaterialDataInit'
 
 // ======= DATA STORE =======
 
 // Map storage for generated data
-export class CraftDataStore {
+export class CraftMaterialDataStore {
     materialCategories: Map<MaterialCategoryId, MaterialCategory> = new Map()
     materialTypes: Map<MaterialTypeId, MaterialType> = new Map()
     materials: Map<MaterialId, Material> = new Map()
@@ -21,9 +21,7 @@ export class CraftDataStore {
 }
 
 // Global data instance
-export const craftData = new CraftDataStore()
-
-// ======= DATA PROCESSING =======
+export const craftMaterialData = new CraftMaterialDataStore()
 
 // Function to generate a unique ID for materials
 export function generateMaterialId(typeId: MaterialTypeId): MaterialId {
@@ -37,17 +35,17 @@ export function applyOverrides<T>(item: T, overrides: Partial<T> | undefined): T
 }
 
 // Initialize all data
-export function initializeCraftData(): CraftDataStore {
+export function initializeCraftData(): CraftMaterialDataStore {
     // Clear existing data
-    craftData.materialCategories.clear()
-    craftData.materialTypes.clear()
-    craftData.materials.clear()
+    craftMaterialData.materialCategories.clear()
+    craftMaterialData.materialTypes.clear()
+    craftMaterialData.materials.clear()
 
     // Process material categories
     initialMaterialCategories.forEach((category) => {
         const overrides = customOverrides.materialCategories?.[category.id]
         const finalCategory = applyOverrides(category, overrides)
-        craftData.materialCategories.set(finalCategory.id, finalCategory)
+        craftMaterialData.materialCategories.set(finalCategory.id, finalCategory)
     })
 
     // Process material types
@@ -62,7 +60,7 @@ export function initializeCraftData(): CraftDataStore {
             overrides
         )
 
-        craftData.materialTypes.set(materialType.id, materialType)
+        craftMaterialData.materialTypes.set(materialType.id, materialType)
 
         // Generate a default material instance for each type
         const materialId = generateMaterialId(materialType.id)
@@ -71,27 +69,25 @@ export function initializeCraftData(): CraftDataStore {
             typeId: materialType.id,
         }
 
-        craftData.materials.set(materialId, material)
+        craftMaterialData.materials.set(materialId, material)
     })
 
-    return craftData
+    return craftMaterialData
 }
-
-// ======= HELPER FUNCTIONS =======
 
 // Helper to get all material types by rarity
 export function getMaterialTypesByRarity(rarity: Rarity): MaterialType[] {
-    return Array.from(craftData.materialTypes.values()).filter((type) => type.rarity === rarity)
+    return Array.from(craftMaterialData.materialTypes.values()).filter((type) => type.rarity === rarity)
 }
 
 // Helper to get all material types by category
 export function getMaterialTypesByCategory(categoryId: MaterialCategoryId): MaterialType[] {
-    return Array.from(craftData.materialTypes.values()).filter((type) => type.categoryId === categoryId)
+    return Array.from(craftMaterialData.materialTypes.values()).filter((type) => type.categoryId === categoryId)
 }
 
 // Helper to create a new material instance
 export function createMaterial(typeId: MaterialTypeId): Material {
-    const materialType = craftData.materialTypes.get(typeId)
+    const materialType = craftMaterialData.materialTypes.get(typeId)
     if (!materialType) throw new Error(`Material type ${typeId} not found`)
 
     const materialId = generateMaterialId(typeId)
@@ -100,6 +96,6 @@ export function createMaterial(typeId: MaterialTypeId): Material {
         typeId,
     }
 
-    craftData.materials.set(materialId, material)
+    craftMaterialData.materials.set(materialId, material)
     return material
 }
