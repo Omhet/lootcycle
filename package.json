@@ -1,0 +1,6 @@
+{
+    "type": "module",
+    "devDependencies": {
+        "tsx": "^4.19.3"
+    }
+}

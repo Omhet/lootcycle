@@ -386,3 +386,5 @@ export const generateAllLootObjectsInGame = (
 
     return { lootObjects, lootParts, lootJunk }
 }
+
+console.log(generateAllLootObjectsInGame(lootItemTemplateConfig, lootMoleculeConfig, lootAtomConfig))
