@@ -196,9 +196,12 @@ const axeTemplate: LootItemTemplate = {
     ],
 }
 
-const configLootItemTemplates: Record<LootItemTemplateType, LootItemTemplate> = {
-    [LootItemTemplateType.Sword]: swordTemplate,
-    [LootItemTemplateType.Axe]: axeTemplate,
+export type LootItemTemplateConfig = Record<LootItemTemplateType, LootItemTemplate[]>
+
+// All loot item templates available in the game
+const lootItemTemplateConfig: LootItemTemplateConfig = {
+    [LootItemTemplateType.Sword]: [swordTemplate],
+    [LootItemTemplateType.Axe]: [axeTemplate],
 }
 
 // ======= LOOT MOLECULES =======
@@ -313,15 +316,17 @@ const axeBasicBladeAtom: LootAtom = {
     assetPath: 'assets/axe/blades/basic-blade.png',
 }
 
+export type LootMoleculeConfig = Record<LootMoleculeType, LootMolecule[]>
 // All molecules and atoms available in the game
-const configLootMolecules: Record<LootMoleculeType, LootMolecule[]> = {
+const lootMoleculeConfig: Record<LootMoleculeType, LootMolecule[]> = {
     [LootMoleculeType.SwordHilt]: [swordHiltMolecule],
     [LootMoleculeType.SwordBlade]: [swordBladeMolecule],
     [LootMoleculeType.AxeHandle]: [axeHandleMolecule],
     [LootMoleculeType.AxeBlade]: [axeBladeMolecule],
 }
 
-const configLootAtoms: Record<LootAtomType, LootAtom[]> = {
+export type LootAtomConfig = Record<LootAtomType, LootAtom[]>
+const lootAtomConfig: Record<LootAtomType, LootAtom[]> = {
     [LootAtomType.Guard]: [swordBasicGuardAtom],
     [LootAtomType.Grip]: [swordBasicGripAtom],
     [LootAtomType.Pommel]: [swordBasicPommelAtom],
@@ -340,12 +345,44 @@ export type LootObject = {
 
 export type LootPartObject = {
     id: LootPartId
-    templateId: LootMoleculeType | LootAtomType
-    subparts: LootPartObject[]
+    subparts: LootPartId[]
     materials: MaterialComposition[]
-    assetPath: string
 }
 
 export type LootJunkObject = LootPartObject & {
     overrideAssetPath?: string
+}
+
+export const generateAllLootObjectsInGame = (
+    lootItemTemplateConfig: LootItemTemplateConfig,
+    lootMoleculeConfig: LootMoleculeConfig,
+    lootAtomConfig: LootAtomConfig
+) => {
+    const lootObjects: Record<LootItemId, LootItemTemplate> = {}
+    const lootParts: Record<LootPartId, LootPartObject> = {}
+    const lootJunk: Record<JunkItemId, LootJunkObject> = {}
+
+    // Generate all loot parts
+    for (const [_templateType, templates] of Object.entries(lootItemTemplateConfig)) {
+        for (const template of templates) {
+            for (const [_moleculeType, molecules] of Object.entries(lootMoleculeConfig)) {
+                for (const molecule of molecules) {
+                    const lootPartId = `${template.type}_${molecule.type}`
+                    lootParts[lootPartId] = {
+                        id: lootPartId,
+                        subparts: [],
+                        materials: [],
+                    }
+                    for (const socket of molecule.sockets) {
+                        for (const atom of lootAtomConfig[socket.acceptType]) {
+                            const lootAtomId = `${molecule.type}_${atom.type}`
+                            lootParts[lootPartId].subparts.push(lootAtomId)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return { lootObjects, lootParts, lootJunk }
 }
