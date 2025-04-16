@@ -1,18 +1,25 @@
-// ======= БАЗОВЫЕ ТИПЫ И ПЕРЕЧИСЛЕНИЯ =======
+// ======= BASIC TYPES AND ENUMERATIONS =======
 
-// Типизированные идентификаторы
-type MaterialCategoryId = string
-type MaterialTypeId = string
-type MaterialId = string
-type ItemCategoryId = string
-type ItemTypeId = string
-type ItemVariantId = string
-type PartId = string
-type JunkItemId = string
-type LootItemId = string
+// Material category enum
+export enum MaterialCategoryIdEnum {
+    Metal = 'metal',
+    Wood = 'wood',
+    // Can be easily extended with new categories
+}
 
-// Системные перечисления
-enum Rarity {
+// Typed identifiers
+export type MaterialCategoryId = MaterialCategoryIdEnum
+export type MaterialTypeId = string
+export type MaterialId = string
+export type ItemCategoryId = string
+export type ItemTypeId = string
+export type ItemVariantId = string
+export type PartId = string
+export type JunkItemId = string
+export type LootItemId = string
+
+// System enumerations
+export enum Rarity {
     Common,
     Uncommon,
     Rare,
@@ -20,8 +27,8 @@ enum Rarity {
     Legendary,
 }
 
-// Результаты операций
-enum CraftingFailureReason {
+// Operation results
+export enum CraftingFailureReason {
     NoItems = 'NO_ITEMS',
     InvalidTemperature = 'INVALID_TEMPERATURE',
     IncompatibleMaterials = 'INCOMPATIBLE_MATERIALS',
@@ -29,97 +36,97 @@ enum CraftingFailureReason {
     TooHighTemperature = 'TOO_HIGH_TEMPERATURE',
 }
 
-enum TemperatureFailureReason {
+export enum TemperatureFailureReason {
     TooLow = 'TOO_LOW_TEMPERATURE',
     TooHigh = 'TOO_HIGH_TEMPERATURE',
 }
 
-// ======= МАТЕРИАЛЫ =======
+// ======= MATERIALS =======
 
-// Температурный диапазон для материалов
-interface TemperatureRange {
-    min: number // Минимальная температура в Цельсиях
-    max: number // Максимальная температура в Цельсиях
+// Temperature range for materials
+export interface TemperatureRange {
+    min: number // Minimum temperature in Celsius
+    max: number // Maximum temperature in Celsius
 }
 
-// Категория материала
-interface MaterialCategory {
+// Material category
+export interface MaterialCategory {
     id: MaterialCategoryId
     name: string
 }
 
-// Тип материала
-interface MaterialType {
+// Material type
+export interface MaterialType {
     id: MaterialTypeId
     name: string
     category: MaterialCategory
     rarity: Rarity
-    basePrice: number // Цена за 1% содержания в части
-    heatValue: number // Тепло за 1 сек горения
-    burnRate: number // Секунд горения для 1 юнита
+    basePrice: number // Price for 1% content in an item part
+    heatValue: number // Heat per 1 second of burning
+    burnRate: number // Seconds of burning for 1 unit
     optimalTemperatureRange: TemperatureRange
 }
 
-// Конкретный материал
-interface Material {
+// Specific material
+export interface Material {
     id: MaterialId
     typeId: MaterialTypeId
 }
 
-// Композиция материалов в части предмета
-interface MaterialComposition {
+// Material composition in an item part
+export interface MaterialComposition {
     materialId: MaterialId
     percentage: number // 0-100
 }
 
-// ======= ЧАСТИ ПРЕДМЕТОВ =======
+// ======= ITEM PARTS =======
 
-// Часть предмета (шаблон)
-interface Part {
+// Item part (template)
+export interface Part {
     id: PartId
     name: string
-    // Визуализация части
+    // Part visualization
     assetPath: string
 }
 
-// Часть предмета с материалами
-interface ItemPart {
+// Item part with materials
+export interface ItemPart {
     partId: PartId
     composition: MaterialComposition[]
 }
 
-// Мусор (входной материал для крафта)
-interface JunkItem {
+// Junk (input material for crafting)
+export interface JunkItem {
     id: JunkItemId
     partId: PartId
     stability: number // 1-5
 }
 
-// ======= ПРЕДМЕТЫ =======
+// ======= ITEMS =======
 
-// Категория предметов
-interface ItemCategory {
+// Item category
+export interface ItemCategory {
     id: ItemCategoryId
     name: string
 }
 
-// Тип предмета
-interface ItemType {
+// Item type
+export interface ItemType {
     id: ItemTypeId
     name: string
     categoryId: ItemCategoryId
 }
 
-// Вариант предмета
-interface ItemVariant {
+// Item variant
+export interface ItemVariant {
     id: ItemVariantId
     name: string
     typeId: ItemTypeId
-    requiredParts: PartId[] // Список необходимых частей
+    requiredParts: PartId[] // List of required parts
 }
 
-// Готовый предмет лута (результат крафта)
-interface LootItem {
+// Finished loot item (crafting result)
+export interface LootItem {
     id: LootItemId
     name: string
     variantId: ItemVariantId
@@ -129,31 +136,31 @@ interface LootItem {
     price: number
 }
 
-// ======= РЕЗУЛЬТАТЫ АНАЛИЗА И ОПЕРАЦИЙ =======
+// ======= ANALYSIS AND OPERATION RESULTS =======
 
-// Результат анализа материалов
-interface MaterialAnalysis {
-    allMaterials: Record<MaterialId, number> // materialId -> процентное содержание
+// Material analysis result
+export interface MaterialAnalysis {
+    allMaterials: Record<MaterialId, number> // materialId -> percentage content
     dominantMaterialType: MaterialType
 }
 
-// Результат проверки совместимости с температурой
-interface TemperatureCompatibilityResult {
+// Temperature compatibility check result
+export interface TemperatureCompatibilityResult {
     compatible: boolean
     reason?: TemperatureFailureReason
 }
 
-// Результат процесса крафтинга
-interface CraftingResult {
+// Crafting process result
+export interface CraftingResult {
     success: boolean
     reason?: CraftingFailureReason
     item?: LootItem
 }
 
-// ======= ДРУГИЕ СИСТЕМЫ =======
+// ======= OTHER SYSTEMS =======
 
-// Запись в книге рецептов (отдельная модель)
-interface RecipeBookEntry {
+// Recipe book entry (separate model)
+export interface RecipeBookEntry {
     recipeId: string
     inputs: JunkItemId[]
     temperatureRange: TemperatureRange
