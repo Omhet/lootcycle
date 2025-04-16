@@ -90,7 +90,7 @@ export const initialItemVariants: ItemVariant[] = [
         id: ItemVariantIdEnum.LongSword,
         typeId: ItemTypeIdEnum.Sword,
         name: 'Long Sword',
-        requiredParts: ['blade_large', 'hilt_advanced', 'pommel_basic'] as PartId[],
+        requiredParts: ['blade_large', 'hilt_advanced'] as PartId[],
     },
 
     // Axe variants
