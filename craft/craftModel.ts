@@ -36,6 +36,12 @@ export interface TemperatureRange {
     max: number // Maximum temperature in Celsius
 }
 
+export enum Durability {
+    Low = 'low',
+    Medium = 'medium',
+    High = 'high',
+}
+
 // Material category
 export interface MaterialCategory {
     id: MaterialCategoryId
@@ -48,6 +54,7 @@ export interface MaterialType {
     categoryId: MaterialCategoryId
     name: string
     rarity: Rarity
+    durability: Durability
     basePrice: number // Price for 1% content in an item part
     optimalTemperatureRange: TemperatureRange
 }
@@ -84,8 +91,9 @@ export const initialMaterialTypes: MaterialType[] = [
         name: 'Copper',
         categoryId: MaterialCategoryIdEnum.Metal,
         rarity: Rarity.Common,
+        durability: Durability.Medium,
         basePrice: 10,
-        optimalTemperatureRange: { min: 900, max: 1200 },
+        optimalTemperatureRange: { min: 30, max: 80 },
     },
     // Wood types
     {
@@ -93,8 +101,9 @@ export const initialMaterialTypes: MaterialType[] = [
         name: 'Pine',
         categoryId: MaterialCategoryIdEnum.Wood,
         rarity: Rarity.Common,
+        durability: Durability.Low,
         basePrice: 5,
-        optimalTemperatureRange: { min: 300, max: 400 },
+        optimalTemperatureRange: { min: 10, max: 60 },
     },
 ]
 
@@ -473,8 +482,13 @@ export type LootDetail = {
     rarity: Rarity
 }
 
-export type LootJunkObject = LootPart & {
+export type LootJunk = LootDetail & {
+    durability: number
     overrideAssetPath?: string
+}
+
+export type LootJunkItem = LootJunk & {
+    degradation: number
 }
 
 const materialTypes = initialMaterialTypes
@@ -544,6 +558,35 @@ const calculateFinalRarity = (
     return getValueRarity(finalRarityValue)
 }
 
+// Utility function for durability calculation
+const getDurabilityValue = (durability: Durability): number => {
+    const durabilityValues: Record<Durability, number> = {
+        [Durability.Low]: 1,
+        [Durability.Medium]: 2,
+        [Durability.High]: 3,
+    }
+    return durabilityValues[durability]
+}
+
+// Calculate durability based on material composition
+const calculateDurability = (materialComposition: MaterialComposition[]): number => {
+    let weightedDurability = 0
+    let totalPercentage = 0
+
+    materialComposition.forEach(({ materialId, percentage }) => {
+        // Find material type from the materialId
+        const materialType = materialTypes.find((mt) => mt.id === materialId)
+        if (materialType) {
+            const durabilityValue = getDurabilityValue(materialType.durability)
+            weightedDurability += durabilityValue * percentage
+            totalPercentage += percentage
+        }
+    })
+
+    // Base durability from 100-300 based on materials (Low=100, Medium=200, High=300)
+    return totalPercentage > 0 ? (weightedDurability / totalPercentage) * 100 : 100
+}
+
 export const generateAllLootObjectsInGame = (
     lootItemTemplateConfig: LootItemTemplateConfig,
     lootMoleculeConfig: LootMoleculeConfig,
@@ -552,6 +595,7 @@ export const generateAllLootObjectsInGame = (
     const lootItems: Record<LootItemId, LootItem> = {}
     const lootParts: Record<LootPartId, LootPart> = {}
     const lootDetails: Record<LootDetailId, LootDetail> = {}
+    const lootJunkItems: Record<LootDetailId, LootJunkItem> = {}
 
     // Helper to combine material compositions with weights
     const combineMaterialCompositions = (
@@ -772,10 +816,29 @@ export const generateAllLootObjectsInGame = (
         })
     }
 
+    /**
+     * Phase 4: Generate Loot Junk Items
+     * Creates loot junk items from loot details with durability
+     */
+    const generateLootJunkItems = () => {
+        Object.values(lootDetails).forEach((detail) => {
+            const durability = calculateDurability(detail.materialComposition)
+
+            const lootJunkItem: LootJunkItem = {
+                ...detail,
+                durability,
+                degradation: 0, // Start with no degradation
+            }
+
+            lootJunkItems[detail.id] = lootJunkItem
+        })
+    }
+
     // Generate all loot objects in sequence
     generateLootDetails()
     generateLootParts()
     generateLootItems()
+    generateLootJunkItems() // Add this line to generate junk items
 
-    return { lootParts, lootItems, lootDetails }
+    return { lootParts, lootItems, lootDetails, lootJunkItems } // Add lootJunkItems to return
 }

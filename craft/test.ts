@@ -15,7 +15,7 @@ export const logLootObjectsInHumanReadableFormat = (
     lootMoleculeConfig: LootMoleculeConfig,
     lootAtomConfig: LootAtomConfig
 ) => {
-    const { lootParts, lootItems, lootDetails } = generateAllLootObjectsInGame(
+    const { lootParts, lootItems, lootDetails, lootJunkItems } = generateAllLootObjectsInGame(
         lootItemTemplateConfig,
         lootMoleculeConfig,
         lootAtomConfig
@@ -102,6 +102,30 @@ export const logLootObjectsInHumanReadableFormat = (
                 `${readableName} [${detail.rarity}] (Materials: ${formatMaterialComposition(
                     detail.materialComposition
                 )})`
+            )
+        }
+    }
+
+    // Log all loot junk items in human-readable format
+    console.log('\n=== LOOT JUNK ITEMS ===')
+    for (const junkItemId in lootJunkItems) {
+        const junkItem = lootJunkItems[junkItemId]
+        const readableName = getAtomReadableName(junkItemId)
+        const atomType = getAtomType(junkItemId)
+
+        if (atomType) {
+            console.log(
+                `${readableName} [${junkItem.rarity}] (Type: ${atomType}) (Durability: ${junkItem.durability.toFixed(
+                    1
+                )}) (Degradation: ${junkItem.degradation}%) (Materials: ${formatMaterialComposition(
+                    junkItem.materialComposition
+                )})`
+            )
+        } else {
+            console.log(
+                `${readableName} [${junkItem.rarity}] (Durability: ${junkItem.durability.toFixed(1)}) (Degradation: ${
+                    junkItem.degradation
+                }%) (Materials: ${formatMaterialComposition(junkItem.materialComposition)})`
             )
         }
     }
