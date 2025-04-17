@@ -74,7 +74,6 @@ const testCraftingSystem = () => {
 
     // Get templates for testing
     const swordTemplate = lootItemTemplateConfig[LootItemTemplateType.Sword][0]
-    const axeTemplate = lootItemTemplateConfig[LootItemTemplateType.Axe][0]
 
     // Get available junk items
     const availableJunkItems = Object.values(lootJunkItems)
@@ -89,32 +88,12 @@ const testCraftingSystem = () => {
         lootParts,
     })
 
-    // Test case 2: Axe crafting with random junk items and optimal temperature
-    console.log('\n=== TEST CASE 2: AXE WITH OPTIMAL TEMPERATURE ===')
-    testCraftWithParams({
-        template: axeTemplate,
-        junkItems: getRandomJunkItems(availableJunkItems, 5, 10),
-        temperature: 50,
-        lootItems,
-        lootParts,
-    })
-
     // Test case 3: Sword crafting with different random junk items and higher temperature
     console.log('\n=== TEST CASE 3: SWORD WITH HIGHER TEMPERATURE ===')
     testCraftWithParams({
         template: swordTemplate,
         junkItems: getRandomJunkItems(availableJunkItems, 3, 8),
         temperature: 70,
-        lootItems,
-        lootParts,
-    })
-
-    // Test case 4: Axe crafting with many random junk items
-    console.log('\n=== TEST CASE 4: AXE WITH MANY JUNK ITEMS ===')
-    testCraftWithParams({
-        template: axeTemplate,
-        junkItems: getRandomJunkItems(availableJunkItems, 8, 15),
-        temperature: 40,
         lootItems,
         lootParts,
     })
