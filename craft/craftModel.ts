@@ -468,6 +468,7 @@ export type LootItem = {
     materialComposition: MaterialComposition[]
     rarity: Rarity
     temperatureRange: TemperatureRange
+    masterQualityTemperatureRange: TemperatureRange
 }
 
 export type LootPart = {
@@ -680,6 +681,31 @@ export const generateAllLootObjectsInGame = (
         }
     }
 
+    // Calculate master quality temperature range (even narrower than regular range)
+    const calculateMasterQualityTemperatureRange = (
+        temperatureRange: TemperatureRange,
+        rarity: Rarity
+    ): TemperatureRange => {
+        // Master quality ranges are significantly narrower
+        // Higher rarity items have even narrower master quality ranges
+        const masterNarrowingFactors: Record<Rarity, number> = {
+            [Rarity.Common]: 0.3, // 70% narrower than regular range
+            [Rarity.Uncommon]: 0.25, // 75% narrower
+            [Rarity.Rare]: 0.2, // 80% narrower
+            [Rarity.Epic]: 0.15, // 85% narrower
+            [Rarity.Legendary]: 0.1, // 90% narrower
+        }
+
+        const rangeMidpoint = (temperatureRange.min + temperatureRange.max) / 2
+        const rangeWidth = temperatureRange.max - temperatureRange.min
+        const masterRangeWidth = rangeWidth * masterNarrowingFactors[rarity]
+
+        return {
+            min: Math.round(rangeMidpoint - masterRangeWidth / 2),
+            max: Math.round(rangeMidpoint + masterRangeWidth / 2),
+        }
+    }
+
     /**
      * Phase 1: Generate Loot Details
      * Creates loot details from atoms combined with materials
@@ -853,12 +879,19 @@ export const generateAllLootObjectsInGame = (
                     // Calculate temperature range based on materials and rarity
                     const temperatureRange = calculateTemperatureRange(materialComposition, finalRarity)
 
+                    // Calculate the master quality temperature range
+                    const masterQualityTemperatureRange = calculateMasterQualityTemperatureRange(
+                        temperatureRange,
+                        finalRarity
+                    )
+
                     const lootItem: LootItem = {
                         id: lootItemId,
                         subparts: partIds,
                         materialComposition: materialComposition,
                         rarity: finalRarity,
-                        temperatureRange: temperatureRange, // Add the calculated temperature range
+                        temperatureRange: temperatureRange,
+                        masterQualityTemperatureRange: masterQualityTemperatureRange,
                     }
 
                     lootItems[lootItemId] = lootItem
