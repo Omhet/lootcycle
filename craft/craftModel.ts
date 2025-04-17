@@ -424,18 +424,18 @@ export type LootDetailId = LootAtomId
 export type LootItem = {
     id: LootItemId
     subparts: LootPartId[]
-    materials: MaterialComposition[]
+    materialComposition: MaterialComposition[]
 }
 
 export type LootPart = {
     id: LootPartId
     subparts: LootDetailId[]
-    materials: MaterialComposition[]
+    materialComposition: MaterialComposition[]
 }
 
 export type LootDetail = {
     id: LootDetailId
-    materials: MaterialComposition[]
+    materialComposition: MaterialComposition[]
 }
 
 export type LootJunkObject = LootPart & {
@@ -456,7 +456,7 @@ export const generateAllLootObjectsInGame = (
         atoms.forEach((atom) => {
             lootDetails[atom.id] = {
                 id: atom.id,
-                materials: [],
+                materialComposition: [],
             }
         })
     })
@@ -497,7 +497,7 @@ export const generateAllLootObjectsInGame = (
                 const lootPart: LootPart = {
                     id: lootPartId,
                     subparts: atomIds,
-                    materials: [],
+                    materialComposition: [],
                 }
 
                 lootParts[lootPartId] = lootPart
@@ -548,7 +548,7 @@ export const generateAllLootObjectsInGame = (
                 const lootItem: LootItem = {
                     id: lootItemId,
                     subparts: partIds,
-                    materials: [],
+                    materialComposition: [],
                 }
 
                 lootItems[lootItemId] = lootItem
