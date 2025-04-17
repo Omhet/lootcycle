@@ -97,6 +97,15 @@ export const initialMaterialTypes: MaterialType[] = [
         basePrice: 4,
         optimalTemperatureRange: { min: 50, max: 100 },
     },
+    {
+        id: 'silver',
+        name: 'Silver',
+        categoryId: MaterialCategoryIdEnum.Metal,
+        rarity: Rarity.Rare,
+        durability: Durability.Low,
+        basePrice: 8,
+        optimalTemperatureRange: { min: 40, max: 90 },
+    },
     // Wood types
     {
         id: 'pine',
@@ -115,6 +124,15 @@ export const initialMaterialTypes: MaterialType[] = [
         durability: Durability.Medium,
         basePrice: 3,
         optimalTemperatureRange: { min: 20, max: 70 },
+    },
+    {
+        id: 'elvenmwood',
+        name: 'Elvenwood',
+        categoryId: MaterialCategoryIdEnum.Wood,
+        rarity: Rarity.Rare,
+        durability: Durability.High,
+        basePrice: 7,
+        optimalTemperatureRange: { min: 15, max: 65 },
     },
 ]
 
@@ -331,6 +349,65 @@ const swordBladeMolecule: LootMolecule = {
     ],
 }
 
+// Elven sword molecules
+const elvenSwordHiltMolecule: LootMolecule = {
+    id: 'elven_sword_hilt',
+    type: LootMoleculeType.SwordHilt,
+    tags: [LootMoleculeTag.Handheld],
+    name: 'Elven Sword Hilt',
+    sockets: [
+        {
+            acceptType: LootAtomType.Guard,
+            relativeWeight: 2,
+            pinpoint: {
+                coords: { x: 0, y: 0.5 },
+                localOffset: { x: 0, y: -0.5 },
+                localRotationAngle: 0,
+                zIndex: 0,
+            },
+        },
+        {
+            acceptType: LootAtomType.Grip,
+            relativeWeight: 1,
+            pinpoint: {
+                coords: { x: 0, y: 0 },
+                localOffset: { x: 0, y: 0 },
+                localRotationAngle: 0,
+                zIndex: 0,
+            },
+        },
+        {
+            acceptType: LootAtomType.Pommel,
+            relativeWeight: 1,
+            pinpoint: {
+                coords: { x: 0, y: -0.5 },
+                localOffset: { x: 0, y: 0.75 },
+                localRotationAngle: 0,
+                zIndex: 0,
+            },
+        },
+    ],
+}
+
+const elvenSwordBladeMolecule: LootMolecule = {
+    id: 'elven_sword_blade',
+    type: LootMoleculeType.SwordBlade,
+    tags: [LootMoleculeTag.Sharp],
+    name: 'Elven Sword Blade',
+    sockets: [
+        {
+            acceptType: LootAtomType.Blade,
+            relativeWeight: 1,
+            pinpoint: {
+                coords: { x: 0, y: 0 },
+                localOffset: { x: 0, y: 0 },
+                localRotationAngle: 0,
+                zIndex: 0,
+            },
+        },
+    ],
+}
+
 const swordBasicGuardAtom: LootAtom = {
     id: 'sword_basic_guard',
     type: LootAtomType.Guard,
@@ -360,19 +437,52 @@ const swordBasicBladeAtom: LootAtom = {
     assetPath: 'assets/sword/blades/basic-blade.png',
 }
 
+// Elven sword atoms
+const elvenSwordGuardAtom: LootAtom = {
+    id: 'elven_sword_guard',
+    type: LootAtomType.Guard,
+    name: 'Elven Sword Guard',
+    rarirty: Rarity.Rare,
+    assetPath: 'assets/sword/guards/elven-guard.png',
+}
+
+const elvenSwordGripAtom: LootAtom = {
+    id: 'elven_sword_grip',
+    type: LootAtomType.Grip,
+    name: 'Elven Sword Grip',
+    rarirty: Rarity.Rare,
+    assetPath: 'assets/sword/grips/elven-grip.png',
+}
+
+const elvenSwordPommelAtom: LootAtom = {
+    id: 'elven_sword_pommel',
+    type: LootAtomType.Pommel,
+    name: 'Elven Sword Pommel',
+    rarirty: Rarity.Rare,
+    assetPath: 'assets/sword/pommels/elven-pommel.png',
+}
+
+const elvenSwordBladeAtom: LootAtom = {
+    id: 'elven_sword_blade',
+    type: LootAtomType.Blade,
+    name: 'Elven Sword Blade',
+    rarirty: Rarity.Rare,
+    assetPath: 'assets/sword/blades/elven-blade.png',
+}
+
 export type LootMoleculeConfig = Record<LootMoleculeType, LootMolecule[]>
 // All molecules and atoms available in the game
 export const lootMoleculeConfig: Record<LootMoleculeType, LootMolecule[]> = {
-    [LootMoleculeType.SwordHilt]: [swordHiltMolecule],
-    [LootMoleculeType.SwordBlade]: [swordBladeMolecule],
+    [LootMoleculeType.SwordHilt]: [swordHiltMolecule, elvenSwordHiltMolecule],
+    [LootMoleculeType.SwordBlade]: [swordBladeMolecule, elvenSwordBladeMolecule],
 }
 
 export type LootAtomConfig = Record<LootAtomType, LootAtom[]>
 export const lootAtomConfig: Record<LootAtomType, LootAtom[]> = {
-    [LootAtomType.Guard]: [swordBasicGuardAtom],
-    [LootAtomType.Grip]: [swordBasicGripAtom],
-    [LootAtomType.Pommel]: [swordBasicPommelAtom],
-    [LootAtomType.Blade]: [swordBasicBladeAtom],
+    [LootAtomType.Guard]: [swordBasicGuardAtom, elvenSwordGuardAtom],
+    [LootAtomType.Grip]: [swordBasicGripAtom, elvenSwordGripAtom],
+    [LootAtomType.Pommel]: [swordBasicPommelAtom, elvenSwordPommelAtom],
+    [LootAtomType.Blade]: [swordBasicBladeAtom, elvenSwordBladeAtom],
 }
 
 // ======= LOOT OBJECTS TYPES (that will be generated in build time and then used in runtime) =======
