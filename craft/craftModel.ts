@@ -481,4 +481,97 @@ export const generateAllLootObjectsInGame = (
     return { lootParts, lootItems }
 }
 
-console.log(generateAllLootObjectsInGame(lootItemTemplateConfig, lootMoleculeConfig, lootAtomConfig))
+export const logLootObjectsInHumanReadableFormat = (
+    lootItemTemplateConfig: LootItemTemplateConfig,
+    lootMoleculeConfig: LootMoleculeConfig,
+    lootAtomConfig: LootAtomConfig
+) => {
+    const { lootParts, lootItems } = generateAllLootObjectsInGame(
+        lootItemTemplateConfig,
+        lootMoleculeConfig,
+        lootAtomConfig
+    )
+
+    // Helper function to convert atom IDs to human-readable names
+    const getAtomReadableName = (atomId: string): string => {
+        // Find the atom in the config
+        const atom = Object.values(lootAtomConfig)
+            .flat()
+            .find((a) => a.id === atomId)
+
+        if (!atom) return atomId
+
+        // Extract a readable name from the ID, preserving the item type prefix
+        const nameParts = atom.id.split('_')
+
+        // Capitalize all parts to keep the item type (sword/axe) visible
+        return nameParts.map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join(' ')
+    }
+
+    // Helper function to get molecule readable name
+    const getMoleculeReadableName = (moleculeId: string): string => {
+        // Find the molecule in the config
+        const molecule = Object.values(lootMoleculeConfig)
+            .flat()
+            .find((m) => m.id === moleculeId)
+
+        if (!molecule) return moleculeId
+
+        // Convert molecule type to readable name, assuming format like "sword_hilt"
+        const nameParts = molecule.id.split('_')
+        return nameParts.map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join(' ')
+    }
+
+    // Helper function to extract molecule ID from part ID
+    const getMoleculeIdFromPartId = (partId: string): string => {
+        // Part ID format is like "sword_hilt-[atom1-atom2-atom3]"
+        return partId.split('-[')[0]
+    }
+
+    // Helper function to extract template ID from item ID
+    const getTemplateIdFromItemId = (itemId: string): string => {
+        // Item ID format is like "sword-[part1-part2]"
+        return itemId.split('-[')[0]
+    }
+
+    // Log all loot parts in human-readable format
+    console.log('\n=== LOOT PARTS ===')
+    for (const partId in lootParts) {
+        const part = lootParts[partId]
+        const moleculeId = getMoleculeIdFromPartId(partId)
+        const moleculeName = getMoleculeReadableName(moleculeId)
+
+        // Get readable names of all atoms in this part
+        const atomNames = part.subparts.map((atomId) => getAtomReadableName(atomId))
+
+        console.log(`${moleculeName} (${atomNames.join(', ')})`)
+    }
+
+    // Log all loot items in human-readable format
+    console.log('\n=== LOOT ITEMS ===')
+    for (const itemId in lootItems) {
+        const item = lootItems[itemId]
+        const templateId = getTemplateIdFromItemId(itemId)
+
+        // Get readable names of all parts in this item
+        const partDescs = item.subparts.map((partId) => {
+            const moleculeId = getMoleculeIdFromPartId(partId)
+            const moleculeName = getMoleculeReadableName(moleculeId)
+
+            // Get the part to find its atoms
+            const part = lootParts[partId]
+            if (!part) return moleculeName
+
+            // Get readable names of all atoms in this part
+            const atomNames = part.subparts.map((atomId) => getAtomReadableName(atomId))
+
+            return `${moleculeName} (${atomNames.join(', ')})`
+        })
+
+        console.log(`${templateId.charAt(0).toUpperCase() + templateId.slice(1)}: ${partDescs.join(', ')}`)
+    }
+}
+
+// Call the function to log all generated loot objects
+// console.log(generateAllLootObjectsInGame(lootItemTemplateConfig, lootMoleculeConfig, lootAtomConfig))
+logLootObjectsInHumanReadableFormat(lootItemTemplateConfig, lootMoleculeConfig, lootAtomConfig)
