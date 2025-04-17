@@ -176,6 +176,7 @@ export type LootAtom = {
     id: LootAtomId
     type: LootAtomType
     name: string
+    rarirty: Rarity
     assetPath: string
 }
 
@@ -307,24 +308,28 @@ const swordBasicGuardAtom: LootAtom = {
     id: 'sword_basic_guard',
     type: LootAtomType.Guard,
     name: 'Basic Sword Guard',
+    rarirty: Rarity.Common,
     assetPath: 'assets/sword/guards/basic-guard.png',
 }
 const swordBasicGripAtom: LootAtom = {
     id: 'sword_basic_grip',
     type: LootAtomType.Grip,
     name: 'Basic Sword Grip',
+    rarirty: Rarity.Common,
     assetPath: 'assets/sword/grips/basic-grip.png',
 }
 const swordBasicPommelAtom: LootAtom = {
     id: 'sword_basic_pommel',
     type: LootAtomType.Pommel,
     name: 'Basic Sword Pommel',
+    rarirty: Rarity.Common,
     assetPath: 'assets/sword/pommels/basic-pommel.png',
 }
 const swordBasicBladeAtom: LootAtom = {
     id: 'sword_basic_blade',
     type: LootAtomType.Blade,
     name: 'Basic Sword Blade',
+    rarirty: Rarity.Common,
     assetPath: 'assets/sword/blades/basic-blade.png',
 }
 
@@ -369,12 +374,14 @@ const axeBasicHandleAtom: LootAtom = {
     id: 'axe_basic_handle',
     type: LootAtomType.Handle,
     name: 'Basic Axe Handle',
+    rarirty: Rarity.Common,
     assetPath: 'assets/axe/handles/basic-handle.png',
 }
 const axeBasicBladeAtom: LootAtom = {
     id: 'axe_basic_blade',
     type: LootAtomType.Blade,
     name: 'Basic Axe Blade',
+    rarirty: Rarity.Common,
     assetPath: 'assets/axe/blades/basic-blade.png',
 }
 
