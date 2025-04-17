@@ -86,7 +86,7 @@ export const initialMaterialTypes: MaterialType[] = [
         categoryId: MaterialCategoryIdEnum.Metal,
         rarity: Rarity.Common,
         durability: Durability.Medium,
-        basePrice: 10,
+        basePrice: 2,
         optimalTemperatureRange: { min: 30, max: 80 },
     },
     // Wood types
@@ -96,7 +96,7 @@ export const initialMaterialTypes: MaterialType[] = [
         categoryId: MaterialCategoryIdEnum.Wood,
         rarity: Rarity.Common,
         durability: Durability.Low,
-        basePrice: 5,
+        basePrice: 1,
         optimalTemperatureRange: { min: 10, max: 60 },
     },
 ]
