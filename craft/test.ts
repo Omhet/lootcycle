@@ -170,9 +170,9 @@ export const logLootObjectsInHumanReadableFormat = (
         })
 
         console.log(
-            `${templateName} [${item.rarity}] (Materials: ${formatMaterialComposition(
-                item.materialComposition
-            )}): ${partDescs.join(', ')}`
+            `${templateName} [${item.rarity}] (Temp: ${item.temperatureRange.min}°C-${
+                item.temperatureRange.max
+            }°C) (Materials: ${formatMaterialComposition(item.materialComposition)}): ${partDescs.join(', ')}`
         )
     }
 }

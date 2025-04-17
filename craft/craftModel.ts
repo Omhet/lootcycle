@@ -467,6 +467,7 @@ export type LootItem = {
     subparts: LootPartId[]
     materialComposition: MaterialComposition[]
     rarity: Rarity
+    temperatureRange: TemperatureRange
 }
 
 export type LootPart = {
@@ -631,6 +632,52 @@ export const generateAllLootObjectsInGame = (
         }
 
         return result
+    }
+
+    // Calculate temperature range based on material composition and rarity
+    const calculateTemperatureRange = (
+        materialComposition: MaterialComposition[],
+        rarity: Rarity
+    ): TemperatureRange => {
+        // First calculate base temperature range from materials
+        let minTemp = 0
+        let maxTemp = 0
+        let totalPercentage = 0
+
+        materialComposition.forEach(({ materialId, percentage }) => {
+            // Find material type from the materialId
+            const materialType = materialTypes.find((mt) => mt.id === materialId)
+            if (materialType) {
+                minTemp += materialType.optimalTemperatureRange.min * percentage
+                maxTemp += materialType.optimalTemperatureRange.max * percentage
+                totalPercentage += percentage
+            }
+        })
+
+        // Calculate average min and max temperatures
+        minTemp = totalPercentage > 0 ? minTemp / totalPercentage : 0
+        maxTemp = totalPercentage > 0 ? maxTemp / totalPercentage : 100
+
+        // Apply a narrowing factor based on rarity
+        // Higher rarity = narrower range (more challenging to work with)
+        const narrowingFactors: Record<Rarity, number> = {
+            [Rarity.Common]: 1.0, // No narrowing
+            [Rarity.Uncommon]: 0.85, // 15% narrower
+            [Rarity.Rare]: 0.7, // 30% narrower
+            [Rarity.Epic]: 0.55, // 45% narrower
+            [Rarity.Legendary]: 0.4, // 60% narrower
+        }
+
+        const rangeMidpoint = (minTemp + maxTemp) / 2
+        const rangeWidth = maxTemp - minTemp
+
+        // Apply narrowing factor
+        const narrowedRangeWidth = rangeWidth * narrowingFactors[rarity]
+
+        return {
+            min: Math.round(rangeMidpoint - narrowedRangeWidth / 2),
+            max: Math.round(rangeMidpoint + narrowedRangeWidth / 2),
+        }
     }
 
     /**
@@ -803,11 +850,15 @@ export const generateAllLootObjectsInGame = (
                     // Calculate final rarity (70% from parts, 30% from materials)
                     const finalRarity = calculateFinalRarity(rarityComponents, materialComposition, 0.7)
 
+                    // Calculate temperature range based on materials and rarity
+                    const temperatureRange = calculateTemperatureRange(materialComposition, finalRarity)
+
                     const lootItem: LootItem = {
                         id: lootItemId,
                         subparts: partIds,
                         materialComposition: materialComposition,
                         rarity: finalRarity,
+                        temperatureRange: temperatureRange, // Add the calculated temperature range
                     }
 
                     lootItems[lootItemId] = lootItem
@@ -838,7 +889,7 @@ export const generateAllLootObjectsInGame = (
     generateLootDetails()
     generateLootParts()
     generateLootItems()
-    generateLootJunkItems() // Add this line to generate junk items
+    generateLootJunkItems()
 
-    return { lootParts, lootItems, lootDetails, lootJunkItems } // Add lootJunkItems to return
+    return { lootParts, lootItems, lootDetails, lootJunkItems }
 }
