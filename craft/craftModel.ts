@@ -88,6 +88,15 @@ export const initialMaterialTypes: MaterialType[] = [
         basePrice: 2,
         optimalTemperatureRange: { min: 30, max: 80 },
     },
+    {
+        id: 'iron',
+        name: 'Iron',
+        categoryId: MaterialCategoryIdEnum.Metal,
+        rarity: Rarity.Uncommon,
+        durability: Durability.Medium,
+        basePrice: 4,
+        optimalTemperatureRange: { min: 50, max: 100 },
+    },
     // Wood types
     {
         id: 'pine',
@@ -97,6 +106,15 @@ export const initialMaterialTypes: MaterialType[] = [
         durability: Durability.Low,
         basePrice: 1,
         optimalTemperatureRange: { min: 10, max: 60 },
+    },
+    {
+        id: 'oak',
+        name: 'Oak',
+        categoryId: MaterialCategoryIdEnum.Wood,
+        rarity: Rarity.Uncommon,
+        durability: Durability.Medium,
+        basePrice: 3,
+        optimalTemperatureRange: { min: 20, max: 70 },
     },
 ]
 
