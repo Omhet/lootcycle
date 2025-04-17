@@ -129,6 +129,7 @@ export interface LootItemTemplate {
     id: LootItemTemplateId
     subCategory: ItemSubCategoryId
     type: LootItemTemplateType
+    name: string
     sockets: LootMoleculeSocket[]
 }
 
@@ -153,6 +154,7 @@ export enum LootMoleculeTag {
 export type LootMolecule = {
     id: LootMoleculeId
     type: LootMoleculeType
+    name: string
     tags: LootMoleculeTag[]
     sockets: LootAtomSocket[]
 }
@@ -173,6 +175,7 @@ export enum LootAtomType {
 export type LootAtom = {
     id: LootAtomId
     type: LootAtomType
+    name: string
     assetPath: string
 }
 
@@ -182,6 +185,7 @@ const swordTemplate: LootItemTemplate = {
     id: 'sword',
     subCategory: ItemSubCategoryId.MeleeWeapon,
     type: LootItemTemplateType.Sword,
+    name: 'Basic Sword',
     sockets: [
         {
             acceptType: LootMoleculeType.SwordHilt,
@@ -209,6 +213,7 @@ const axeTemplate: LootItemTemplate = {
     id: 'axe',
     subCategory: ItemSubCategoryId.MeleeWeapon,
     type: LootItemTemplateType.Axe,
+    name: 'Basic Axe',
     sockets: [
         {
             acceptType: LootMoleculeType.AxeHandle,
@@ -248,6 +253,7 @@ const swordHiltMolecule: LootMolecule = {
     id: 'sword_hilt',
     type: LootMoleculeType.SwordHilt,
     tags: [LootMoleculeTag.Handheld],
+    name: 'Basic Sword Hilt',
     sockets: [
         {
             acceptType: LootAtomType.Guard,
@@ -283,6 +289,7 @@ const swordBladeMolecule: LootMolecule = {
     id: 'sword_blade',
     type: LootMoleculeType.SwordBlade,
     tags: [LootMoleculeTag.Sharp],
+    name: 'Basic Sword Blade',
     sockets: [
         {
             acceptType: LootAtomType.Blade,
@@ -299,21 +306,25 @@ const swordBladeMolecule: LootMolecule = {
 const swordBasicGuardAtom: LootAtom = {
     id: 'sword_basic_guard',
     type: LootAtomType.Guard,
+    name: 'Basic Sword Guard',
     assetPath: 'assets/sword/guards/basic-guard.png',
 }
 const swordBasicGripAtom: LootAtom = {
     id: 'sword_basic_grip',
     type: LootAtomType.Grip,
+    name: 'Basic Sword Grip',
     assetPath: 'assets/sword/grips/basic-grip.png',
 }
 const swordBasicPommelAtom: LootAtom = {
     id: 'sword_basic_pommel',
     type: LootAtomType.Pommel,
+    name: 'Basic Sword Pommel',
     assetPath: 'assets/sword/pommels/basic-pommel.png',
 }
 const swordBasicBladeAtom: LootAtom = {
     id: 'sword_basic_blade',
     type: LootAtomType.Blade,
+    name: 'Basic Sword Blade',
     assetPath: 'assets/sword/blades/basic-blade.png',
 }
 
@@ -323,6 +334,7 @@ const axeHandleMolecule: LootMolecule = {
     id: 'axe_handle',
     type: LootMoleculeType.AxeHandle,
     tags: [LootMoleculeTag.Handheld],
+    name: 'Basic Axe Handle',
     sockets: [
         {
             acceptType: LootAtomType.Handle,
@@ -339,6 +351,7 @@ const axeBladeMolecule: LootMolecule = {
     id: 'axe_blade',
     type: LootMoleculeType.AxeBlade,
     tags: [LootMoleculeTag.Sharp],
+    name: 'Basic Axe Blade',
     sockets: [
         {
             acceptType: LootAtomType.Blade,
@@ -355,11 +368,13 @@ const axeBladeMolecule: LootMolecule = {
 const axeBasicHandleAtom: LootAtom = {
     id: 'axe_basic_handle',
     type: LootAtomType.Handle,
+    name: 'Basic Axe Handle',
     assetPath: 'assets/axe/handles/basic-handle.png',
 }
 const axeBasicBladeAtom: LootAtom = {
     id: 'axe_basic_blade',
     type: LootAtomType.Blade,
+    name: 'Basic Axe Blade',
     assetPath: 'assets/axe/blades/basic-blade.png',
 }
 
