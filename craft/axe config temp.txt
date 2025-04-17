@@ -1,0 +1,45 @@
+// Axe molecules and atoms
+
+const axeHandleMolecule: LootMolecule = {
+    id: 'axe_handle',
+    type: LootMoleculeType.AxeHandle,
+    tags: [LootMoleculeTag.Handheld],
+    sockets: [
+        {
+            acceptType: LootAtomType.Handle,
+            pinpoint: {
+                coords: { x: 0, y: 0 },
+                localOffset: { x: 0, y: 0 },
+                localRotationAngle: 0,
+                zIndex: 0,
+            },
+        },
+    ],
+}
+const axeBladeMolecule: LootMolecule = {
+    id: 'axe_blade',
+    type: LootMoleculeType.AxeBlade,
+    tags: [LootMoleculeTag.Sharp],
+    sockets: [
+        {
+            acceptType: LootAtomType.Blade,
+            pinpoint: {
+                coords: { x: 0, y: 0 },
+                localOffset: { x: 0, y: 0 },
+                localRotationAngle: 0,
+                zIndex: 0,
+            },
+        },
+    ],
+}
+
+const axeBasicHandleAtom: LootAtom = {
+    id: 'axe_basic_handle',
+    type: LootAtomType.Handle,
+    assetPath: 'assets/axe/handles/basic-handle.png',
+}
+const axeBasicBladeAtom: LootAtom = {
+    id: 'axe_basic_blade',
+    type: LootAtomType.Blade,
+    assetPath: 'assets/axe/blades/basic-blade.png',
+}

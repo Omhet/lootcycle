@@ -1,17 +1,9 @@
 // ======= BASIC TYPES AND ENUMERATIONS =======
 
-import { ItemCategoryIdEnum, ItemSubCategoryIdEnum, ItemTemplateIdEnum } from './data/item/craftItemDataInit'
-
 // Typed identifiers
 export type MaterialCategoryId = string
 export type MaterialTypeId = string
 export type MaterialId = string
-export type ItemCategoryId = ItemCategoryIdEnum
-export type ItemSubCategoryId = ItemSubCategoryIdEnum
-export type ItemTemplateId = ItemTemplateIdEnum
-export type JunkItemId = string
-export type LootItemId = string
-export type LootPartId = string
 
 // System enumerations
 export enum Rarity {
@@ -91,12 +83,20 @@ export type Pinpoint = {
     zIndex: number
 }
 
+// export type ItemCategoryId = ItemCategoryIdEnum
+// export type ItemSubCategoryId = ItemSubCategoryIdEnum
+// export type JunkItemId = string
+export type LootItemTemplateId = string
+export type LootMoleculeId = string
+export type LootAtomId = string
+
 export enum LootItemTemplateType {
     Sword = 'sword',
     Axe = 'axe',
 }
 
 export interface LootItemTemplate {
+    id: LootItemTemplateId
     type: LootItemTemplateType
     sockets: LootMoleculeSocket[]
 }
@@ -120,6 +120,7 @@ export enum LootMoleculeTag {
 }
 
 export type LootMolecule = {
+    id: LootMoleculeId
     type: LootMoleculeType
     tags: LootMoleculeTag[]
     sockets: LootAtomSocket[]
@@ -139,6 +140,7 @@ export enum LootAtomType {
 }
 
 export type LootAtom = {
+    id: LootAtomId
     type: LootAtomType
     assetPath: string
 }
@@ -146,6 +148,7 @@ export type LootAtom = {
 // ======= LOOT ITEMS =======
 
 const swordTemplate: LootItemTemplate = {
+    id: 'sword',
     type: LootItemTemplateType.Sword,
     sockets: [
         {
@@ -171,6 +174,7 @@ const swordTemplate: LootItemTemplate = {
     ],
 }
 const axeTemplate: LootItemTemplate = {
+    id: 'axe',
     type: LootItemTemplateType.Axe,
     sockets: [
         {
@@ -208,6 +212,7 @@ const lootItemTemplateConfig: LootItemTemplateConfig = {
 
 // Sword molecules and atoms
 const swordHiltMolecule: LootMolecule = {
+    id: 'sword_hilt',
     type: LootMoleculeType.SwordHilt,
     tags: [LootMoleculeTag.Handheld],
     sockets: [
@@ -242,6 +247,7 @@ const swordHiltMolecule: LootMolecule = {
 }
 
 const swordBladeMolecule: LootMolecule = {
+    id: 'sword_blade',
     type: LootMoleculeType.SwordBlade,
     tags: [LootMoleculeTag.Sharp],
     sockets: [
@@ -258,18 +264,22 @@ const swordBladeMolecule: LootMolecule = {
 }
 
 const swordBasicGuardAtom: LootAtom = {
+    id: 'sword_basic_guard',
     type: LootAtomType.Guard,
     assetPath: 'assets/sword/guards/basic-guard.png',
 }
 const swordBasicGripAtom: LootAtom = {
+    id: 'sword_basic_grip',
     type: LootAtomType.Grip,
     assetPath: 'assets/sword/grips/basic-grip.png',
 }
 const swordBasicPommelAtom: LootAtom = {
+    id: 'sword_basic_pommel',
     type: LootAtomType.Pommel,
     assetPath: 'assets/sword/pommels/basic-pommel.png',
 }
 const swordBasicBladeAtom: LootAtom = {
+    id: 'sword_basic_blade',
     type: LootAtomType.Blade,
     assetPath: 'assets/sword/blades/basic-blade.png',
 }
@@ -277,6 +287,7 @@ const swordBasicBladeAtom: LootAtom = {
 // Axe molecules and atoms
 
 const axeHandleMolecule: LootMolecule = {
+    id: 'axe_handle',
     type: LootMoleculeType.AxeHandle,
     tags: [LootMoleculeTag.Handheld],
     sockets: [
@@ -292,6 +303,7 @@ const axeHandleMolecule: LootMolecule = {
     ],
 }
 const axeBladeMolecule: LootMolecule = {
+    id: 'axe_blade',
     type: LootMoleculeType.AxeBlade,
     tags: [LootMoleculeTag.Sharp],
     sockets: [
@@ -308,10 +320,12 @@ const axeBladeMolecule: LootMolecule = {
 }
 
 const axeBasicHandleAtom: LootAtom = {
+    id: 'axe_basic_handle',
     type: LootAtomType.Handle,
     assetPath: 'assets/axe/handles/basic-handle.png',
 }
 const axeBasicBladeAtom: LootAtom = {
+    id: 'axe_basic_blade',
     type: LootAtomType.Blade,
     assetPath: 'assets/axe/blades/basic-blade.png',
 }
@@ -336,20 +350,28 @@ const lootAtomConfig: Record<LootAtomType, LootAtom[]> = {
 
 // ======= LOOT OBJECTS TYPES (that will be generated in build time and then used in runtime) =======
 
-export type LootObject = {
+export type LootItemId = string
+export type LootPartId = string
+export type LootDetailId = LootAtomId
+
+export type LootItem = {
     id: LootItemId
-    template: LootItemTemplateType
     subparts: LootPartId[]
     materials: MaterialComposition[]
 }
 
-export type LootPartObject = {
+export type LootPart = {
     id: LootPartId
-    subparts: LootPartId[]
+    subparts: LootDetailId[]
     materials: MaterialComposition[]
 }
 
-export type LootJunkObject = LootPartObject & {
+export type LootDetail = {
+    id: LootDetailId
+    materials: MaterialComposition[]
+}
+
+export type LootJunkObject = LootPart & {
     overrideAssetPath?: string
 }
 
@@ -358,33 +380,37 @@ export const generateAllLootObjectsInGame = (
     lootMoleculeConfig: LootMoleculeConfig,
     lootAtomConfig: LootAtomConfig
 ) => {
-    const lootObjects: Record<LootItemId, LootItemTemplate> = {}
-    const lootParts: Record<LootPartId, LootPartObject> = {}
-    const lootJunk: Record<JunkItemId, LootJunkObject> = {}
+    const lootItems: Record<LootItemId, LootItemTemplate> = {}
+    const lootParts: Record<LootPartId, LootPart> = {}
+    // const lootJunk: Record<JunkItemId, LootJunkObject> = {}
 
     // Generate all loot parts
-    for (const [_templateType, templates] of Object.entries(lootItemTemplateConfig)) {
-        for (const template of templates) {
-            for (const [_moleculeType, molecules] of Object.entries(lootMoleculeConfig)) {
-                for (const molecule of molecules) {
-                    const lootPartId = `${template.type}_${molecule.type}`
-                    lootParts[lootPartId] = {
-                        id: lootPartId,
-                        subparts: [],
-                        materials: [],
-                    }
-                    for (const socket of molecule.sockets) {
-                        for (const atom of lootAtomConfig[socket.acceptType]) {
-                            const lootAtomId = `${molecule.type}_${atom.type}`
-                            lootParts[lootPartId].subparts.push(lootAtomId)
-                        }
-                    }
-                }
+    const allBaseTemplates = Object.entries(lootItemTemplateConfig).flatMap(([_key, value]) => value)
+
+    for (const template of allBaseTemplates) {
+        const molecules = template.sockets.map((socket) => lootMoleculeConfig[socket.acceptType]).flat()
+
+        for (const molecule of molecules) {
+            const atoms = molecule.sockets.map((socket) => lootAtomConfig[socket.acceptType]).flat()
+
+            const lootPartId = `$${molecule.id}-[${atoms.map((atom) => atom.id).join('-')}]`
+            const lootPart: LootPart = {
+                id: lootPartId,
+                subparts: atoms.map((atom) => atom.id),
+                materials: [],
+            }
+            lootParts[lootPartId] = lootPart
+
+            const lootItemId = `${template.id}_${lootPartId}`
+            const lootItem: LootItem = {
+                id: lootItemId,
+                subparts: [],
+                materials: [],
             }
         }
     }
 
-    return { lootObjects, lootParts, lootJunk }
+    return { lootObjects: lootItems, lootParts }
 }
 
 console.log(generateAllLootObjectsInGame(lootItemTemplateConfig, lootMoleculeConfig, lootAtomConfig))

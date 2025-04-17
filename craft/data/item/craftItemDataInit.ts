@@ -10,10 +10,3 @@ export enum ItemSubCategoryIdEnum {
     // RangeWeapon = 'range_weapon',
     // Future subcategories would go here
 }
-
-// Item type enum
-export enum ItemTemplateIdEnum {
-    // Melee weapons
-    Sword = 'sword',
-    Axe = 'axe',
-}
