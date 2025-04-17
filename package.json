@@ -1,7 +1,7 @@
 {
     "type": "module",
     "scripts": {
-        "testCraft": "tsx ./craft/craftModel.ts"
+        "testCraft": "tsx ./craft/test.ts"
     },
     "devDependencies": {
         "tsx": "^4.19.3"
