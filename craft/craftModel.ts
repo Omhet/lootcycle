@@ -136,6 +136,7 @@ export interface LootItemTemplate {
 export type LootMoleculeSocket = {
     acceptType: LootMoleculeType
     acceptTags: LootMoleculeTag[]
+    relativeWeight?: number
     pinpoint: Pinpoint
 }
 
@@ -161,6 +162,7 @@ export type LootMolecule = {
 
 export type LootAtomSocket = {
     acceptType: LootAtomType
+    relativeWeight?: number
     pinpoint: Pinpoint
 }
 
@@ -191,6 +193,7 @@ const swordTemplate: LootItemTemplate = {
         {
             acceptType: LootMoleculeType.SwordHilt,
             acceptTags: [LootMoleculeTag.Handheld],
+            relativeWeight: 3,
             pinpoint: {
                 coords: { x: 0, y: 0 },
                 localOffset: { x: 0, y: -0.5 },
@@ -201,6 +204,7 @@ const swordTemplate: LootItemTemplate = {
         {
             acceptType: LootMoleculeType.SwordBlade,
             acceptTags: [LootMoleculeTag.Sharp],
+            relativeWeight: 7,
             pinpoint: {
                 coords: { x: 0, y: 0 },
                 localOffset: { x: 0, y: 0.5 },
@@ -219,6 +223,7 @@ const axeTemplate: LootItemTemplate = {
         {
             acceptType: LootMoleculeType.AxeHandle,
             acceptTags: [LootMoleculeTag.Handheld],
+            relativeWeight: 3,
             pinpoint: {
                 coords: { x: 0, y: 0 },
                 localOffset: { x: 0, y: 0 },
@@ -229,6 +234,7 @@ const axeTemplate: LootItemTemplate = {
         {
             acceptType: LootMoleculeType.AxeBlade,
             acceptTags: [LootMoleculeTag.Sharp],
+            relativeWeight: 7,
             pinpoint: {
                 coords: { x: 0, y: 0.5 },
                 localOffset: { x: 0.5, y: 0 },
@@ -258,6 +264,7 @@ const swordHiltMolecule: LootMolecule = {
     sockets: [
         {
             acceptType: LootAtomType.Guard,
+            relativeWeight: 2,
             pinpoint: {
                 coords: { x: 0, y: 0.5 },
                 localOffset: { x: 0, y: -0.5 },
@@ -267,6 +274,7 @@ const swordHiltMolecule: LootMolecule = {
         },
         {
             acceptType: LootAtomType.Grip,
+            relativeWeight: 1,
             pinpoint: {
                 coords: { x: 0, y: 0 },
                 localOffset: { x: 0, y: 0 },
@@ -276,9 +284,10 @@ const swordHiltMolecule: LootMolecule = {
         },
         {
             acceptType: LootAtomType.Pommel,
+            relativeWeight: 1,
             pinpoint: {
                 coords: { x: 0, y: -0.5 },
-                localOffset: { x: 0, y: 0.75 },
+                localOffset: { x: 0, y: 75 },
                 localRotationAngle: 0,
                 zIndex: 0,
             },
@@ -294,6 +303,7 @@ const swordBladeMolecule: LootMolecule = {
     sockets: [
         {
             acceptType: LootAtomType.Blade,
+            relativeWeight: 1,
             pinpoint: {
                 coords: { x: 0, y: 0 },
                 localOffset: { x: 0, y: 0 },
@@ -343,6 +353,7 @@ const axeHandleMolecule: LootMolecule = {
     sockets: [
         {
             acceptType: LootAtomType.Handle,
+            relativeWeight: 1,
             pinpoint: {
                 coords: { x: 0, y: 0 },
                 localOffset: { x: 0, y: 0 },
@@ -360,6 +371,7 @@ const axeBladeMolecule: LootMolecule = {
     sockets: [
         {
             acceptType: LootAtomType.Blade,
+            relativeWeight: 1,
             pinpoint: {
                 coords: { x: 0, y: 0 },
                 localOffset: { x: 0, y: 0 },
