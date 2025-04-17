@@ -1,7 +1,8 @@
 {
     "type": "module",
     "scripts": {
-        "testCraft": "tsx ./craft/test.ts"
+        "logAll": "tsx ./craft/logAllObjects.ts",
+        "testCraft": "tsx ./craft/testCraft.ts"
     },
     "devDependencies": {
         "tsx": "^4.19.3"
