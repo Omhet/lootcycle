@@ -542,6 +542,42 @@ export const generateAllLootObjectsInGame = (
         return generateCombinations(0)
     }
 
+    // Helper to combine material compositions with weights
+    const combineMaterialCompositions = (
+        compositions: Array<{ composition: MaterialComposition[]; weight: number }>
+    ): MaterialComposition[] => {
+        const materialMap = new Map<MaterialId, number>()
+        let totalWeight = 0
+
+        // Sum all weights and accumulate material percentages
+        compositions.forEach(({ composition, weight }) => {
+            totalWeight += weight
+            composition.forEach(({ materialId, percentage }) => {
+                const weightedPercentage = (percentage * weight) / 100
+                materialMap.set(materialId, (materialMap.get(materialId) || 0) + weightedPercentage)
+            })
+        })
+
+        // Normalize percentages based on total weight
+        const result: MaterialComposition[] = []
+        materialMap.forEach((weightedPercentage, materialId) => {
+            const normalizedPercentage = (weightedPercentage / totalWeight) * 100
+            result.push({
+                materialId,
+                percentage: parseFloat(normalizedPercentage.toFixed(2)),
+            })
+        })
+
+        // Ensure percentages sum to exactly 100%
+        if (result.length > 0) {
+            const sum = result.reduce((acc, { percentage }) => acc + percentage, 0)
+            const adjustment = 100 - sum
+            result[0].percentage += parseFloat(adjustment.toFixed(2))
+        }
+
+        return result
+    }
+
     // Generate all possible loot parts
     Object.values(lootMoleculeConfig).forEach((molecules) => {
         molecules.forEach((molecule) => {
@@ -552,9 +588,16 @@ export const generateAllLootObjectsInGame = (
             atomCombinations.forEach((detailIds) => {
                 const lootPartId = `${molecule.id}-[${detailIds.join('-')}]`
 
-                // Calculate material composition based on details
-                const materialComposition: MaterialComposition[] = []
-                // We could implement logic here to combine the materials from the details
+                // Calculate material composition based on details and molecule sockets
+                const materialCompositions = detailIds.map((detailId, index) => {
+                    const socketWeight = molecule.sockets[index].relativeWeight || 1
+                    return {
+                        composition: lootDetails[detailId].materialComposition,
+                        weight: socketWeight,
+                    }
+                })
+
+                const materialComposition = combineMaterialCompositions(materialCompositions)
 
                 const lootPart: LootPart = {
                     id: lootPartId,
@@ -607,10 +650,21 @@ export const generateAllLootObjectsInGame = (
             partCombinations.forEach((partIds) => {
                 const lootItemId = `${template.id}-[${partIds.join('-')}]`
 
+                // Calculate material composition based on parts and template sockets
+                const materialCompositions = partIds.map((partId, index) => {
+                    const socketWeight = template.sockets[index].relativeWeight || 1
+                    return {
+                        composition: lootParts[partId].materialComposition,
+                        weight: socketWeight,
+                    }
+                })
+
+                const materialComposition = combineMaterialCompositions(materialCompositions)
+
                 const lootItem: LootItem = {
                     id: lootItemId,
                     subparts: partIds,
-                    materialComposition: [],
+                    materialComposition: materialComposition,
                 }
 
                 lootItems[lootItemId] = lootItem
