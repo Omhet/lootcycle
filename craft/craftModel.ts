@@ -16,7 +16,10 @@ export enum Rarity {
 
 // Operation results
 export enum CraftingFailureReason {
-    NoItems = 'NO_ITEMS',
+    NoJunkItems = 'NO_JUNK_ITEMS',
+    NoPotentialLootItems = 'NO_POTENTIAL_LOOT_ITEMS',
+    NoPotentialLootParts = 'NO_POTENTIAL_LOOT_PARTS',
+    NoPotentialLootDetails = 'NO_POTENTIAL_LOOT_DETAILS',
     IncompatibleMaterials = 'INCOMPATIBLE_MATERIALS',
     TooLowTemperature = 'TOO_LOW_TEMPERATURE',
     TooHighTemperature = 'TOO_HIGH_TEMPERATURE',
@@ -954,7 +957,7 @@ export function craftLootItem(params: {
     if (availableJunkItems.length === 0) {
         return {
             success: false,
-            failure: { reason: CraftingFailureReason.NoItems },
+            failure: { reason: CraftingFailureReason.NoJunkItems },
         }
     }
 
@@ -1055,7 +1058,7 @@ export function craftLootItem(params: {
     if (moleculeSelections.length === 0) {
         return {
             success: false,
-            failure: { reason: CraftingFailureReason.NoItems },
+            failure: { reason: CraftingFailureReason.NoPotentialLootParts },
         }
     }
 
@@ -1083,7 +1086,7 @@ export function craftLootItem(params: {
     if (selectedJunkItems.length === 0) {
         return {
             success: false,
-            failure: { reason: CraftingFailureReason.NoItems },
+            failure: { reason: CraftingFailureReason.NoPotentialLootDetails },
         }
     }
 
@@ -1121,7 +1124,7 @@ export function craftLootItem(params: {
     if (potentialItems.length === 0) {
         return {
             success: false,
-            failure: { reason: CraftingFailureReason.NoItems },
+            failure: { reason: CraftingFailureReason.NoPotentialLootItems },
         }
     }
 
