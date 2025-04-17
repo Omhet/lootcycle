@@ -382,6 +382,17 @@ export const generateAllLootObjectsInGame = (
 ) => {
     const lootItems: Record<LootItemId, LootItem> = {}
     const lootParts: Record<LootPartId, LootPart> = {}
+    const lootDetails: Record<LootDetailId, LootDetail> = {}
+
+    // Create loot details from all available atoms
+    Object.values(lootAtomConfig).forEach((atoms) => {
+        atoms.forEach((atom) => {
+            lootDetails[atom.id] = {
+                id: atom.id,
+                materials: [],
+            }
+        })
+    })
 
     // Helper to generate atom combinations for a molecule
     const generateAtomCombinationsForMolecule = (molecule: LootMolecule): LootAtomId[][] => {
@@ -478,7 +489,7 @@ export const generateAllLootObjectsInGame = (
         })
     })
 
-    return { lootParts, lootItems }
+    return { lootParts, lootItems, lootDetails }
 }
 
 export const logLootObjectsInHumanReadableFormat = (
@@ -486,7 +497,7 @@ export const logLootObjectsInHumanReadableFormat = (
     lootMoleculeConfig: LootMoleculeConfig,
     lootAtomConfig: LootAtomConfig
 ) => {
-    const { lootParts, lootItems } = generateAllLootObjectsInGame(
+    const { lootParts, lootItems, lootDetails } = generateAllLootObjectsInGame(
         lootItemTemplateConfig,
         lootMoleculeConfig,
         lootAtomConfig
@@ -532,6 +543,24 @@ export const logLootObjectsInHumanReadableFormat = (
     const getTemplateIdFromItemId = (itemId: string): string => {
         // Item ID format is like "sword-[part1-part2]"
         return itemId.split('-[')[0]
+    }
+
+    // Log all loot details (atoms) in human-readable format
+    console.log('\n=== LOOT DETAILS (ATOMS) ===')
+    for (const detailId in lootDetails) {
+        const detail = lootDetails[detailId]
+        const readableName = getAtomReadableName(detailId)
+
+        // Find the atom to get its type
+        const atom = Object.values(lootAtomConfig)
+            .flat()
+            .find((a) => a.id === detailId)
+
+        if (atom) {
+            console.log(`${readableName} (Type: ${atom.type})`)
+        } else {
+            console.log(readableName)
+        }
     }
 
     // Log all loot parts in human-readable format
