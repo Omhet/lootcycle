@@ -83,8 +83,38 @@ export type Pinpoint = {
     zIndex: number
 }
 
-// export type ItemCategoryId = ItemCategoryIdEnum
-// export type ItemSubCategoryId = ItemSubCategoryIdEnum
+// Item category enum
+export enum ItemCategoryId {
+    Weapon = 'weapon',
+    // Future categories would go here: Armor, Magic, Accessories, etc.
+}
+
+// Item subcategory enum
+export enum ItemSubCategoryId {
+    MeleeWeapon = 'melee_weapon',
+    // Future subcategories would go here: Range Weapon, Light Armor, Heavy Armor, etc.
+}
+
+export type ItemCategory = {
+    id: ItemCategoryId
+    name: string
+}
+
+export type ItemSubCategory = {
+    id: ItemSubCategoryId
+    name: string
+    categoryId: ItemCategoryId
+}
+
+// Initial item categories
+export const initialItemCategories: ItemCategory[] = [{ id: ItemCategoryId.Weapon, name: 'Weapon' }]
+
+// Initial item subcategories
+export const initialItemSubCategories: ItemSubCategory[] = [
+    { id: ItemSubCategoryId.MeleeWeapon, name: 'Melee Weapon', categoryId: ItemCategoryId.Weapon },
+    // Future subcategories would go here: Range Weapon, Light Armor, Heavy Armor, etc.
+]
+
 // export type JunkItemId = string
 export type LootItemTemplateId = string
 export type LootMoleculeId = string
@@ -97,6 +127,7 @@ export enum LootItemTemplateType {
 
 export interface LootItemTemplate {
     id: LootItemTemplateId
+    subCategory: ItemSubCategoryId
     type: LootItemTemplateType
     sockets: LootMoleculeSocket[]
 }
@@ -149,6 +180,7 @@ export type LootAtom = {
 
 const swordTemplate: LootItemTemplate = {
     id: 'sword',
+    subCategory: ItemSubCategoryId.MeleeWeapon,
     type: LootItemTemplateType.Sword,
     sockets: [
         {
@@ -175,6 +207,7 @@ const swordTemplate: LootItemTemplate = {
 }
 const axeTemplate: LootItemTemplate = {
     id: 'axe',
+    subCategory: ItemSubCategoryId.MeleeWeapon,
     type: LootItemTemplateType.Axe,
     sockets: [
         {
@@ -602,5 +635,4 @@ export const logLootObjectsInHumanReadableFormat = (
 }
 
 // Call the function to log all generated loot objects
-// console.log(generateAllLootObjectsInGame(lootItemTemplateConfig, lootMoleculeConfig, lootAtomConfig))
 logLootObjectsInHumanReadableFormat(lootItemTemplateConfig, lootMoleculeConfig, lootAtomConfig)
