@@ -570,34 +570,37 @@ export const logLootObjectsInHumanReadableFormat = (
         lootAtomConfig
     )
 
-    // Helper function to convert atom IDs to human-readable names
+    // Helper function to find atom by ID and get its name
     const getAtomReadableName = (atomId: string): string => {
         // Find the atom in the config
         const atom = Object.values(lootAtomConfig)
             .flat()
             .find((a) => a.id === atomId)
 
-        if (!atom) return atomId
-
-        // Extract a readable name from the ID, preserving the item type prefix
-        const nameParts = atom.id.split('_')
-
-        // Capitalize all parts to keep the item type (sword/axe) visible
-        return nameParts.map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join(' ')
+        // Return the explicit name if found, otherwise the ID
+        return atom ? atom.name : atomId
     }
 
-    // Helper function to get molecule readable name
+    // Helper function to find molecule by ID and get its name
     const getMoleculeReadableName = (moleculeId: string): string => {
         // Find the molecule in the config
         const molecule = Object.values(lootMoleculeConfig)
             .flat()
             .find((m) => m.id === moleculeId)
 
-        if (!molecule) return moleculeId
+        // Return the explicit name if found, otherwise the ID
+        return molecule ? molecule.name : moleculeId
+    }
 
-        // Convert molecule type to readable name, assuming format like "sword_hilt"
-        const nameParts = molecule.id.split('_')
-        return nameParts.map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join(' ')
+    // Helper function to find template by ID and get its name
+    const getTemplateReadableName = (templateId: string): string => {
+        // Find the template in the config
+        const template = Object.values(lootItemTemplateConfig)
+            .flat()
+            .find((t) => t.id === templateId)
+
+        // Return the explicit name if found, otherwise capitalize the ID
+        return template ? template.name : templateId.charAt(0).toUpperCase() + templateId.slice(1)
     }
 
     // Helper function to extract molecule ID from part ID
@@ -612,19 +615,24 @@ export const logLootObjectsInHumanReadableFormat = (
         return itemId.split('-[')[0]
     }
 
+    // Helper function to get atom type
+    const getAtomType = (atomId: string): LootAtomType | undefined => {
+        const atom = Object.values(lootAtomConfig)
+            .flat()
+            .find((a) => a.id === atomId)
+
+        return atom?.type
+    }
+
     // Log all loot details (atoms) in human-readable format
     console.log('\n=== LOOT DETAILS (ATOMS) ===')
     for (const detailId in lootDetails) {
         const detail = lootDetails[detailId]
         const readableName = getAtomReadableName(detailId)
+        const atomType = getAtomType(detailId)
 
-        // Find the atom to get its type
-        const atom = Object.values(lootAtomConfig)
-            .flat()
-            .find((a) => a.id === detailId)
-
-        if (atom) {
-            console.log(`${readableName} (Type: ${atom.type})`)
+        if (atomType) {
+            console.log(`${readableName} (Type: ${atomType})`)
         } else {
             console.log(readableName)
         }
@@ -648,6 +656,7 @@ export const logLootObjectsInHumanReadableFormat = (
     for (const itemId in lootItems) {
         const item = lootItems[itemId]
         const templateId = getTemplateIdFromItemId(itemId)
+        const templateName = getTemplateReadableName(templateId)
 
         // Get readable names of all parts in this item
         const partDescs = item.subparts.map((partId) => {
@@ -664,7 +673,7 @@ export const logLootObjectsInHumanReadableFormat = (
             return `${moleculeName} (${atomNames.join(', ')})`
         })
 
-        console.log(`${templateId.charAt(0).toUpperCase() + templateId.slice(1)}: ${partDescs.join(', ')}`)
+        console.log(`${templateName}: ${partDescs.join(', ')}`)
     }
 }
 
