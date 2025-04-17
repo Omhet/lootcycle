@@ -17,10 +17,6 @@ export enum Rarity {
 // Operation results
 export enum CraftingFailureReason {
     NoJunkItems = 'NO_JUNK_ITEMS',
-    NoPotentialLootItems = 'NO_POTENTIAL_LOOT_ITEMS',
-    NoPotentialLootParts = 'NO_POTENTIAL_LOOT_PARTS',
-    NoPotentialLootDetails = 'NO_POTENTIAL_LOOT_DETAILS',
-    IncompatibleMaterials = 'INCOMPATIBLE_MATERIALS',
     TooLowTemperature = 'TOO_LOW_TEMPERATURE',
     TooHighTemperature = 'TOO_HIGH_TEMPERATURE',
 }
@@ -953,7 +949,7 @@ export function craftLootItem(params: {
         config: { lootItems, lootParts },
     } = params
 
-    // Step 1: Check if there are any junk items
+    // Step 1: Check if there are any junk items (keep this check as required)
     if (availableJunkItems.length === 0) {
         return {
             success: false,
@@ -978,8 +974,8 @@ export function craftLootItem(params: {
     })
 
     // Step 3: Select junk items based on template requirements
-    const selectedJunkItems: LootJunkItem[] = []
-    const socketWeights: number[] = []
+    let selectedJunkItems: LootJunkItem[] = []
+    let socketWeights: number[] = []
 
     // Try to find the best molecule configuration across all sockets
     const moleculeSelections: Array<{
@@ -1054,93 +1050,95 @@ export function craftLootItem(params: {
         }
     }
 
-    // If we couldn't find any valid molecule configuration
+    // If we couldn't find any valid molecule configuration, use any available junk items
     if (moleculeSelections.length === 0) {
-        return {
-            success: false,
-            failure: { reason: CraftingFailureReason.NoPotentialLootParts },
+        // Just use the best junk items we have, regardless of strict compatibility
+        const bestJunks = Object.values(junkItemsByType)
+            .flat()
+            .sort((a, b) => a.degradation - b.degradation)
+            .slice(0, Math.min(5, availableJunkItems.length)) // Take up to 5 best junk items
+
+        selectedJunkItems = bestJunks
+        socketWeights = bestJunks.map(() => 1) // Equal weight for all
+    } else {
+        // Sort molecule selections by quality score (descending)
+        moleculeSelections.sort((a, b) => b.qualityScore - a.qualityScore)
+
+        // Group the best molecules by socket
+        const bestMoleculesBySocket: Record<number, (typeof moleculeSelections)[0]> = {}
+
+        for (const selection of moleculeSelections) {
+            if (
+                !bestMoleculesBySocket[selection.socketIndex] ||
+                selection.qualityScore > bestMoleculesBySocket[selection.socketIndex].qualityScore
+            ) {
+                bestMoleculesBySocket[selection.socketIndex] = selection
+            }
         }
-    }
 
-    // Sort molecule selections by quality score (descending)
-    moleculeSelections.sort((a, b) => b.qualityScore - a.qualityScore)
-
-    // Group the best molecules by socket
-    const bestMoleculesBySocket: Record<number, (typeof moleculeSelections)[0]> = {}
-
-    for (const selection of moleculeSelections) {
-        if (
-            !bestMoleculesBySocket[selection.socketIndex] ||
-            selection.qualityScore > bestMoleculesBySocket[selection.socketIndex].qualityScore
-        ) {
-            bestMoleculesBySocket[selection.socketIndex] = selection
-        }
-    }
-
-    // Combine all selected junk items from the best molecule per socket
-    Object.values(bestMoleculesBySocket).forEach((selection) => {
-        selectedJunkItems.push(...selection.junkItems)
-        socketWeights.push(...selection.weights)
-    })
-
-    if (selectedJunkItems.length === 0) {
-        return {
-            success: false,
-            failure: { reason: CraftingFailureReason.NoPotentialLootDetails },
-        }
+        // Combine all selected junk items from the best molecule per socket
+        Object.values(bestMoleculesBySocket).forEach((selection) => {
+            selectedJunkItems.push(...selection.junkItems)
+            socketWeights.push(...selection.weights)
+        })
     }
 
     // Step 4: Calculate combined material composition
     const materialCompositions = selectedJunkItems.map((junkItem, index) => ({
         composition: junkItem.materialComposition,
-        weight: socketWeights[index],
+        weight: socketWeights[index] || 1, // Default to 1 if no weight specified
     }))
 
     const combinedMaterialComposition = combineMaterialCompositions(materialCompositions)
 
     // Step 5: Find the most compatible item from potential items
 
-    // Track the molecules we've selected
+    // Track the molecules we've selected (if any)
     const selectedMolecules = new Set<string>()
-    Object.values(bestMoleculesBySocket).forEach((selection) => {
-        selectedMolecules.add(selection.molecule.id)
-    })
-
-    // Filter potential items that match the template AND contain parts made from our selected molecules
-    const potentialItems = Object.values(lootItems).filter((item) => {
-        if (item.templateId !== lootItemTemplate.id) {
-            return false
-        }
-
-        // Check if any of the item's parts use our selected molecules
-        return item.subparts.some((partId) => {
-            const part = lootParts[partId]
-            if (!part) return false
-
-            return selectedMolecules.has(part.moleculeId)
+    if (moleculeSelections.length > 0) {
+        Object.values(moleculeSelections).forEach((selection) => {
+            selectedMolecules.add(selection.molecule.id)
         })
-    })
+    }
+
+    // Filter potential items that match the template
+    let potentialItems = Object.values(lootItems).filter((item) => item.templateId === lootItemTemplate.id)
+
+    // If we found molecules, further refine by checking if any parts use our selected molecules
+    if (selectedMolecules.size > 0) {
+        potentialItems = potentialItems.filter((item) => {
+            return item.subparts.some((partId) => {
+                const part = lootParts[partId]
+                if (!part) return false
+                return selectedMolecules.has(part.moleculeId)
+            })
+        })
+    }
+
+    // If still no potential items, just use any item that matches the template
+    if (potentialItems.length === 0) {
+        potentialItems = Object.values(lootItems).filter((item) => item.templateId === lootItemTemplate.id)
+    }
+
+    let bestMatch: LootItem
 
     if (potentialItems.length === 0) {
-        return {
-            success: false,
-            failure: { reason: CraftingFailureReason.NoPotentialLootItems },
+        throw new Error('No potential items found for crafting.')
+    } else {
+        // Find the item with the closest material composition
+        bestMatch = potentialItems[0]
+        let bestScore = calculateMaterialSimilarity(bestMatch.materialComposition, combinedMaterialComposition)
+
+        for (const item of potentialItems) {
+            const score = calculateMaterialSimilarity(item.materialComposition, combinedMaterialComposition)
+            if (score > bestScore) {
+                bestMatch = item
+                bestScore = score
+            }
         }
     }
 
-    // Find the item with the closest material composition
-    let bestMatch = potentialItems[0]
-    let bestScore = calculateMaterialSimilarity(bestMatch.materialComposition, combinedMaterialComposition)
-
-    for (const item of potentialItems) {
-        const score = calculateMaterialSimilarity(item.materialComposition, combinedMaterialComposition)
-        if (score > bestScore) {
-            bestMatch = item
-            bestScore = score
-        }
-    }
-
-    // Step 6: Check if temperature is appropriate for crafting
+    // Step 6: Check if temperature is appropriate for crafting (keep this check as required)
     if (temperature < bestMatch.temperatureRange.min) {
         return {
             success: false,
@@ -1161,8 +1159,8 @@ export function craftLootItem(params: {
 
     // Step 7: Calculate quality based on junk item degradation and temperature
     const avgDegradation =
-        selectedJunkItems.reduce((sum, junk, index) => sum + junk.degradation * socketWeights[index], 0) /
-        socketWeights.reduce((sum, weight) => sum + weight, 0)
+        selectedJunkItems.reduce((sum, junk, index) => sum + junk.degradation * (socketWeights[index] || 1), 0) /
+        socketWeights.reduce((sum, weight) => sum + (weight || 1), 0)
 
     let quality = 100 - avgDegradation
 
@@ -1222,6 +1220,12 @@ export function craftLootItem(params: {
         quality,
         sellPrice,
     }
+}
+
+// Helper function to calculate rarity based solely on material composition
+function calculateRarityFromMaterials(materialComposition: MaterialComposition[]): Rarity {
+    const materialRarityValue = calculateMaterialRarity(materialComposition)
+    return getValueRarity(materialRarityValue)
 }
 
 // Helper function to calculate similarity between material compositions
