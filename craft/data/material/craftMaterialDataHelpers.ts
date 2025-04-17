@@ -30,7 +30,7 @@ export function generateMaterialId(typeId: MaterialTypeId): MaterialId {
 }
 
 // Initialize all data
-export function initializeCraftData(): CraftMaterialDataStore {
+export function initializeCraftMaterialData(): CraftMaterialDataStore {
     // Clear existing data
     craftMaterialData.materialCategories.clear()
     craftMaterialData.materialTypes.clear()

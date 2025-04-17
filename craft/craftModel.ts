@@ -7,11 +7,11 @@ export type MaterialId = string
 
 // System enumerations
 export enum Rarity {
-    Common,
-    Uncommon,
-    Rare,
-    Epic,
-    Legendary,
+    Common = 'common',
+    Uncommon = 'uncommon',
+    Rare = 'rare',
+    Epic = 'epic',
+    Legendary = 'legendary',
 }
 
 // Operation results
@@ -49,8 +49,6 @@ export interface MaterialType {
     name: string
     rarity: Rarity
     basePrice: number // Price for 1% content in an item part
-    heatValue: number // Heat per 1 second of burning
-    burnRate: number // Seconds of burning for 1 unit
     optimalTemperatureRange: TemperatureRange
 }
 
@@ -65,6 +63,40 @@ export interface MaterialComposition {
     materialId: MaterialId
     percentage: number // 0-100
 }
+
+export enum MaterialCategoryIdEnum {
+    Metal = 'metal',
+    Wood = 'wood',
+    // Can be easily extended with new categories
+}
+
+// Initial material categories
+export const initialMaterialCategories: MaterialCategory[] = [
+    { id: MaterialCategoryIdEnum.Metal, name: 'Metal' },
+    { id: MaterialCategoryIdEnum.Wood, name: 'Wood' },
+]
+
+// Initial material types with one of each rarity per category
+export const initialMaterialTypes: MaterialType[] = [
+    // Metal types
+    {
+        id: 'copper',
+        name: 'Copper',
+        categoryId: MaterialCategoryIdEnum.Metal,
+        rarity: Rarity.Common,
+        basePrice: 10,
+        optimalTemperatureRange: { min: 900, max: 1200 },
+    },
+    // Wood types
+    {
+        id: 'pine',
+        name: 'Pine',
+        categoryId: MaterialCategoryIdEnum.Wood,
+        rarity: Rarity.Common,
+        basePrice: 5,
+        optimalTemperatureRange: { min: 300, max: 400 },
+    },
+]
 
 // ======= ITEMS =======
 // TODO: Refactor to divide exact templates types that will be in config with corresponding molecules and atoms in its own files
@@ -442,6 +474,8 @@ export type LootJunkObject = LootPart & {
     overrideAssetPath?: string
 }
 
+const materialTypes = initialMaterialTypes
+
 export const generateAllLootObjectsInGame = (
     lootItemTemplateConfig: LootItemTemplateConfig,
     lootMoleculeConfig: LootMoleculeConfig,
@@ -451,32 +485,56 @@ export const generateAllLootObjectsInGame = (
     const lootParts: Record<LootPartId, LootPart> = {}
     const lootDetails: Record<LootDetailId, LootDetail> = {}
 
-    // Create loot details from all available atoms
+    // Create loot details from all available atoms combined with all available materials
     Object.values(lootAtomConfig).forEach((atoms) => {
         atoms.forEach((atom) => {
-            lootDetails[atom.id] = {
-                id: atom.id,
-                materialComposition: [],
-            }
+            // Get all materials from craftMaterialData
+            const materials = Array.from(materialTypes.values())
+
+            // For each material, create a unique loot detail
+            materials.forEach((material) => {
+                const lootDetailId = `${atom.id}-${material.id}`
+                lootDetails[lootDetailId] = {
+                    id: lootDetailId,
+                    materialComposition: [
+                        {
+                            materialId: material.id,
+                            percentage: 100, // 100% of this single material
+                        },
+                    ],
+                }
+            })
         })
     })
 
     // Helper to generate atom combinations for a molecule
-    const generateAtomCombinationsForMolecule = (molecule: LootMolecule): LootAtomId[][] => {
+    const generateAtomCombinationsForMolecule = (molecule: LootMolecule): LootDetailId[][] => {
         // For each socket, get all compatible atoms
-        const atomsPerSocket = molecule.sockets.map((socket) =>
-            lootAtomConfig[socket.acceptType].map((atom) => atom.id)
-        )
+        const atomsPerSocket = molecule.sockets.map((socket) => {
+            const compatibleAtoms = lootAtomConfig[socket.acceptType].map((atom) => atom.id)
+
+            // For each atom, get all material variants
+            const atomMaterialVariants: LootDetailId[] = []
+            compatibleAtoms.forEach((atomId) => {
+                // Get all materials
+                const materials = Array.from(materialTypes.values())
+                materials.forEach((material) => {
+                    atomMaterialVariants.push(`${atomId}-${material.id}`)
+                })
+            })
+
+            return atomMaterialVariants
+        })
 
         // Generate all combinations using recursive helper
-        const generateCombinations = (current: number, combination: LootAtomId[] = []): LootAtomId[][] => {
+        const generateCombinations = (current: number, combination: LootDetailId[] = []): LootDetailId[][] => {
             if (current === atomsPerSocket.length) {
                 return [combination]
             }
 
-            const result: LootAtomId[][] = []
-            for (const atomId of atomsPerSocket[current]) {
-                result.push(...generateCombinations(current + 1, [...combination, atomId]))
+            const result: LootDetailId[][] = []
+            for (const detailId of atomsPerSocket[current]) {
+                result.push(...generateCombinations(current + 1, [...combination, detailId]))
             }
             return result
         }
@@ -491,13 +549,17 @@ export const generateAllLootObjectsInGame = (
             const atomCombinations = generateAtomCombinationsForMolecule(molecule)
 
             // Create a unique loot part for each combination
-            atomCombinations.forEach((atomIds) => {
-                const lootPartId = `${molecule.id}-[${atomIds.join('-')}]`
+            atomCombinations.forEach((detailIds) => {
+                const lootPartId = `${molecule.id}-[${detailIds.join('-')}]`
+
+                // Calculate material composition based on details
+                const materialComposition: MaterialComposition[] = []
+                // We could implement logic here to combine the materials from the details
 
                 const lootPart: LootPart = {
                     id: lootPartId,
-                    subparts: atomIds,
-                    materialComposition: [],
+                    subparts: detailIds,
+                    materialComposition: materialComposition,
                 }
 
                 lootParts[lootPartId] = lootPart
