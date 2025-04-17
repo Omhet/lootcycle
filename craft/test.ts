@@ -3,6 +3,7 @@ import {
     LootAtomType,
     LootItemTemplateConfig,
     LootMoleculeConfig,
+    MaterialComposition,
     generateAllLootObjectsInGame,
     lootAtomConfig,
     lootItemTemplateConfig,
@@ -74,6 +75,15 @@ export const logLootObjectsInHumanReadableFormat = (
         return atom?.type
     }
 
+    // Helper function to format material composition in a readable way
+    const formatMaterialComposition = (materialComposition: MaterialComposition[]): string => {
+        if (!materialComposition || materialComposition.length === 0) return 'No materials'
+
+        return materialComposition
+            .map(({ materialId, percentage }) => `${materialId}: ${percentage.toFixed(1)}%`)
+            .join(', ')
+    }
+
     // Log all loot details (atoms) in human-readable format
     console.log('\n=== LOOT DETAILS (ATOMS) ===')
     for (const detailId in lootDetails) {
@@ -82,9 +92,17 @@ export const logLootObjectsInHumanReadableFormat = (
         const atomType = getAtomType(detailId)
 
         if (atomType) {
-            console.log(`${readableName} (Type: ${atomType})`)
+            console.log(
+                `${readableName} [${detail.rarity}] (Type: ${atomType}) (Materials: ${formatMaterialComposition(
+                    detail.materialComposition
+                )})`
+            )
         } else {
-            console.log(readableName)
+            console.log(
+                `${readableName} [${detail.rarity}] (Materials: ${formatMaterialComposition(
+                    detail.materialComposition
+                )})`
+            )
         }
     }
 
@@ -98,7 +116,11 @@ export const logLootObjectsInHumanReadableFormat = (
         // Get readable names of all atoms in this part
         const atomNames = part.subparts.map((atomId) => getAtomReadableName(atomId))
 
-        console.log(`${moleculeName} (${atomNames.join(', ')})`)
+        console.log(
+            `${moleculeName} [${part.rarity}] (${atomNames.join(', ')}) (Materials: ${formatMaterialComposition(
+                part.materialComposition
+            )})`
+        )
     }
 
     // Log all loot items in human-readable format
@@ -123,7 +145,11 @@ export const logLootObjectsInHumanReadableFormat = (
             return `${moleculeName} (${atomNames.join(', ')})`
         })
 
-        console.log(`${templateName}: ${partDescs.join(', ')}`)
+        console.log(
+            `${templateName} [${item.rarity}] (Materials: ${formatMaterialComposition(
+                item.materialComposition
+            )}): ${partDescs.join(', ')}`
+        )
     }
 }
 
