@@ -43,3 +43,13 @@ const axeBasicBladeAtom: LootAtom = {
     type: LootAtomType.Blade,
     assetPath: 'assets/axe/blades/basic-blade.png',
 }
+
+
+
+                const lootItemId = `${template.id}_${lootPartId}`
+                const lootItem: LootItem = {
+                    id: lootItemId,
+                    subparts: [],
+                    materials: [],
+                }
+                lootItems[lootItemId] = lootItem

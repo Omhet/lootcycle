@@ -380,37 +380,105 @@ export const generateAllLootObjectsInGame = (
     lootMoleculeConfig: LootMoleculeConfig,
     lootAtomConfig: LootAtomConfig
 ) => {
-    const lootItems: Record<LootItemId, LootItemTemplate> = {}
+    const lootItems: Record<LootItemId, LootItem> = {}
     const lootParts: Record<LootPartId, LootPart> = {}
-    // const lootJunk: Record<JunkItemId, LootJunkObject> = {}
 
-    // Generate all loot parts
-    const allBaseTemplates = Object.entries(lootItemTemplateConfig).flatMap(([_key, value]) => value)
+    // Helper to generate atom combinations for a molecule
+    const generateAtomCombinationsForMolecule = (molecule: LootMolecule): LootAtomId[][] => {
+        // For each socket, get all compatible atoms
+        const atomsPerSocket = molecule.sockets.map((socket) =>
+            lootAtomConfig[socket.acceptType].map((atom) => atom.id)
+        )
 
-    for (const template of allBaseTemplates) {
-        const molecules = template.sockets.map((socket) => lootMoleculeConfig[socket.acceptType]).flat()
-
-        for (const molecule of molecules) {
-            const atoms = molecule.sockets.map((socket) => lootAtomConfig[socket.acceptType]).flat()
-
-            const lootPartId = `$${molecule.id}-[${atoms.map((atom) => atom.id).join('-')}]`
-            const lootPart: LootPart = {
-                id: lootPartId,
-                subparts: atoms.map((atom) => atom.id),
-                materials: [],
+        // Generate all combinations using recursive helper
+        const generateCombinations = (current: number, combination: LootAtomId[] = []): LootAtomId[][] => {
+            if (current === atomsPerSocket.length) {
+                return [combination]
             }
-            lootParts[lootPartId] = lootPart
 
-            const lootItemId = `${template.id}_${lootPartId}`
-            const lootItem: LootItem = {
-                id: lootItemId,
-                subparts: [],
-                materials: [],
+            const result: LootAtomId[][] = []
+            for (const atomId of atomsPerSocket[current]) {
+                result.push(...generateCombinations(current + 1, [...combination, atomId]))
             }
+            return result
         }
+
+        return generateCombinations(0)
     }
 
-    return { lootObjects: lootItems, lootParts }
+    // Generate all possible loot parts
+    Object.values(lootMoleculeConfig).forEach((molecules) => {
+        molecules.forEach((molecule) => {
+            // Get all possible atom combinations for this molecule
+            const atomCombinations = generateAtomCombinationsForMolecule(molecule)
+
+            // Create a unique loot part for each combination
+            atomCombinations.forEach((atomIds) => {
+                const lootPartId = `${molecule.id}-[${atomIds.join('-')}]`
+
+                const lootPart: LootPart = {
+                    id: lootPartId,
+                    subparts: atomIds,
+                    materials: [],
+                }
+
+                lootParts[lootPartId] = lootPart
+            })
+        })
+    })
+
+    // Helper to generate part combinations for an item template
+    const generatePartCombinationsForTemplate = (template: LootItemTemplate): LootPartId[][] => {
+        // For each socket, get all compatible parts
+        const partsPerSocket = template.sockets.map((socket) => {
+            const compatibleMolecules = Object.values(lootMoleculeConfig[socket.acceptType] || []).filter((molecule) =>
+                socket.acceptTags.every((tag) => molecule.tags.includes(tag))
+            )
+
+            // Get all parts created from these molecules
+            return Object.values(lootParts)
+                .filter((part) => compatibleMolecules.some((molecule) => part.id.startsWith(`${molecule.id}-`)))
+                .map((part) => part.id)
+        })
+
+        // Generate all combinations using recursive helper
+        const generateCombinations = (current: number, combination: LootPartId[] = []): LootPartId[][] => {
+            if (current === partsPerSocket.length) {
+                return [combination]
+            }
+
+            const result: LootPartId[][] = []
+            for (const partId of partsPerSocket[current]) {
+                result.push(...generateCombinations(current + 1, [...combination, partId]))
+            }
+            return result
+        }
+
+        return generateCombinations(0)
+    }
+
+    // Generate all possible loot items
+    Object.values(lootItemTemplateConfig).forEach((templates) => {
+        templates.forEach((template) => {
+            // Get all possible part combinations for this template
+            const partCombinations = generatePartCombinationsForTemplate(template)
+
+            // Create a unique loot item for each combination
+            partCombinations.forEach((partIds) => {
+                const lootItemId = `${template.id}-[${partIds.join('-')}]`
+
+                const lootItem: LootItem = {
+                    id: lootItemId,
+                    subparts: partIds,
+                    materials: [],
+                }
+
+                lootItems[lootItemId] = lootItem
+            })
+        })
+    })
+
+    return { lootParts, lootItems }
 }
 
 console.log(generateAllLootObjectsInGame(lootItemTemplateConfig, lootMoleculeConfig, lootAtomConfig))
