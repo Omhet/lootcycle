@@ -457,17 +457,20 @@ export type LootItem = {
     id: LootItemId
     subparts: LootPartId[]
     materialComposition: MaterialComposition[]
+    rarity: Rarity
 }
 
 export type LootPart = {
     id: LootPartId
     subparts: LootDetailId[]
     materialComposition: MaterialComposition[]
+    rarity: Rarity
 }
 
 export type LootDetail = {
     id: LootDetailId
     materialComposition: MaterialComposition[]
+    rarity: Rarity
 }
 
 export type LootJunkObject = LootPart & {
@@ -475,6 +478,71 @@ export type LootJunkObject = LootPart & {
 }
 
 const materialTypes = initialMaterialTypes
+
+// Utility functions for rarity calculation
+const getRarityValue = (rarity: Rarity): number => {
+    const rarityValues: Record<Rarity, number> = {
+        [Rarity.Common]: 1,
+        [Rarity.Uncommon]: 2,
+        [Rarity.Rare]: 3,
+        [Rarity.Epic]: 4,
+        [Rarity.Legendary]: 5,
+    }
+    return rarityValues[rarity]
+}
+
+const getValueRarity = (value: number): Rarity => {
+    if (value >= 4.5) return Rarity.Legendary
+    if (value >= 3.5) return Rarity.Epic
+    if (value >= 2.5) return Rarity.Rare
+    if (value >= 1.5) return Rarity.Uncommon
+    return Rarity.Common
+}
+
+// Calculate rarity based on material composition
+const calculateMaterialRarity = (materialComposition: MaterialComposition[]): number => {
+    let weightedRarityValue = 0
+    let totalPercentage = 0
+
+    materialComposition.forEach(({ materialId, percentage }) => {
+        // Find material type from the materialId
+        const material = materialTypes.find((mt) => mt.id === materialId)
+        if (material) {
+            const rarityValue = getRarityValue(material.rarity)
+            weightedRarityValue += rarityValue * percentage
+            totalPercentage += percentage
+        }
+    })
+
+    return totalPercentage > 0 ? weightedRarityValue / totalPercentage : getRarityValue(Rarity.Common)
+}
+
+// Calculate weighted rarity from components and material composition
+const calculateFinalRarity = (
+    components: Array<{ rarity: Rarity; weight: number }>,
+    materialComposition: MaterialComposition[],
+    componentRarityWeight: number = 0.6 // Default weight for component rarity (vs material rarity)
+): Rarity => {
+    // Calculate component rarity
+    let combinedRarityValue = 0
+    let totalWeight = 0
+
+    components.forEach(({ rarity, weight }) => {
+        combinedRarityValue += getRarityValue(rarity) * weight
+        totalWeight += weight
+    })
+
+    const componentRarityValue = totalWeight > 0 ? combinedRarityValue / totalWeight : getRarityValue(Rarity.Common)
+
+    // Calculate material rarity
+    const materialRarityValue = calculateMaterialRarity(materialComposition)
+
+    // Combined weighted rarity
+    const finalRarityValue =
+        componentRarityValue * componentRarityWeight + materialRarityValue * (1 - componentRarityWeight)
+
+    return getValueRarity(finalRarityValue)
+}
 
 export const generateAllLootObjectsInGame = (
     lootItemTemplateConfig: LootItemTemplateConfig,
@@ -484,63 +552,6 @@ export const generateAllLootObjectsInGame = (
     const lootItems: Record<LootItemId, LootItem> = {}
     const lootParts: Record<LootPartId, LootPart> = {}
     const lootDetails: Record<LootDetailId, LootDetail> = {}
-
-    // Create loot details from all available atoms combined with all available materials
-    Object.values(lootAtomConfig).forEach((atoms) => {
-        atoms.forEach((atom) => {
-            // Get all materials from craftMaterialData
-            const materials = Array.from(materialTypes.values())
-
-            // For each material, create a unique loot detail
-            materials.forEach((material) => {
-                const lootDetailId = `${atom.id}-${material.id}`
-                lootDetails[lootDetailId] = {
-                    id: lootDetailId,
-                    materialComposition: [
-                        {
-                            materialId: material.id,
-                            percentage: 100, // 100% of this single material
-                        },
-                    ],
-                }
-            })
-        })
-    })
-
-    // Helper to generate atom combinations for a molecule
-    const generateAtomCombinationsForMolecule = (molecule: LootMolecule): LootDetailId[][] => {
-        // For each socket, get all compatible atoms
-        const atomsPerSocket = molecule.sockets.map((socket) => {
-            const compatibleAtoms = lootAtomConfig[socket.acceptType].map((atom) => atom.id)
-
-            // For each atom, get all material variants
-            const atomMaterialVariants: LootDetailId[] = []
-            compatibleAtoms.forEach((atomId) => {
-                // Get all materials
-                const materials = Array.from(materialTypes.values())
-                materials.forEach((material) => {
-                    atomMaterialVariants.push(`${atomId}-${material.id}`)
-                })
-            })
-
-            return atomMaterialVariants
-        })
-
-        // Generate all combinations using recursive helper
-        const generateCombinations = (current: number, combination: LootDetailId[] = []): LootDetailId[][] => {
-            if (current === atomsPerSocket.length) {
-                return [combination]
-            }
-
-            const result: LootDetailId[][] = []
-            for (const detailId of atomsPerSocket[current]) {
-                result.push(...generateCombinations(current + 1, [...combination, detailId]))
-            }
-            return result
-        }
-
-        return generateCombinations(0)
-    }
 
     // Helper to combine material compositions with weights
     const combineMaterialCompositions = (
@@ -578,99 +589,193 @@ export const generateAllLootObjectsInGame = (
         return result
     }
 
-    // Generate all possible loot parts
-    Object.values(lootMoleculeConfig).forEach((molecules) => {
-        molecules.forEach((molecule) => {
-            // Get all possible atom combinations for this molecule
-            const atomCombinations = generateAtomCombinationsForMolecule(molecule)
-
-            // Create a unique loot part for each combination
-            atomCombinations.forEach((detailIds) => {
-                const lootPartId = `${molecule.id}-[${detailIds.join('-')}]`
-
-                // Calculate material composition based on details and molecule sockets
-                const materialCompositions = detailIds.map((detailId, index) => {
-                    const socketWeight = molecule.sockets[index].relativeWeight || 1
-                    return {
-                        composition: lootDetails[detailId].materialComposition,
-                        weight: socketWeight,
+    /**
+     * Phase 1: Generate Loot Details
+     * Creates loot details from atoms combined with materials
+     */
+    const generateLootDetails = () => {
+        Object.values(lootAtomConfig).forEach((atoms) => {
+            atoms.forEach((atom) => {
+                const materials = Array.from(materialTypes.values())
+                materials.forEach((material) => {
+                    const lootDetailId = `${atom.id}-${material.id}`
+                    lootDetails[lootDetailId] = {
+                        id: lootDetailId,
+                        materialComposition: [
+                            {
+                                materialId: material.id,
+                                percentage: 100, // 100% of this single material
+                            },
+                        ],
+                        rarity: atom.rarirty, // Using atom rarity directly for details
                     }
                 })
-
-                const materialComposition = combineMaterialCompositions(materialCompositions)
-
-                const lootPart: LootPart = {
-                    id: lootPartId,
-                    subparts: detailIds,
-                    materialComposition: materialComposition,
-                }
-
-                lootParts[lootPartId] = lootPart
             })
         })
-    })
-
-    // Helper to generate part combinations for an item template
-    const generatePartCombinationsForTemplate = (template: LootItemTemplate): LootPartId[][] => {
-        // For each socket, get all compatible parts
-        const partsPerSocket = template.sockets.map((socket) => {
-            const compatibleMolecules = Object.values(lootMoleculeConfig[socket.acceptType] || []).filter((molecule) =>
-                socket.acceptTags.every((tag) => molecule.tags.includes(tag))
-            )
-
-            // Get all parts created from these molecules
-            return Object.values(lootParts)
-                .filter((part) => compatibleMolecules.some((molecule) => part.id.startsWith(`${molecule.id}-`)))
-                .map((part) => part.id)
-        })
-
-        // Generate all combinations using recursive helper
-        const generateCombinations = (current: number, combination: LootPartId[] = []): LootPartId[][] => {
-            if (current === partsPerSocket.length) {
-                return [combination]
-            }
-
-            const result: LootPartId[][] = []
-            for (const partId of partsPerSocket[current]) {
-                result.push(...generateCombinations(current + 1, [...combination, partId]))
-            }
-            return result
-        }
-
-        return generateCombinations(0)
     }
 
-    // Generate all possible loot items
-    Object.values(lootItemTemplateConfig).forEach((templates) => {
-        templates.forEach((template) => {
-            // Get all possible part combinations for this template
-            const partCombinations = generatePartCombinationsForTemplate(template)
+    /**
+     * Phase 2: Generate Loot Parts
+     * Creates loot parts by combining atoms into molecules
+     */
+    const generateLootParts = () => {
+        // Helper to generate atom combinations for a molecule
+        const generateAtomCombinationsForMolecule = (molecule: LootMolecule): LootDetailId[][] => {
+            // For each socket, get all compatible atoms
+            const atomsPerSocket = molecule.sockets.map((socket) => {
+                const compatibleAtoms = lootAtomConfig[socket.acceptType].map((atom) => atom.id)
 
-            // Create a unique loot item for each combination
-            partCombinations.forEach((partIds) => {
-                const lootItemId = `${template.id}-[${partIds.join('-')}]`
-
-                // Calculate material composition based on parts and template sockets
-                const materialCompositions = partIds.map((partId, index) => {
-                    const socketWeight = template.sockets[index].relativeWeight || 1
-                    return {
-                        composition: lootParts[partId].materialComposition,
-                        weight: socketWeight,
-                    }
+                // For each atom, get all material variants
+                const atomMaterialVariants: LootDetailId[] = []
+                compatibleAtoms.forEach((atomId) => {
+                    const materials = Array.from(materialTypes.values())
+                    materials.forEach((material) => {
+                        atomMaterialVariants.push(`${atomId}-${material.id}`)
+                    })
                 })
 
-                const materialComposition = combineMaterialCompositions(materialCompositions)
+                return atomMaterialVariants
+            })
 
-                const lootItem: LootItem = {
-                    id: lootItemId,
-                    subparts: partIds,
-                    materialComposition: materialComposition,
+            // Generate all combinations using recursive helper
+            const generateCombinations = (current: number, combination: LootDetailId[] = []): LootDetailId[][] => {
+                if (current === atomsPerSocket.length) {
+                    return [combination]
                 }
 
-                lootItems[lootItemId] = lootItem
+                const result: LootDetailId[][] = []
+                for (const detailId of atomsPerSocket[current]) {
+                    result.push(...generateCombinations(current + 1, [...combination, detailId]))
+                }
+                return result
+            }
+
+            return generateCombinations(0)
+        }
+
+        Object.values(lootMoleculeConfig).forEach((molecules) => {
+            molecules.forEach((molecule) => {
+                // Get all possible atom combinations for this molecule
+                const atomCombinations = generateAtomCombinationsForMolecule(molecule)
+
+                // Create a unique loot part for each combination
+                atomCombinations.forEach((detailIds) => {
+                    const lootPartId = `${molecule.id}-[${detailIds.join('-')}]`
+
+                    // Calculate material composition based on details and molecule sockets
+                    const materialCompositions = detailIds.map((detailId, index) => {
+                        const socketWeight = molecule.sockets[index].relativeWeight || 1
+                        return {
+                            composition: lootDetails[detailId].materialComposition,
+                            weight: socketWeight,
+                        }
+                    })
+
+                    const materialComposition = combineMaterialCompositions(materialCompositions)
+
+                    // Calculate rarity components
+                    const rarityComponents = detailIds.map((detailId, index) => ({
+                        rarity: lootDetails[detailId].rarity,
+                        weight: molecule.sockets[index].relativeWeight || 1,
+                    }))
+
+                    // Calculate final rarity (60% from details, 40% from materials)
+                    const finalRarity = calculateFinalRarity(rarityComponents, materialComposition, 0.6)
+
+                    const lootPart: LootPart = {
+                        id: lootPartId,
+                        subparts: detailIds,
+                        materialComposition: materialComposition,
+                        rarity: finalRarity,
+                    }
+
+                    lootParts[lootPartId] = lootPart
+                })
             })
         })
-    })
+    }
+
+    /**
+     * Phase 3: Generate Loot Items
+     * Creates loot items by combining parts according to templates
+     */
+    const generateLootItems = () => {
+        // Helper to generate part combinations for an item template
+        const generatePartCombinationsForTemplate = (template: LootItemTemplate): LootPartId[][] => {
+            // For each socket, get all compatible parts
+            const partsPerSocket = template.sockets.map((socket) => {
+                const compatibleMolecules = Object.values(lootMoleculeConfig[socket.acceptType] || []).filter(
+                    (molecule) => socket.acceptTags.every((tag) => molecule.tags.includes(tag))
+                )
+
+                // Get all parts created from these molecules
+                return Object.values(lootParts)
+                    .filter((part) => compatibleMolecules.some((molecule) => part.id.startsWith(`${molecule.id}-`)))
+                    .map((part) => part.id)
+            })
+
+            // Generate all combinations using recursive helper
+            const generateCombinations = (current: number, combination: LootPartId[] = []): LootPartId[][] => {
+                if (current === partsPerSocket.length) {
+                    return [combination]
+                }
+
+                const result: LootPartId[][] = []
+                for (const partId of partsPerSocket[current]) {
+                    result.push(...generateCombinations(current + 1, [...combination, partId]))
+                }
+                return result
+            }
+
+            return generateCombinations(0)
+        }
+
+        Object.values(lootItemTemplateConfig).forEach((templates) => {
+            templates.forEach((template) => {
+                // Get all possible part combinations for this template
+                const partCombinations = generatePartCombinationsForTemplate(template)
+
+                // Create a unique loot item for each combination
+                partCombinations.forEach((partIds) => {
+                    const lootItemId = `${template.id}-[${partIds.join('-')}]`
+
+                    // Calculate material composition based on parts and template sockets
+                    const materialCompositions = partIds.map((partId, index) => {
+                        const socketWeight = template.sockets[index].relativeWeight || 1
+                        return {
+                            composition: lootParts[partId].materialComposition,
+                            weight: socketWeight,
+                        }
+                    })
+
+                    const materialComposition = combineMaterialCompositions(materialCompositions)
+
+                    // Calculate rarity components
+                    const rarityComponents = partIds.map((partId, index) => ({
+                        rarity: lootParts[partId].rarity,
+                        weight: template.sockets[index].relativeWeight || 1,
+                    }))
+
+                    // Calculate final rarity (70% from parts, 30% from materials)
+                    const finalRarity = calculateFinalRarity(rarityComponents, materialComposition, 0.7)
+
+                    const lootItem: LootItem = {
+                        id: lootItemId,
+                        subparts: partIds,
+                        materialComposition: materialComposition,
+                        rarity: finalRarity,
+                    }
+
+                    lootItems[lootItemId] = lootItem
+                })
+            })
+        })
+    }
+
+    // Generate all loot objects in sequence
+    generateLootDetails()
+    generateLootParts()
+    generateLootItems()
 
     return { lootParts, lootItems, lootDetails }
 }
