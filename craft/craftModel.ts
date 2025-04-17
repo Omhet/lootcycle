@@ -17,15 +17,9 @@ export enum Rarity {
 // Operation results
 export enum CraftingFailureReason {
     NoItems = 'NO_ITEMS',
-    InvalidTemperature = 'INVALID_TEMPERATURE',
     IncompatibleMaterials = 'INCOMPATIBLE_MATERIALS',
     TooLowTemperature = 'TOO_LOW_TEMPERATURE',
     TooHighTemperature = 'TOO_HIGH_TEMPERATURE',
-}
-
-export enum TemperatureFailureReason {
-    TooLow = 'TOO_LOW_TEMPERATURE',
-    TooHigh = 'TOO_HIGH_TEMPERATURE',
 }
 
 // ======= MATERIALS =======
@@ -464,6 +458,7 @@ export type LootDetailId = LootAtomId
 
 export type LootItem = {
     id: LootItemId
+    templateId: LootItemTemplateId
     subparts: LootPartId[]
     materialComposition: MaterialComposition[]
     rarity: Rarity
@@ -473,6 +468,7 @@ export type LootItem = {
 
 export type LootPart = {
     id: LootPartId
+    moleculeId: LootMoleculeId
     subparts: LootDetailId[]
     materialComposition: MaterialComposition[]
     rarity: Rarity
@@ -480,6 +476,7 @@ export type LootPart = {
 
 export type LootDetail = {
     id: LootDetailId
+    atomId: LootAtomId
     materialComposition: MaterialComposition[]
     rarity: Rarity
 }
@@ -589,6 +586,110 @@ const calculateDurability = (materialComposition: MaterialComposition[]): number
     return totalPercentage > 0 ? (weightedDurability / totalPercentage) * 100 : 100
 }
 
+// Helper to combine material compositions with weights
+const combineMaterialCompositions = (
+    compositions: Array<{ composition: MaterialComposition[]; weight: number }>
+): MaterialComposition[] => {
+    const materialMap = new Map<MaterialId, number>()
+    let totalWeight = 0
+
+    // Sum all weights and accumulate material percentages
+    compositions.forEach(({ composition, weight }) => {
+        totalWeight += weight
+        composition.forEach(({ materialId, percentage }) => {
+            const weightedPercentage = (percentage * weight) / 100
+            materialMap.set(materialId, (materialMap.get(materialId) || 0) + weightedPercentage)
+        })
+    })
+
+    // Normalize percentages based on total weight
+    const result: MaterialComposition[] = []
+    materialMap.forEach((weightedPercentage, materialId) => {
+        const normalizedPercentage = (weightedPercentage / totalWeight) * 100
+        result.push({
+            materialId,
+            percentage: parseFloat(normalizedPercentage.toFixed(2)),
+        })
+    })
+
+    // Ensure percentages sum to exactly 100%
+    if (result.length > 0) {
+        const sum = result.reduce((acc, { percentage }) => acc + percentage, 0)
+        const adjustment = 100 - sum
+        result[0].percentage += parseFloat(adjustment.toFixed(2))
+    }
+
+    return result
+}
+
+// Calculate temperature range based on material composition and rarity
+const calculateTemperatureRange = (materialComposition: MaterialComposition[], rarity: Rarity): TemperatureRange => {
+    // First calculate base temperature range from materials
+    let minTemp = 0
+    let maxTemp = 0
+    let totalPercentage = 0
+
+    materialComposition.forEach(({ materialId, percentage }) => {
+        // Find material type from the materialId
+        const materialType = materialTypes.find((mt) => mt.id === materialId)
+        if (materialType) {
+            minTemp += materialType.optimalTemperatureRange.min * percentage
+            maxTemp += materialType.optimalTemperatureRange.max * percentage
+            totalPercentage += percentage
+        }
+    })
+
+    // Calculate average min and max temperatures
+    minTemp = totalPercentage > 0 ? minTemp / totalPercentage : 0
+    maxTemp = totalPercentage > 0 ? maxTemp / totalPercentage : 100
+
+    // Apply a narrowing factor based on rarity
+    // Higher rarity = narrower range (more challenging to work with)
+    const narrowingFactors: Record<Rarity, number> = {
+        [Rarity.Common]: 1.0, // No narrowing
+        [Rarity.Uncommon]: 0.85, // 15% narrower
+        [Rarity.Rare]: 0.7, // 30% narrower
+        [Rarity.Epic]: 0.55, // 45% narrower
+        [Rarity.Legendary]: 0.4, // 60% narrower
+    }
+
+    const rangeMidpoint = (minTemp + maxTemp) / 2
+    const rangeWidth = maxTemp - minTemp
+
+    // Apply narrowing factor
+    const narrowedRangeWidth = rangeWidth * narrowingFactors[rarity]
+
+    return {
+        min: Math.round(rangeMidpoint - narrowedRangeWidth / 2),
+        max: Math.round(rangeMidpoint + narrowedRangeWidth / 2),
+    }
+}
+
+// Calculate master quality temperature range (even narrower than regular range)
+const calculateMasterQualityTemperatureRange = (
+    temperatureRange: TemperatureRange,
+    rarity: Rarity
+): TemperatureRange => {
+    // Master quality ranges are significantly narrower
+    // Higher rarity items have even narrower master quality ranges
+    const masterNarrowingFactors: Record<Rarity, number> = {
+        [Rarity.Common]: 0.3, // 70% narrower than regular range
+        [Rarity.Uncommon]: 0.25, // 75% narrower
+        [Rarity.Rare]: 0.2, // 80% narrower
+        [Rarity.Epic]: 0.15, // 85% narrower
+        [Rarity.Legendary]: 0.1, // 90% narrower
+    }
+
+    const rangeMidpoint = (temperatureRange.min + temperatureRange.max) / 2
+    const rangeWidth = temperatureRange.max - temperatureRange.min
+    const masterRangeWidth = rangeWidth * masterNarrowingFactors[rarity]
+
+    return {
+        min: Math.round(rangeMidpoint - masterRangeWidth / 2),
+        max: Math.round(rangeMidpoint + masterRangeWidth / 2),
+    }
+}
+
 export const generateAllLootObjectsInGame = (
     lootItemTemplateConfig: LootItemTemplateConfig,
     lootMoleculeConfig: LootMoleculeConfig,
@@ -598,113 +699,6 @@ export const generateAllLootObjectsInGame = (
     const lootParts: Record<LootPartId, LootPart> = {}
     const lootDetails: Record<LootDetailId, LootDetail> = {}
     const lootJunkItems: Record<LootDetailId, LootJunkItem> = {}
-
-    // Helper to combine material compositions with weights
-    const combineMaterialCompositions = (
-        compositions: Array<{ composition: MaterialComposition[]; weight: number }>
-    ): MaterialComposition[] => {
-        const materialMap = new Map<MaterialId, number>()
-        let totalWeight = 0
-
-        // Sum all weights and accumulate material percentages
-        compositions.forEach(({ composition, weight }) => {
-            totalWeight += weight
-            composition.forEach(({ materialId, percentage }) => {
-                const weightedPercentage = (percentage * weight) / 100
-                materialMap.set(materialId, (materialMap.get(materialId) || 0) + weightedPercentage)
-            })
-        })
-
-        // Normalize percentages based on total weight
-        const result: MaterialComposition[] = []
-        materialMap.forEach((weightedPercentage, materialId) => {
-            const normalizedPercentage = (weightedPercentage / totalWeight) * 100
-            result.push({
-                materialId,
-                percentage: parseFloat(normalizedPercentage.toFixed(2)),
-            })
-        })
-
-        // Ensure percentages sum to exactly 100%
-        if (result.length > 0) {
-            const sum = result.reduce((acc, { percentage }) => acc + percentage, 0)
-            const adjustment = 100 - sum
-            result[0].percentage += parseFloat(adjustment.toFixed(2))
-        }
-
-        return result
-    }
-
-    // Calculate temperature range based on material composition and rarity
-    const calculateTemperatureRange = (
-        materialComposition: MaterialComposition[],
-        rarity: Rarity
-    ): TemperatureRange => {
-        // First calculate base temperature range from materials
-        let minTemp = 0
-        let maxTemp = 0
-        let totalPercentage = 0
-
-        materialComposition.forEach(({ materialId, percentage }) => {
-            // Find material type from the materialId
-            const materialType = materialTypes.find((mt) => mt.id === materialId)
-            if (materialType) {
-                minTemp += materialType.optimalTemperatureRange.min * percentage
-                maxTemp += materialType.optimalTemperatureRange.max * percentage
-                totalPercentage += percentage
-            }
-        })
-
-        // Calculate average min and max temperatures
-        minTemp = totalPercentage > 0 ? minTemp / totalPercentage : 0
-        maxTemp = totalPercentage > 0 ? maxTemp / totalPercentage : 100
-
-        // Apply a narrowing factor based on rarity
-        // Higher rarity = narrower range (more challenging to work with)
-        const narrowingFactors: Record<Rarity, number> = {
-            [Rarity.Common]: 1.0, // No narrowing
-            [Rarity.Uncommon]: 0.85, // 15% narrower
-            [Rarity.Rare]: 0.7, // 30% narrower
-            [Rarity.Epic]: 0.55, // 45% narrower
-            [Rarity.Legendary]: 0.4, // 60% narrower
-        }
-
-        const rangeMidpoint = (minTemp + maxTemp) / 2
-        const rangeWidth = maxTemp - minTemp
-
-        // Apply narrowing factor
-        const narrowedRangeWidth = rangeWidth * narrowingFactors[rarity]
-
-        return {
-            min: Math.round(rangeMidpoint - narrowedRangeWidth / 2),
-            max: Math.round(rangeMidpoint + narrowedRangeWidth / 2),
-        }
-    }
-
-    // Calculate master quality temperature range (even narrower than regular range)
-    const calculateMasterQualityTemperatureRange = (
-        temperatureRange: TemperatureRange,
-        rarity: Rarity
-    ): TemperatureRange => {
-        // Master quality ranges are significantly narrower
-        // Higher rarity items have even narrower master quality ranges
-        const masterNarrowingFactors: Record<Rarity, number> = {
-            [Rarity.Common]: 0.3, // 70% narrower than regular range
-            [Rarity.Uncommon]: 0.25, // 75% narrower
-            [Rarity.Rare]: 0.2, // 80% narrower
-            [Rarity.Epic]: 0.15, // 85% narrower
-            [Rarity.Legendary]: 0.1, // 90% narrower
-        }
-
-        const rangeMidpoint = (temperatureRange.min + temperatureRange.max) / 2
-        const rangeWidth = temperatureRange.max - temperatureRange.min
-        const masterRangeWidth = rangeWidth * masterNarrowingFactors[rarity]
-
-        return {
-            min: Math.round(rangeMidpoint - masterRangeWidth / 2),
-            max: Math.round(rangeMidpoint + masterRangeWidth / 2),
-        }
-    }
 
     /**
      * Phase 1: Generate Loot Details
@@ -718,6 +712,7 @@ export const generateAllLootObjectsInGame = (
                     const lootDetailId = `${atom.id}-${material.id}`
                     lootDetails[lootDetailId] = {
                         id: lootDetailId,
+                        atomId: atom.id,
                         materialComposition: [
                             {
                                 materialId: material.id,
@@ -801,6 +796,7 @@ export const generateAllLootObjectsInGame = (
 
                     const lootPart: LootPart = {
                         id: lootPartId,
+                        moleculeId: molecule.id,
                         subparts: detailIds,
                         materialComposition: materialComposition,
                         rarity: finalRarity,
@@ -887,6 +883,7 @@ export const generateAllLootObjectsInGame = (
 
                     const lootItem: LootItem = {
                         id: lootItemId,
+                        templateId: template.id,
                         subparts: partIds,
                         materialComposition: materialComposition,
                         rarity: finalRarity,
@@ -925,4 +922,325 @@ export const generateAllLootObjectsInGame = (
     generateLootJunkItems()
 
     return { lootParts, lootItems, lootDetails, lootJunkItems }
+}
+
+export interface CraftingResult {
+    success: boolean
+    item?: LootItem
+    quality?: number // 0-100 quality percentage
+    sellPrice?: number
+    failure?: {
+        reason: CraftingFailureReason
+    }
+}
+
+export function craftLootItem(params: {
+    lootItemTemplate: LootItemTemplate
+    availableJunkItems: LootJunkItem[]
+    temperature: number
+    config: {
+        lootItems: Record<LootItemId, LootItem>
+        lootParts: Record<LootPartId, LootPart>
+    }
+}): CraftingResult {
+    const {
+        lootItemTemplate,
+        availableJunkItems,
+        temperature,
+        config: { lootItems, lootParts },
+    } = params
+
+    // Step 1: Check if there are any junk items
+    if (availableJunkItems.length === 0) {
+        return {
+            success: false,
+            failure: { reason: CraftingFailureReason.NoItems },
+        }
+    }
+
+    // Step 2: Organize junk items by atom type for selection
+    const junkItemsByType: Partial<Record<LootAtomType, LootJunkItem[]>> = {}
+    availableJunkItems.forEach((junkItem) => {
+        // Use the explicit atomId instead of parsing from the id string
+        const atomId = junkItem.atomId
+        const atom = Object.values(lootAtomConfig)
+            .flat()
+            .find((a) => a.id === atomId)
+        if (atom) {
+            if (!junkItemsByType[atom.type]) {
+                junkItemsByType[atom.type] = []
+            }
+            junkItemsByType[atom.type]?.push(junkItem)
+        }
+    })
+
+    // Step 3: Select junk items based on template requirements
+    const selectedJunkItems: LootJunkItem[] = []
+    const socketWeights: number[] = []
+
+    // Try to find the best molecule configuration across all sockets
+    const moleculeSelections: Array<{
+        socketIndex: number
+        molecule: LootMolecule
+        junkItems: LootJunkItem[]
+        weights: number[]
+        qualityScore: number
+    }> = []
+
+    // For each socket in the template, evaluate all compatible molecules
+    for (let socketIndex = 0; socketIndex < lootItemTemplate.sockets.length; socketIndex++) {
+        const socket = lootItemTemplate.sockets[socketIndex]
+        const compatibleMolecules = lootMoleculeConfig[socket.acceptType] || []
+
+        if (compatibleMolecules.length === 0) continue
+
+        // Try each compatible molecule
+        for (const molecule of compatibleMolecules) {
+            // Check if all atom sockets can be filled with available junk items
+            const selectedJunks: LootJunkItem[] = []
+            const weights: number[] = []
+            let canFillAllSockets = true
+
+            // Clone junkItemsByType to avoid modifying the original during evaluation
+            const availableJunksByType = { ...junkItemsByType }
+
+            // Make deep copies of the arrays
+            Object.keys(availableJunksByType).forEach((key) => {
+                const atomType = key as LootAtomType
+                availableJunksByType[atomType] = [...(junkItemsByType[atomType] || [])]
+            })
+
+            // For each atom socket in the molecule, try to select a junk item
+            for (const atomSocket of molecule.sockets) {
+                const availableJunksOfType = availableJunksByType[atomSocket.acceptType] || []
+
+                if (availableJunksOfType.length === 0) {
+                    canFillAllSockets = false
+                    break
+                }
+
+                // Select the junk with lowest degradation for better quality
+                availableJunksOfType.sort((a, b) => a.degradation - b.degradation)
+                const selectedJunk = availableJunksOfType.shift() // Take and remove the best one
+
+                if (selectedJunk) {
+                    selectedJunks.push(selectedJunk)
+                    weights.push(atomSocket.relativeWeight || 1)
+                } else {
+                    canFillAllSockets = false
+                    break
+                }
+            }
+
+            if (canFillAllSockets) {
+                // Calculate a quality score for this molecule selection
+                const totalWeight = weights.reduce((sum, w) => sum + w, 0)
+                const qualityScore = selectedJunks.reduce(
+                    (score, junk, i) => score + (100 - junk.degradation) * (weights[i] / totalWeight),
+                    0
+                )
+
+                moleculeSelections.push({
+                    socketIndex,
+                    molecule,
+                    junkItems: selectedJunks,
+                    weights,
+                    qualityScore,
+                })
+            }
+        }
+    }
+
+    // If we couldn't find any valid molecule configuration
+    if (moleculeSelections.length === 0) {
+        return {
+            success: false,
+            failure: { reason: CraftingFailureReason.NoItems },
+        }
+    }
+
+    // Sort molecule selections by quality score (descending)
+    moleculeSelections.sort((a, b) => b.qualityScore - a.qualityScore)
+
+    // Group the best molecules by socket
+    const bestMoleculesBySocket: Record<number, (typeof moleculeSelections)[0]> = {}
+
+    for (const selection of moleculeSelections) {
+        if (
+            !bestMoleculesBySocket[selection.socketIndex] ||
+            selection.qualityScore > bestMoleculesBySocket[selection.socketIndex].qualityScore
+        ) {
+            bestMoleculesBySocket[selection.socketIndex] = selection
+        }
+    }
+
+    // Combine all selected junk items from the best molecule per socket
+    Object.values(bestMoleculesBySocket).forEach((selection) => {
+        selectedJunkItems.push(...selection.junkItems)
+        socketWeights.push(...selection.weights)
+    })
+
+    if (selectedJunkItems.length === 0) {
+        return {
+            success: false,
+            failure: { reason: CraftingFailureReason.NoItems },
+        }
+    }
+
+    // Step 4: Calculate combined material composition
+    const materialCompositions = selectedJunkItems.map((junkItem, index) => ({
+        composition: junkItem.materialComposition,
+        weight: socketWeights[index],
+    }))
+
+    const combinedMaterialComposition = combineMaterialCompositions(materialCompositions)
+
+    // Step 5: Find the most compatible item from potential items
+
+    // Track the molecules we've selected
+    const selectedMolecules = new Set<string>()
+    Object.values(bestMoleculesBySocket).forEach((selection) => {
+        selectedMolecules.add(selection.molecule.id)
+    })
+
+    // Filter potential items that match the template AND contain parts made from our selected molecules
+    const potentialItems = Object.values(lootItems).filter((item) => {
+        if (item.templateId !== lootItemTemplate.id) {
+            return false
+        }
+
+        // Check if any of the item's parts use our selected molecules
+        return item.subparts.some((partId) => {
+            const part = lootParts[partId]
+            if (!part) return false
+
+            return selectedMolecules.has(part.moleculeId)
+        })
+    })
+
+    if (potentialItems.length === 0) {
+        return {
+            success: false,
+            failure: { reason: CraftingFailureReason.NoItems },
+        }
+    }
+
+    // Find the item with the closest material composition
+    let bestMatch = potentialItems[0]
+    let bestScore = calculateMaterialSimilarity(bestMatch.materialComposition, combinedMaterialComposition)
+
+    for (const item of potentialItems) {
+        const score = calculateMaterialSimilarity(item.materialComposition, combinedMaterialComposition)
+        if (score > bestScore) {
+            bestMatch = item
+            bestScore = score
+        }
+    }
+
+    // Step 6: Check if temperature is appropriate for crafting
+    if (temperature < bestMatch.temperatureRange.min) {
+        return {
+            success: false,
+            failure: {
+                reason: CraftingFailureReason.TooLowTemperature,
+            },
+        }
+    }
+
+    if (temperature > bestMatch.temperatureRange.max) {
+        return {
+            success: false,
+            failure: {
+                reason: CraftingFailureReason.TooHighTemperature,
+            },
+        }
+    }
+
+    // Step 7: Calculate quality based on junk item degradation and temperature
+    const avgDegradation =
+        selectedJunkItems.reduce((sum, junk, index) => sum + junk.degradation * socketWeights[index], 0) /
+        socketWeights.reduce((sum, weight) => sum + weight, 0)
+
+    let quality = 100 - avgDegradation
+
+    // Adjust quality based on temperature within optimal range
+    const inMasterRange =
+        temperature >= bestMatch.masterQualityTemperatureRange.min &&
+        temperature <= bestMatch.masterQualityTemperatureRange.max
+
+    if (inMasterRange) {
+        // Boost quality if temperature is in master range
+        quality = Math.min(100, quality * 1.5)
+    } else {
+        // Penalty based on how far from master temperature range
+        const distanceToMasterRange = Math.min(
+            Math.abs(temperature - bestMatch.masterQualityTemperatureRange.min),
+            Math.abs(temperature - bestMatch.masterQualityTemperatureRange.max)
+        )
+
+        const maxDistance = Math.max(
+            bestMatch.temperatureRange.max - bestMatch.masterQualityTemperatureRange.max,
+            bestMatch.masterQualityTemperatureRange.min - bestMatch.temperatureRange.min
+        )
+
+        // Quality penalty (up to 30%)
+        const penalty = (distanceToMasterRange / maxDistance) * 30
+        quality = Math.max(10, quality - penalty)
+    }
+
+    // Step 8: Calculate final sell price
+    const rarityMultipliers: Record<Rarity, number> = {
+        [Rarity.Common]: 1,
+        [Rarity.Uncommon]: 2,
+        [Rarity.Rare]: 4,
+        [Rarity.Epic]: 8,
+        [Rarity.Legendary]: 16,
+    }
+
+    const rarityFactor = rarityMultipliers[bestMatch.rarity]
+
+    // Calculate material value
+    const materialValue = combinedMaterialComposition.reduce((value, { materialId, percentage }) => {
+        const materialType = materialTypes.find((mt) => mt.id === materialId)
+        if (materialType) {
+            return value + materialType.basePrice * (percentage / 100)
+        }
+        return value
+    }, 0)
+
+    // Quality affects price (higher quality = higher price)
+    const qualityFactor = 0.5 + (quality / 100) * 1.5 // 0.5 to 2.0
+
+    const sellPrice = Math.round(materialValue * rarityFactor * qualityFactor * 10)
+
+    return {
+        success: true,
+        item: bestMatch,
+        quality,
+        sellPrice,
+    }
+}
+
+// Helper function to calculate similarity between material compositions
+function calculateMaterialSimilarity(composition1: MaterialComposition[], composition2: MaterialComposition[]): number {
+    let similarity = 0
+
+    // Create maps of material percentages for easier comparison
+    const map1 = new Map(composition1.map((mc) => [mc.materialId, mc.percentage]))
+    const map2 = new Map(composition2.map((mc) => [mc.materialId, mc.percentage]))
+
+    // Combine all material IDs
+    const allMaterials = new Set([...map1.keys(), ...map2.keys()])
+
+    // For each material, calculate the similarity (100 - absolute difference)
+    allMaterials.forEach((materialId) => {
+        const percentage1 = map1.get(materialId) || 0
+        const percentage2 = map2.get(materialId) || 0
+
+        const materialSimilarity = 100 - Math.abs(percentage1 - percentage2)
+        similarity += materialSimilarity
+    })
+
+    // Normalize by the number of materials
+    return similarity / allMaterials.size
 }
