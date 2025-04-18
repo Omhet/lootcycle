@@ -2,7 +2,7 @@ body {
     margin: 0;
     padding: 0;
     color: rgba(255, 255, 255, 0.87);
-    background-color: #000000; 
+    background-color: #000000;
     font-family: Arial, Helvetica, sans-serif;
 }
 
@@ -13,6 +13,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    position: relative; /* Needed for fixed positioning of children */
 }
 
 .spritePosition {
@@ -45,4 +46,36 @@ body {
         border: 1px solid rgba(255, 255, 255, 0.3);
         color: rgba(255, 255, 255, 0.3);
     }
+}
+
+/* UI Container Styles */
+#uiContainer {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100vw; /* Full screen width */
+    aspect-ratio: 16 / 9; /* Maintain 16/9 ratio */
+    max-width: 100vw;
+    max-height: 100vh;
+    display: flex; /* Use flexbox */
+    justify-content: center; /* Center content horizontally */
+    align-items: center; /* Center content vertically */
+    pointer-events: none; /* Allow clicks to pass through to the game canvas by default */
+    z-index: 10; /* Ensure UI is above the Phaser canvas */
+}
+
+#mainMenuContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Make buttons inside the UI interactive */
+#uiContainer button {
+    pointer-events: auto; /* Make buttons clickable */
+    /* You can add specific button styling here or use the existing .button class */
+    padding: 10px 20px;
+    font-size: 1.2em;
+    cursor: pointer;
 }

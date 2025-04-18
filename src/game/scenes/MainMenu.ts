@@ -43,4 +43,9 @@ export class MainMenu extends Scene {
 
         EventBus.emit("current-scene-ready", this);
     }
+
+    // Method to change scene to Game
+    startGame() {
+        this.scene.start("Game");
+    }
 }
