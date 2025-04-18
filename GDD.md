@@ -47,7 +47,7 @@ TODO
 
 ## ♻️ Key Mechanics
 
-### 1. Mechanical Claw Crane
+### 1. Mechanical Claw
 
 -   **Control**: WASD for movement, hold LMB to grab an item
 -   **Scanning**: RMB with an item in the claw to analyze properties
@@ -107,23 +107,6 @@ TODO
        GROUND/DUMP (where trash falls)
 
 ```
-
-### Visual Features
-
--   **Style**: 2D with detailed sprites
--   **Animations**: Crane movement, smelting process, smoke from the Cauldron
--   **Effects**: Smoke of different colors, sparks, particles
--   **Color Coding**: Different colors for different rarity levels
--   **Degradation**: Sepia filter or B/W effect
-
-### Interface
-
--   **Thermometer**: Vertical indicator on the Cauldron with color gradation
--   **Item Slots**: Show loaded items in the Cauldron and Furnace
--   **Inventory**: Grid with created items and their properties (accessed by pressing I)
--   **Recipe Book**: Interface with all possible items (accessed by pressing R)
--   **Statistics**: Day summary, earnings, expenses
--   **Upgrades Menu (Shop)**: Displayed at the end of the day
 
 ## 📋 Gameplay Process
 
