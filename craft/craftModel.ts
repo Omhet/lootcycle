@@ -1,87 +1,87 @@
 // ======= BASIC TYPES AND ENUMERATIONS =======
 
 // Typed identifiers
-export type MaterialCategoryId = string
-export type MaterialTypeId = string
-export type MaterialId = string
+export type MaterialCategoryId = string;
+export type MaterialTypeId = string;
+export type MaterialId = string;
 
 // System enumerations
 export enum Rarity {
-    Common = 'common',
-    Uncommon = 'uncommon',
-    Rare = 'rare',
-    Epic = 'epic',
-    Legendary = 'legendary',
+    Common = "common",
+    Uncommon = "uncommon",
+    Rare = "rare",
+    Epic = "epic",
+    Legendary = "legendary",
 }
 
 // Operation results
 export enum CraftingFailureReason {
-    NoJunkItems = 'NO_JUNK_ITEMS',
-    TooLowTemperature = 'TOO_LOW_TEMPERATURE',
-    TooHighTemperature = 'TOO_HIGH_TEMPERATURE',
+    NoJunkItems = "NO_JUNK_ITEMS",
+    TooLowTemperature = "TOO_LOW_TEMPERATURE",
+    TooHighTemperature = "TOO_HIGH_TEMPERATURE",
 }
 
 // ======= MATERIALS =======
 
 // Temperature range for materials
 export interface TemperatureRange {
-    min: number // Minimum temperature in Celsius
-    max: number // Maximum temperature in Celsius
+    min: number; // Minimum temperature in Celsius
+    max: number; // Maximum temperature in Celsius
 }
 
 export enum Durability {
-    Low = 'low',
-    Medium = 'medium',
-    High = 'high',
+    Low = "low",
+    Medium = "medium",
+    High = "high",
 }
 
 // Material category
 export interface MaterialCategory {
-    id: MaterialCategoryId
-    name: string
+    id: MaterialCategoryId;
+    name: string;
 }
 
 // Material type
 export interface MaterialType {
-    id: MaterialTypeId
-    categoryId: MaterialCategoryId
-    name: string
-    rarity: Rarity
-    durability: Durability
-    basePrice: number // Price for 1% content in an item part
-    optimalTemperatureRange: TemperatureRange
+    id: MaterialTypeId;
+    categoryId: MaterialCategoryId;
+    name: string;
+    rarity: Rarity;
+    durability: Durability;
+    basePrice: number; // Price for 1% content in an item part
+    optimalTemperatureRange: TemperatureRange;
 }
 
 // Specific material
 export interface Material {
-    id: MaterialId
-    typeId: MaterialTypeId
+    id: MaterialId;
+    typeId: MaterialTypeId;
 }
 
 // Material composition in an item part
 export interface MaterialComposition {
-    materialId: MaterialId
-    percentage: number // 0-100
+    materialId: MaterialId;
+    percentage: number; // 0-100
 }
 
 export enum MaterialCategoryIdEnum {
-    Metal = 'metal',
-    Wood = 'wood',
+    Metal = "metal",
+    Wood = "wood",
     // Can be easily extended with new categories
 }
 
 // Initial material categories
 export const initialMaterialCategories: MaterialCategory[] = [
-    { id: MaterialCategoryIdEnum.Metal, name: 'Metal' },
-    { id: MaterialCategoryIdEnum.Wood, name: 'Wood' },
-]
+    { id: MaterialCategoryIdEnum.Metal, name: "Metal" },
+    { id: MaterialCategoryIdEnum.Wood, name: "Wood" },
+];
 
 // Initial material types with one of each rarity per category
 export const initialMaterialTypes: MaterialType[] = [
     // Metal types
     {
-        id: 'copper',
-        name: 'Copper',
+        id: "copper",
+        name: "Copper",
         categoryId: MaterialCategoryIdEnum.Metal,
         rarity: Rarity.Common,
         durability: Durability.Medium,
@@ -89,8 +89,8 @@ export const initialMaterialTypes: MaterialType[] = [
         optimalTemperatureRange: { min: 30, max: 80 },
     },
     {
-        id: 'iron',
-        name: 'Iron',
+        id: "iron",
+        name: "Iron",
         categoryId: MaterialCategoryIdEnum.Metal,
         rarity: Rarity.Uncommon,
         durability: Durability.Medium,
@@ -98,8 +98,8 @@ export const initialMaterialTypes: MaterialType[] = [
         optimalTemperatureRange: { min: 50, max: 100 },
     },
     {
-        id: 'silver',
-        name: 'Silver',
+        id: "silver",
+        name: "Silver",
         categoryId: MaterialCategoryIdEnum.Metal,
         rarity: Rarity.Rare,
         durability: Durability.Low,
@@ -108,8 +108,8 @@ export const initialMaterialTypes: MaterialType[] = [
     },
     // Wood types
     {
-        id: 'pine',
-        name: 'Pine',
+        id: "pine",
+        name: "Pine",
         categoryId: MaterialCategoryIdEnum.Wood,
         rarity: Rarity.Common,
         durability: Durability.Low,
@@ -117,8 +117,8 @@ export const initialMaterialTypes: MaterialType[] = [
         optimalTemperatureRange: { min: 10, max: 60 },
     },
     {
-        id: 'oak',
-        name: 'Oak',
+        id: "oak",
+        name: "Oak",
         categoryId: MaterialCategoryIdEnum.Wood,
         rarity: Rarity.Uncommon,
         durability: Durability.Medium,
@@ -126,15 +126,15 @@ export const initialMaterialTypes: MaterialType[] = [
         optimalTemperatureRange: { min: 20, max: 70 },
     },
     {
-        id: 'elvenmwood',
-        name: 'Elvenwood',
+        id: "elvenmwood",
+        name: "Elvenwood",
         categoryId: MaterialCategoryIdEnum.Wood,
         rarity: Rarity.Rare,
         durability: Durability.High,
         basePrice: 7,
         optimalTemperatureRange: { min: 15, max: 65 },
     },
-]
+];
 
 // ======= ITEMS =======
 // TODO: Refactor to divide exact templates types that will be in config with corresponding molecules and atoms in its own files
@@ -142,119 +142,125 @@ export const initialMaterialTypes: MaterialType[] = [
 
 export type Pinpoint = {
     coords: {
-        x: number
-        y: number
-    }
+        x: number;
+        y: number;
+    };
     localOffset: {
-        x: number
-        y: number
-    }
-    localRotationAngle: number
-    zIndex: number
-}
+        x: number;
+        y: number;
+    };
+    localRotationAngle: number;
+    zIndex: number;
+};
 
 // Item category enum
 export enum ItemCategoryId {
-    Weapon = 'weapon',
+    Weapon = "weapon",
     // Future categories would go here: Armor, Magic, Accessories, etc.
 }
 
 // Item subcategory enum
 export enum ItemSubCategoryId {
-    MeleeWeapon = 'melee_weapon',
+    MeleeWeapon = "melee_weapon",
     // Future subcategories would go here: Range Weapon, Light Armor, Heavy Armor, etc.
 }
 
 export type ItemCategory = {
-    id: ItemCategoryId
-    name: string
-}
+    id: ItemCategoryId;
+    name: string;
+};
 
 export type ItemSubCategory = {
-    id: ItemSubCategoryId
-    name: string
-    categoryId: ItemCategoryId
-}
+    id: ItemSubCategoryId;
+    name: string;
+    categoryId: ItemCategoryId;
+};
 
 // Initial item categories
-export const initialItemCategories: ItemCategory[] = [{ id: ItemCategoryId.Weapon, name: 'Weapon' }]
+export const initialItemCategories: ItemCategory[] = [
+    { id: ItemCategoryId.Weapon, name: "Weapon" },
+];
 
 // Initial item subcategories
 export const initialItemSubCategories: ItemSubCategory[] = [
-    { id: ItemSubCategoryId.MeleeWeapon, name: 'Melee Weapon', categoryId: ItemCategoryId.Weapon },
+    {
+        id: ItemSubCategoryId.MeleeWeapon,
+        name: "Melee Weapon",
+        categoryId: ItemCategoryId.Weapon,
+    },
     // Future subcategories would go here: Range Weapon, Light Armor, Heavy Armor, etc.
-]
+];
 
 // export type JunkItemId = string
-export type LootItemTemplateId = string
-export type LootMoleculeId = string
-export type LootAtomId = string
+export type LootItemTemplateId = string;
+export type LootMoleculeId = string;
+export type LootAtomId = string;
 
 export enum LootItemTemplateType {
-    Sword = 'sword',
+    Sword = "sword",
 }
 
 export interface LootItemTemplate {
-    id: LootItemTemplateId
-    subCategory: ItemSubCategoryId
-    type: LootItemTemplateType
-    name: string
-    sockets: LootMoleculeSocket[]
+    id: LootItemTemplateId;
+    subCategory: ItemSubCategoryId;
+    type: LootItemTemplateType;
+    name: string;
+    sockets: LootMoleculeSocket[];
 }
 
 export type LootMoleculeSocket = {
-    acceptType: LootMoleculeType
-    acceptTags: LootMoleculeTag[]
-    relativeWeight?: number
-    pinpoint: Pinpoint
-}
+    acceptType: LootMoleculeType;
+    acceptTags: LootMoleculeTag[];
+    relativeWeight?: number;
+    pinpoint: Pinpoint;
+};
 
 export enum LootMoleculeType {
-    SwordHilt = 'sword_hilt',
-    SwordBlade = 'sword_blade',
+    SwordHilt = "sword_hilt",
+    SwordBlade = "sword_blade",
 }
 
 export enum LootMoleculeTag {
-    Handheld = 'handheld',
-    Sharp = 'sharp',
+    Handheld = "handheld",
+    Sharp = "sharp",
 }
 
 export type LootMolecule = {
-    id: LootMoleculeId
-    type: LootMoleculeType
-    name: string
-    tags: LootMoleculeTag[]
-    sockets: LootAtomSocket[]
-}
+    id: LootMoleculeId;
+    type: LootMoleculeType;
+    name: string;
+    tags: LootMoleculeTag[];
+    sockets: LootAtomSocket[];
+};
 
 export type LootAtomSocket = {
-    acceptType: LootAtomType
-    relativeWeight?: number
-    pinpoint: Pinpoint
-}
+    acceptType: LootAtomType;
+    relativeWeight?: number;
+    pinpoint: Pinpoint;
+};
 
 export enum LootAtomType {
-    Pommel = 'pommel',
-    Grip = 'grip',
-    Guard = 'guard',
-    Blade = 'blade',
+    Pommel = "pommel",
+    Grip = "grip",
+    Guard = "guard",
+    Blade = "blade",
 }
 
 export type LootAtom = {
-    id: LootAtomId
-    type: LootAtomType
-    name: string
-    rarirty: Rarity
-    assetPath: string
-}
+    id: LootAtomId;
+    type: LootAtomType;
+    name: string;
+    rarirty: Rarity;
+    assetPath: string;
+};
 
 // ======= LOOT ITEMS =======
 
 const swordTemplate: LootItemTemplate = {
-    id: 'sword',
+    id: "sword",
     subCategory: ItemSubCategoryId.MeleeWeapon,
     type: LootItemTemplateType.Sword,
-    name: 'Basic Sword',
+    name: "Basic Sword",
     sockets: [
         {
             acceptType: LootMoleculeType.SwordHilt,
@@ -279,23 +285,26 @@ const swordTemplate: LootItemTemplate = {
             },
         },
     ],
-}
+};
 
-export type LootItemTemplateConfig = Record<LootItemTemplateType, LootItemTemplate[]>
+export type LootItemTemplateConfig = Record<
+    LootItemTemplateType,
+    LootItemTemplate[]
+>;
 
 // All loot item templates available in the game
 export const lootItemTemplateConfig: LootItemTemplateConfig = {
     [LootItemTemplateType.Sword]: [swordTemplate],
-}
+};
 
 // ======= LOOT MOLECULES =======
 
 // Sword molecules and atoms
 const swordHiltMolecule: LootMolecule = {
-    id: 'sword_hilt',
+    id: "sword_hilt",
     type: LootMoleculeType.SwordHilt,
     tags: [LootMoleculeTag.Handheld],
-    name: 'Basic Sword Hilt',
+    name: "Basic Sword Hilt",
     sockets: [
         {
             acceptType: LootAtomType.Guard,
@@ -328,13 +337,13 @@ const swordHiltMolecule: LootMolecule = {
             },
         },
     ],
-}
+};
 
 const swordBladeMolecule: LootMolecule = {
-    id: 'sword_blade',
+    id: "sword_blade",
     type: LootMoleculeType.SwordBlade,
     tags: [LootMoleculeTag.Sharp],
-    name: 'Basic Sword Blade',
+    name: "Basic Sword Blade",
     sockets: [
         {
             acceptType: LootAtomType.Blade,
@@ -347,14 +356,14 @@ const swordBladeMolecule: LootMolecule = {
             },
         },
     ],
-}
+};
 
 // Elven sword molecules
 const elvenSwordHiltMolecule: LootMolecule = {
-    id: 'elven_sword_hilt',
+    id: "elven_sword_hilt",
     type: LootMoleculeType.SwordHilt,
     tags: [LootMoleculeTag.Handheld],
-    name: 'Elven Sword Hilt',
+    name: "Elven Sword Hilt",
     sockets: [
         {
             acceptType: LootAtomType.Guard,
@@ -387,13 +396,13 @@ const elvenSwordHiltMolecule: LootMolecule = {
             },
         },
     ],
-}
+};
 
 const elvenSwordBladeMolecule: LootMolecule = {
-    id: 'elven_sword_blade',
+    id: "elven_sword_blade",
     type: LootMoleculeType.SwordBlade,
     tags: [LootMoleculeTag.Sharp],
-    name: 'Elven Sword Blade',
+    name: "Elven Sword Blade",
     sockets: [
         {
             acceptType: LootAtomType.Blade,
@@ -406,126 +415,129 @@ const elvenSwordBladeMolecule: LootMolecule = {
             },
         },
     ],
-}
+};
 
 const swordBasicGuardAtom: LootAtom = {
-    id: 'sword_basic_guard',
+    id: "sword_basic_guard",
     type: LootAtomType.Guard,
-    name: 'Basic Sword Guard',
+    name: "Basic Sword Guard",
     rarirty: Rarity.Common,
-    assetPath: 'assets/sword/guards/basic-guard.png',
-}
+    assetPath: "assets/sword/guards/basic-guard.png",
+};
 const swordBasicGripAtom: LootAtom = {
-    id: 'sword_basic_grip',
+    id: "sword_basic_grip",
     type: LootAtomType.Grip,
-    name: 'Basic Sword Grip',
+    name: "Basic Sword Grip",
     rarirty: Rarity.Common,
-    assetPath: 'assets/sword/grips/basic-grip.png',
-}
+    assetPath: "assets/sword/grips/basic-grip.png",
+};
 const swordBasicPommelAtom: LootAtom = {
-    id: 'sword_basic_pommel',
+    id: "sword_basic_pommel",
     type: LootAtomType.Pommel,
-    name: 'Basic Sword Pommel',
+    name: "Basic Sword Pommel",
     rarirty: Rarity.Common,
-    assetPath: 'assets/sword/pommels/basic-pommel.png',
-}
+    assetPath: "assets/sword/pommels/basic-pommel.png",
+};
 const swordBasicBladeAtom: LootAtom = {
-    id: 'sword_basic_blade',
+    id: "sword_basic_blade",
     type: LootAtomType.Blade,
-    name: 'Basic Sword Blade',
+    name: "Basic Sword Blade",
     rarirty: Rarity.Common,
-    assetPath: 'assets/sword/blades/basic-blade.png',
-}
+    assetPath: "assets/sword/blades/basic-blade.png",
+};
 
 // Elven sword atoms
 const elvenSwordGuardAtom: LootAtom = {
-    id: 'elven_sword_guard',
+    id: "elven_sword_guard",
     type: LootAtomType.Guard,
-    name: 'Elven Sword Guard',
+    name: "Elven Sword Guard",
     rarirty: Rarity.Rare,
-    assetPath: 'assets/sword/guards/elven-guard.png',
-}
+    assetPath: "assets/sword/guards/elven-guard.png",
+};
 
 const elvenSwordGripAtom: LootAtom = {
-    id: 'elven_sword_grip',
+    id: "elven_sword_grip",
     type: LootAtomType.Grip,
-    name: 'Elven Sword Grip',
+    name: "Elven Sword Grip",
     rarirty: Rarity.Rare,
-    assetPath: 'assets/sword/grips/elven-grip.png',
-}
+    assetPath: "assets/sword/grips/elven-grip.png",
+};
 
 const elvenSwordPommelAtom: LootAtom = {
-    id: 'elven_sword_pommel',
+    id: "elven_sword_pommel",
     type: LootAtomType.Pommel,
-    name: 'Elven Sword Pommel',
+    name: "Elven Sword Pommel",
     rarirty: Rarity.Rare,
-    assetPath: 'assets/sword/pommels/elven-pommel.png',
-}
+    assetPath: "assets/sword/pommels/elven-pommel.png",
+};
 
 const elvenSwordBladeAtom: LootAtom = {
-    id: 'elven_sword_blade',
+    id: "elven_sword_blade",
     type: LootAtomType.Blade,
-    name: 'Elven Sword Blade',
+    name: "Elven Sword Blade",
     rarirty: Rarity.Rare,
-    assetPath: 'assets/sword/blades/elven-blade.png',
-}
+    assetPath: "assets/sword/blades/elven-blade.png",
+};
 
-export type LootMoleculeConfig = Record<LootMoleculeType, LootMolecule[]>
+export type LootMoleculeConfig = Record<LootMoleculeType, LootMolecule[]>;
 // All molecules and atoms available in the game
 export const lootMoleculeConfig: Record<LootMoleculeType, LootMolecule[]> = {
     [LootMoleculeType.SwordHilt]: [swordHiltMolecule, elvenSwordHiltMolecule],
-    [LootMoleculeType.SwordBlade]: [swordBladeMolecule, elvenSwordBladeMolecule],
-}
+    [LootMoleculeType.SwordBlade]: [
+        swordBladeMolecule,
+        elvenSwordBladeMolecule,
+    ],
+};
 
-export type LootAtomConfig = Record<LootAtomType, LootAtom[]>
+export type LootAtomConfig = Record<LootAtomType, LootAtom[]>;
 export const lootAtomConfig: Record<LootAtomType, LootAtom[]> = {
     [LootAtomType.Guard]: [swordBasicGuardAtom, elvenSwordGuardAtom],
     [LootAtomType.Grip]: [swordBasicGripAtom, elvenSwordGripAtom],
     [LootAtomType.Pommel]: [swordBasicPommelAtom, elvenSwordPommelAtom],
     [LootAtomType.Blade]: [swordBasicBladeAtom, elvenSwordBladeAtom],
-}
+};
 
 // ======= LOOT OBJECTS TYPES (that will be generated in build time and then used in runtime) =======
 
-export type LootItemId = string
-export type LootPartId = string
-export type LootDetailId = LootAtomId
+export type LootItemId = string;
+export type LootPartId = string;
+export type LootDetailId = LootAtomId;
 
 export type LootItem = {
-    id: LootItemId
-    templateId: LootItemTemplateId
-    subparts: LootPartId[]
-    materialComposition: MaterialComposition[]
-    rarity: Rarity
-    temperatureRange: TemperatureRange
-    masterQualityTemperatureRange: TemperatureRange
-}
+    id: LootItemId;
+    templateId: LootItemTemplateId;
+    subparts: LootPartId[];
+    materialComposition: MaterialComposition[];
+    rarity: Rarity;
+    temperatureRange: TemperatureRange;
+    masterQualityTemperatureRange: TemperatureRange;
+};
 
 export type LootPart = {
-    id: LootPartId
-    moleculeId: LootMoleculeId
-    subparts: LootDetailId[]
-    materialComposition: MaterialComposition[]
-    rarity: Rarity
-}
+    id: LootPartId;
+    moleculeId: LootMoleculeId;
+    subparts: LootDetailId[];
+    materialComposition: MaterialComposition[];
+    rarity: Rarity;
+};
 
 export type LootDetail = {
-    id: LootDetailId
-    atomId: LootAtomId
-    materialComposition: MaterialComposition[]
-    rarity: Rarity
-}
+    id: LootDetailId;
+    atomId: LootAtomId;
+    materialComposition: MaterialComposition[];
+    rarity: Rarity;
+};
 
 export type LootJunk = LootDetail & {
-    durability: number
-    overrideAssetPath?: string
-}
+    durability: number;
+    overrideAssetPath?: string;
+};
 
 export type LootJunkItem = LootJunk & {
-    degradation: number
-}
+    degradation: number; // Degradation remains in the type for runtime use
+};
 
-const materialTypes = initialMaterialTypes
+const materialTypes = initialMaterialTypes;
 
 // Utility functions for rarity calculation
 const getRarityValue = (rarity: Rarity): number => {
@@ -535,35 +547,39 @@ const getRarityValue = (rarity: Rarity): number => {
         [Rarity.Rare]: 3,
         [Rarity.Epic]: 4,
         [Rarity.Legendary]: 5,
-    }
-    return rarityValues[rarity]
-}
+    };
+    return rarityValues[rarity];
+};
 
 const getValueRarity = (value: number): Rarity => {
-    if (value >= 4.5) return Rarity.Legendary
-    if (value >= 3.5) return Rarity.Epic
-    if (value >= 2.5) return Rarity.Rare
-    if (value >= 1.5) return Rarity.Uncommon
-    return Rarity.Common
-}
+    if (value >= 4.5) return Rarity.Legendary;
+    if (value >= 3.5) return Rarity.Epic;
+    if (value >= 2.5) return Rarity.Rare;
+    if (value >= 1.5) return Rarity.Uncommon;
+    return Rarity.Common;
+};
 
 // Calculate rarity based on material composition
-const calculateMaterialRarity = (materialComposition: MaterialComposition[]): number => {
-    let weightedRarityValue = 0
-    let totalPercentage = 0
+const calculateMaterialRarity = (
+    materialComposition: MaterialComposition[]
+): number => {
+    let weightedRarityValue = 0;
+    let totalPercentage = 0;
 
     materialComposition.forEach(({ materialId, percentage }) => {
         // Find material type from the materialId
-        const material = materialTypes.find((mt) => mt.id === materialId)
+        const material = materialTypes.find((mt) => mt.id === materialId);
         if (material) {
-            const rarityValue = getRarityValue(material.rarity)
-            weightedRarityValue += rarityValue * percentage
-            totalPercentage += percentage
+            const rarityValue = getRarityValue(material.rarity);
+            weightedRarityValue += rarityValue * percentage;
+            totalPercentage += percentage;
         }
-    })
+    });
 
-    return totalPercentage > 0 ? weightedRarityValue / totalPercentage : getRarityValue(Rarity.Common)
-}
+    return totalPercentage > 0
+        ? weightedRarityValue / totalPercentage
+        : getRarityValue(Rarity.Common);
+};
 
 // Calculate weighted rarity from components and material composition
 const calculateFinalRarity = (
@@ -572,25 +588,29 @@ const calculateFinalRarity = (
     componentRarityWeight: number = 0.6 // Default weight for component rarity (vs material rarity)
 ): Rarity => {
     // Calculate component rarity
-    let combinedRarityValue = 0
-    let totalWeight = 0
+    let combinedRarityValue = 0;
+    let totalWeight = 0;
 
     components.forEach(({ rarity, weight }) => {
-        combinedRarityValue += getRarityValue(rarity) * weight
-        totalWeight += weight
-    })
+        combinedRarityValue += getRarityValue(rarity) * weight;
+        totalWeight += weight;
+    });
 
-    const componentRarityValue = totalWeight > 0 ? combinedRarityValue / totalWeight : getRarityValue(Rarity.Common)
+    const componentRarityValue =
+        totalWeight > 0
+            ? combinedRarityValue / totalWeight
+            : getRarityValue(Rarity.Common);
 
     // Calculate material rarity
-    const materialRarityValue = calculateMaterialRarity(materialComposition)
+    const materialRarityValue = calculateMaterialRarity(materialComposition);
 
     // Combined weighted rarity
     const finalRarityValue =
-        componentRarityValue * componentRarityWeight + materialRarityValue * (1 - componentRarityWeight)
+        componentRarityValue * componentRarityWeight +
+        materialRarityValue * (1 - componentRarityWeight);
 
-    return getValueRarity(finalRarityValue)
-}
+    return getValueRarity(finalRarityValue);
+};
 
 // Utility function for durability calculation
 const getDurabilityValue = (durability: Durability): number => {
@@ -598,85 +618,95 @@ const getDurabilityValue = (durability: Durability): number => {
         [Durability.Low]: 1,
         [Durability.Medium]: 2,
         [Durability.High]: 3,
-    }
-    return durabilityValues[durability]
-}
+    };
+    return durabilityValues[durability];
+};
 
 // Calculate durability based on material composition
-const calculateDurability = (materialComposition: MaterialComposition[]): number => {
-    let weightedDurability = 0
-    let totalPercentage = 0
+const calculateDurability = (
+    materialComposition: MaterialComposition[]
+): number => {
+    let weightedDurability = 0;
+    let totalPercentage = 0;
 
     materialComposition.forEach(({ materialId, percentage }) => {
         // Find material type from the materialId
-        const materialType = materialTypes.find((mt) => mt.id === materialId)
+        const materialType = materialTypes.find((mt) => mt.id === materialId);
         if (materialType) {
-            const durabilityValue = getDurabilityValue(materialType.durability)
-            weightedDurability += durabilityValue * percentage
-            totalPercentage += percentage
+            const durabilityValue = getDurabilityValue(materialType.durability);
+            weightedDurability += durabilityValue * percentage;
+            totalPercentage += percentage;
         }
-    })
+    });
 
     // Base durability from 100-300 based on materials (Low=100, Medium=200, High=300)
-    return totalPercentage > 0 ? (weightedDurability / totalPercentage) * 100 : 100
-}
+    return totalPercentage > 0
+        ? (weightedDurability / totalPercentage) * 100
+        : 100;
+};
 
 // Helper to combine material compositions with weights
 const combineMaterialCompositions = (
     compositions: Array<{ composition: MaterialComposition[]; weight: number }>
 ): MaterialComposition[] => {
-    const materialMap = new Map<MaterialId, number>()
-    let totalWeight = 0
+    const materialMap = new Map<MaterialId, number>();
+    let totalWeight = 0;
 
     // Sum all weights and accumulate material percentages
     compositions.forEach(({ composition, weight }) => {
-        totalWeight += weight
+        totalWeight += weight;
         composition.forEach(({ materialId, percentage }) => {
-            const weightedPercentage = (percentage * weight) / 100
-            materialMap.set(materialId, (materialMap.get(materialId) || 0) + weightedPercentage)
-        })
-    })
+            const weightedPercentage = (percentage * weight) / 100;
+            materialMap.set(
+                materialId,
+                (materialMap.get(materialId) || 0) + weightedPercentage
+            );
+        });
+    });
 
     // Normalize percentages based on total weight
-    const result: MaterialComposition[] = []
+    const result: MaterialComposition[] = [];
     materialMap.forEach((weightedPercentage, materialId) => {
-        const normalizedPercentage = (weightedPercentage / totalWeight) * 100
+        const normalizedPercentage = (weightedPercentage / totalWeight) * 100;
         result.push({
             materialId,
             percentage: parseFloat(normalizedPercentage.toFixed(2)),
-        })
-    })
+        });
+    });
 
     // Ensure percentages sum to exactly 100%
     if (result.length > 0) {
-        const sum = result.reduce((acc, { percentage }) => acc + percentage, 0)
-        const adjustment = 100 - sum
-        result[0].percentage += parseFloat(adjustment.toFixed(2))
+        const sum = result.reduce((acc, { percentage }) => acc + percentage, 0);
+        const adjustment = 100 - sum;
+        result[0].percentage += parseFloat(adjustment.toFixed(2));
     }
 
-    return result
-}
+    return result;
+};
 
 // Calculate temperature range based on material composition and rarity
-const calculateTemperatureRange = (materialComposition: MaterialComposition[], rarity: Rarity): TemperatureRange => {
+const calculateTemperatureRange = (
+    materialComposition: MaterialComposition[],
+    rarity: Rarity
+): TemperatureRange => {
     // First calculate base temperature range from materials
-    let minTemp = 0
-    let maxTemp = 0
-    let totalPercentage = 0
+    let minTemp = 0;
+    let maxTemp = 0;
+    let totalPercentage = 0;
 
     materialComposition.forEach(({ materialId, percentage }) => {
         // Find material type from the materialId
-        const materialType = materialTypes.find((mt) => mt.id === materialId)
+        const materialType = materialTypes.find((mt) => mt.id === materialId);
         if (materialType) {
-            minTemp += materialType.optimalTemperatureRange.min * percentage
-            maxTemp += materialType.optimalTemperatureRange.max * percentage
-            totalPercentage += percentage
+            minTemp += materialType.optimalTemperatureRange.min * percentage;
+            maxTemp += materialType.optimalTemperatureRange.max * percentage;
+            totalPercentage += percentage;
         }
-    })
+    });
 
     // Calculate average min and max temperatures
-    minTemp = totalPercentage > 0 ? minTemp / totalPercentage : 0
-    maxTemp = totalPercentage > 0 ? maxTemp / totalPercentage : 100
+    minTemp = totalPercentage > 0 ? minTemp / totalPercentage : 0;
+    maxTemp = totalPercentage > 0 ? maxTemp / totalPercentage : 100;
 
     // Apply a narrowing factor based on rarity
     // Higher rarity = narrower range (more challenging to work with)
@@ -686,19 +716,19 @@ const calculateTemperatureRange = (materialComposition: MaterialComposition[], r
         [Rarity.Rare]: 0.7, // 30% narrower
         [Rarity.Epic]: 0.55, // 45% narrower
         [Rarity.Legendary]: 0.4, // 60% narrower
-    }
+    };
 
-    const rangeMidpoint = (minTemp + maxTemp) / 2
-    const rangeWidth = maxTemp - minTemp
+    const rangeMidpoint = (minTemp + maxTemp) / 2;
+    const rangeWidth = maxTemp - minTemp;
 
     // Apply narrowing factor
-    const narrowedRangeWidth = rangeWidth * narrowingFactors[rarity]
+    const narrowedRangeWidth = rangeWidth * narrowingFactors[rarity];
 
     return {
         min: Math.round(rangeMidpoint - narrowedRangeWidth / 2),
         max: Math.round(rangeMidpoint + narrowedRangeWidth / 2),
-    }
-}
+    };
+};
 
 // Calculate master quality temperature range (even narrower than regular range)
 const calculateMasterQualityTemperatureRange = (
@@ -713,27 +743,27 @@ const calculateMasterQualityTemperatureRange = (
         [Rarity.Rare]: 0.2, // 80% narrower
         [Rarity.Epic]: 0.15, // 85% narrower
         [Rarity.Legendary]: 0.1, // 90% narrower
-    }
+    };
 
-    const rangeMidpoint = (temperatureRange.min + temperatureRange.max) / 2
-    const rangeWidth = temperatureRange.max - temperatureRange.min
-    const masterRangeWidth = rangeWidth * masterNarrowingFactors[rarity]
+    const rangeMidpoint = (temperatureRange.min + temperatureRange.max) / 2;
+    const rangeWidth = temperatureRange.max - temperatureRange.min;
+    const masterRangeWidth = rangeWidth * masterNarrowingFactors[rarity];
 
     return {
         min: Math.round(rangeMidpoint - masterRangeWidth / 2),
         max: Math.round(rangeMidpoint + masterRangeWidth / 2),
-    }
-}
+    };
+};
 
 export const generateAllLootObjectsInGame = (
     lootItemTemplateConfig: LootItemTemplateConfig,
     lootMoleculeConfig: LootMoleculeConfig,
     lootAtomConfig: LootAtomConfig
 ) => {
-    const lootItems: Record<LootItemId, LootItem> = {}
-    const lootParts: Record<LootPartId, LootPart> = {}
-    const lootDetails: Record<LootDetailId, LootDetail> = {}
-    const lootJunkItems: Record<LootDetailId, LootJunkItem> = {}
+    const lootItems: Record<LootItemId, LootItem> = {};
+    const lootParts: Record<LootPartId, LootPart> = {};
+    const lootDetails: Record<LootDetailId, LootDetail> = {};
+    const lootJunkItems: Record<LootDetailId, LootJunkItem> = {};
 
     /**
      * Phase 1: Generate Loot Details
@@ -742,9 +772,9 @@ export const generateAllLootObjectsInGame = (
     const generateLootDetails = () => {
         Object.values(lootAtomConfig).forEach((atoms) => {
             atoms.forEach((atom) => {
-                const materials = Array.from(materialTypes.values())
+                const materials = Array.from(materialTypes.values());
                 materials.forEach((material) => {
-                    const lootDetailId = `${atom.id}-${material.id}`
+                    const lootDetailId = `${atom.id}-${material.id}`;
                     lootDetails[lootDetailId] = {
                         id: lootDetailId,
                         atomId: atom.id,
@@ -755,11 +785,11 @@ export const generateAllLootObjectsInGame = (
                             },
                         ],
                         rarity: atom.rarirty, // Using atom rarity directly for details
-                    }
-                })
-            })
-        })
-    }
+                    };
+                });
+            });
+        });
+    };
 
     /**
      * Phase 2: Generate Loot Parts
@@ -767,67 +797,93 @@ export const generateAllLootObjectsInGame = (
      */
     const generateLootParts = () => {
         // Helper to generate atom combinations for a molecule
-        const generateAtomCombinationsForMolecule = (molecule: LootMolecule): LootDetailId[][] => {
+        const generateAtomCombinationsForMolecule = (
+            molecule: LootMolecule
+        ): LootDetailId[][] => {
             // For each socket, get all compatible atoms
             const atomsPerSocket = molecule.sockets.map((socket) => {
-                const compatibleAtoms = lootAtomConfig[socket.acceptType].map((atom) => atom.id)
+                const compatibleAtoms = lootAtomConfig[socket.acceptType].map(
+                    (atom) => atom.id
+                );
 
                 // For each atom, get all material variants
-                const atomMaterialVariants: LootDetailId[] = []
+                const atomMaterialVariants: LootDetailId[] = [];
                 compatibleAtoms.forEach((atomId) => {
-                    const materials = Array.from(materialTypes.values())
+                    const materials = Array.from(materialTypes.values());
                     materials.forEach((material) => {
-                        atomMaterialVariants.push(`${atomId}-${material.id}`)
-                    })
-                })
+                        atomMaterialVariants.push(`${atomId}-${material.id}`);
+                    });
+                });
 
-                return atomMaterialVariants
-            })
+                return atomMaterialVariants;
+            });
 
             // Generate all combinations using recursive helper
-            const generateCombinations = (current: number, combination: LootDetailId[] = []): LootDetailId[][] => {
+            const generateCombinations = (
+                current: number,
+                combination: LootDetailId[] = []
+            ): LootDetailId[][] => {
                 if (current === atomsPerSocket.length) {
-                    return [combination]
+                    return [combination];
                 }
 
-                const result: LootDetailId[][] = []
+                const result: LootDetailId[][] = [];
                 for (const detailId of atomsPerSocket[current]) {
-                    result.push(...generateCombinations(current + 1, [...combination, detailId]))
+                    result.push(
+                        ...generateCombinations(current + 1, [
+                            ...combination,
+                            detailId,
+                        ])
+                    );
                 }
-                return result
-            }
+                return result;
+            };
 
-            return generateCombinations(0)
-        }
+            return generateCombinations(0);
+        };
 
         Object.values(lootMoleculeConfig).forEach((molecules) => {
             molecules.forEach((molecule) => {
                 // Get all possible atom combinations for this molecule
-                const atomCombinations = generateAtomCombinationsForMolecule(molecule)
+                const atomCombinations =
+                    generateAtomCombinationsForMolecule(molecule);
 
                 // Create a unique loot part for each combination
                 atomCombinations.forEach((detailIds) => {
-                    const lootPartId = `${molecule.id}-[${detailIds.join('-')}]`
+                    const lootPartId = `${molecule.id}-[${detailIds.join(
+                        "-"
+                    )}]`;
 
                     // Calculate material composition based on details and molecule sockets
-                    const materialCompositions = detailIds.map((detailId, index) => {
-                        const socketWeight = molecule.sockets[index].relativeWeight || 1
-                        return {
-                            composition: lootDetails[detailId].materialComposition,
-                            weight: socketWeight,
+                    const materialCompositions = detailIds.map(
+                        (detailId, index) => {
+                            const socketWeight =
+                                molecule.sockets[index].relativeWeight || 1;
+                            return {
+                                composition:
+                                    lootDetails[detailId].materialComposition,
+                                weight: socketWeight,
+                            };
                         }
-                    })
+                    );
 
-                    const materialComposition = combineMaterialCompositions(materialCompositions)
+                    const materialComposition =
+                        combineMaterialCompositions(materialCompositions);
 
                     // Calculate rarity components
-                    const rarityComponents = detailIds.map((detailId, index) => ({
-                        rarity: lootDetails[detailId].rarity,
-                        weight: molecule.sockets[index].relativeWeight || 1,
-                    }))
+                    const rarityComponents = detailIds.map(
+                        (detailId, index) => ({
+                            rarity: lootDetails[detailId].rarity,
+                            weight: molecule.sockets[index].relativeWeight || 1,
+                        })
+                    );
 
                     // Calculate final rarity (60% from details, 40% from materials)
-                    const finalRarity = calculateFinalRarity(rarityComponents, materialComposition, 0.6)
+                    const finalRarity = calculateFinalRarity(
+                        rarityComponents,
+                        materialComposition,
+                        0.6
+                    );
 
                     const lootPart: LootPart = {
                         id: lootPartId,
@@ -835,13 +891,13 @@ export const generateAllLootObjectsInGame = (
                         subparts: detailIds,
                         materialComposition: materialComposition,
                         rarity: finalRarity,
-                    }
+                    };
 
-                    lootParts[lootPartId] = lootPart
-                })
-            })
-        })
-    }
+                    lootParts[lootPartId] = lootPart;
+                });
+            });
+        });
+    };
 
     /**
      * Phase 3: Generate Loot Items
@@ -849,72 +905,104 @@ export const generateAllLootObjectsInGame = (
      */
     const generateLootItems = () => {
         // Helper to generate part combinations for an item template
-        const generatePartCombinationsForTemplate = (template: LootItemTemplate): LootPartId[][] => {
+        const generatePartCombinationsForTemplate = (
+            template: LootItemTemplate
+        ): LootPartId[][] => {
             // For each socket, get all compatible parts
             const partsPerSocket = template.sockets.map((socket) => {
-                const compatibleMolecules = Object.values(lootMoleculeConfig[socket.acceptType] || []).filter(
-                    (molecule) => socket.acceptTags.every((tag) => molecule.tags.includes(tag))
-                )
+                const compatibleMolecules = Object.values(
+                    lootMoleculeConfig[socket.acceptType] || []
+                ).filter((molecule) =>
+                    socket.acceptTags.every((tag) =>
+                        molecule.tags.includes(tag)
+                    )
+                );
 
                 // Get all parts created from these molecules
                 return Object.values(lootParts)
-                    .filter((part) => compatibleMolecules.some((molecule) => part.id.startsWith(`${molecule.id}-`)))
-                    .map((part) => part.id)
-            })
+                    .filter((part) =>
+                        compatibleMolecules.some((molecule) =>
+                            part.id.startsWith(`${molecule.id}-`)
+                        )
+                    )
+                    .map((part) => part.id);
+            });
 
             // Generate all combinations using recursive helper
-            const generateCombinations = (current: number, combination: LootPartId[] = []): LootPartId[][] => {
+            const generateCombinations = (
+                current: number,
+                combination: LootPartId[] = []
+            ): LootPartId[][] => {
                 if (current === partsPerSocket.length) {
-                    return [combination]
+                    return [combination];
                 }
 
-                const result: LootPartId[][] = []
+                const result: LootPartId[][] = [];
                 for (const partId of partsPerSocket[current]) {
-                    result.push(...generateCombinations(current + 1, [...combination, partId]))
+                    result.push(
+                        ...generateCombinations(current + 1, [
+                            ...combination,
+                            partId,
+                        ])
+                    );
                 }
-                return result
-            }
+                return result;
+            };
 
-            return generateCombinations(0)
-        }
+            return generateCombinations(0);
+        };
 
         Object.values(lootItemTemplateConfig).forEach((templates) => {
             templates.forEach((template) => {
                 // Get all possible part combinations for this template
-                const partCombinations = generatePartCombinationsForTemplate(template)
+                const partCombinations =
+                    generatePartCombinationsForTemplate(template);
 
                 // Create a unique loot item for each combination
                 partCombinations.forEach((partIds) => {
-                    const lootItemId = `${template.id}-[${partIds.join('-')}]`
+                    const lootItemId = `${template.id}-[${partIds.join("-")}]`;
 
                     // Calculate material composition based on parts and template sockets
-                    const materialCompositions = partIds.map((partId, index) => {
-                        const socketWeight = template.sockets[index].relativeWeight || 1
-                        return {
-                            composition: lootParts[partId].materialComposition,
-                            weight: socketWeight,
+                    const materialCompositions = partIds.map(
+                        (partId, index) => {
+                            const socketWeight =
+                                template.sockets[index].relativeWeight || 1;
+                            return {
+                                composition:
+                                    lootParts[partId].materialComposition,
+                                weight: socketWeight,
+                            };
                         }
-                    })
+                    );
 
-                    const materialComposition = combineMaterialCompositions(materialCompositions)
+                    const materialComposition =
+                        combineMaterialCompositions(materialCompositions);
 
                     // Calculate rarity components
                     const rarityComponents = partIds.map((partId, index) => ({
                         rarity: lootParts[partId].rarity,
                         weight: template.sockets[index].relativeWeight || 1,
-                    }))
+                    }));
 
                     // Calculate final rarity (70% from parts, 30% from materials)
-                    const finalRarity = calculateFinalRarity(rarityComponents, materialComposition, 0.7)
+                    const finalRarity = calculateFinalRarity(
+                        rarityComponents,
+                        materialComposition,
+                        0.7
+                    );
 
                     // Calculate temperature range based on materials and rarity
-                    const temperatureRange = calculateTemperatureRange(materialComposition, finalRarity)
+                    const temperatureRange = calculateTemperatureRange(
+                        materialComposition,
+                        finalRarity
+                    );
 
                     // Calculate the master quality temperature range
-                    const masterQualityTemperatureRange = calculateMasterQualityTemperatureRange(
-                        temperatureRange,
-                        finalRarity
-                    )
+                    const masterQualityTemperatureRange =
+                        calculateMasterQualityTemperatureRange(
+                            temperatureRange,
+                            finalRarity
+                        );
 
                     const lootItem: LootItem = {
                         id: lootItemId,
@@ -923,14 +1011,15 @@ export const generateAllLootObjectsInGame = (
                         materialComposition: materialComposition,
                         rarity: finalRarity,
                         temperatureRange: temperatureRange,
-                        masterQualityTemperatureRange: masterQualityTemperatureRange,
-                    }
+                        masterQualityTemperatureRange:
+                            masterQualityTemperatureRange,
+                    };
 
-                    lootItems[lootItemId] = lootItem
-                })
-            })
-        })
-    }
+                    lootItems[lootItemId] = lootItem;
+                });
+            });
+        });
+    };
 
     /**
      * Phase 4: Generate Loot Junk Items
@@ -938,142 +1027,154 @@ export const generateAllLootObjectsInGame = (
      */
     const generateLootJunkItems = () => {
         Object.values(lootDetails).forEach((detail) => {
-            const durability = calculateDurability(detail.materialComposition)
+            const durability = calculateDurability(detail.materialComposition);
 
-            const lootJunkItem: LootJunkItem = {
+            // Create the junk item *without* degradation initially
+            const lootJunkItem: Omit<LootJunkItem, "degradation"> = {
                 ...detail,
                 durability,
-                degradation: 0, // Start with no degradation
-            }
+                // overrideAssetPath can be added here if needed
+            };
 
-            lootJunkItems[detail.id] = lootJunkItem
-        })
-    }
+            lootJunkItems[detail.id] = lootJunkItem as LootJunkItem; // Cast needed temporarily
+        });
+    };
 
     // Generate all loot objects in sequence
-    generateLootDetails()
-    generateLootParts()
-    generateLootItems()
-    generateLootJunkItems()
+    generateLootDetails();
+    generateLootParts();
+    generateLootItems();
+    generateLootJunkItems(); // Degradation is now excluded here
 
-    return { lootParts, lootItems, lootDetails, lootJunkItems }
-}
+    return { lootParts, lootItems, lootDetails, lootJunkItems };
+};
 
 export interface CraftingResult {
-    success: boolean
-    item?: LootItem
-    quality?: number // 0-100 quality percentage
-    sellPrice?: number
+    success: boolean;
+    item?: LootItem;
+    quality?: number; // 0-100 quality percentage
+    sellPrice?: number;
     failure?: {
-        reason: CraftingFailureReason
-    }
+        reason: CraftingFailureReason;
+    };
 }
 
 export function craftLootItem(params: {
-    lootItemTemplate: LootItemTemplate
-    availableJunkItems: LootJunkItem[]
-    temperature: number
+    lootItemTemplate: LootItemTemplate;
+    availableJunkItems: LootJunkItem[];
+    temperature: number;
     config: {
-        lootItems: Record<LootItemId, LootItem>
-        lootParts: Record<LootPartId, LootPart>
-    }
+        lootItems: Record<LootItemId, LootItem>;
+        lootParts: Record<LootPartId, LootPart>;
+    };
 }): CraftingResult {
     const {
         lootItemTemplate,
         availableJunkItems,
         temperature,
         config: { lootItems, lootParts },
-    } = params
+    } = params;
 
     // Step 1: Check if there are any junk items (keep this check as required)
     if (availableJunkItems.length === 0) {
         return {
             success: false,
             failure: { reason: CraftingFailureReason.NoJunkItems },
-        }
+        };
     }
 
     // Step 2: Organize junk items by atom type for selection
-    const junkItemsByType: Partial<Record<LootAtomType, LootJunkItem[]>> = {}
+    const junkItemsByType: Partial<Record<LootAtomType, LootJunkItem[]>> = {};
     availableJunkItems.forEach((junkItem) => {
         // Use the explicit atomId instead of parsing from the id string
-        const atomId = junkItem.atomId
+        const atomId = junkItem.atomId;
         const atom = Object.values(lootAtomConfig)
             .flat()
-            .find((a) => a.id === atomId)
+            .find((a) => a.id === atomId);
         if (atom) {
             if (!junkItemsByType[atom.type]) {
-                junkItemsByType[atom.type] = []
+                junkItemsByType[atom.type] = [];
             }
-            junkItemsByType[atom.type]?.push(junkItem)
+            junkItemsByType[atom.type]?.push(junkItem);
         }
-    })
+    });
 
     // Step 3: Select junk items based on template requirements
-    let selectedJunkItems: LootJunkItem[] = []
-    let socketWeights: number[] = []
+    let selectedJunkItems: LootJunkItem[] = [];
+    let socketWeights: number[] = [];
 
     // Try to find the best molecule configuration across all sockets
     const moleculeSelections: Array<{
-        socketIndex: number
-        molecule: LootMolecule
-        junkItems: LootJunkItem[]
-        weights: number[]
-        qualityScore: number
-    }> = []
+        socketIndex: number;
+        molecule: LootMolecule;
+        junkItems: LootJunkItem[];
+        weights: number[];
+        qualityScore: number;
+    }> = [];
 
     // For each socket in the template, evaluate all compatible molecules
-    for (let socketIndex = 0; socketIndex < lootItemTemplate.sockets.length; socketIndex++) {
-        const socket = lootItemTemplate.sockets[socketIndex]
-        const compatibleMolecules = lootMoleculeConfig[socket.acceptType] || []
+    for (
+        let socketIndex = 0;
+        socketIndex < lootItemTemplate.sockets.length;
+        socketIndex++
+    ) {
+        const socket = lootItemTemplate.sockets[socketIndex];
+        const compatibleMolecules = lootMoleculeConfig[socket.acceptType] || [];
 
-        if (compatibleMolecules.length === 0) continue
+        if (compatibleMolecules.length === 0) continue;
 
         // Try each compatible molecule
         for (const molecule of compatibleMolecules) {
             // Check if all atom sockets can be filled with available junk items
-            const selectedJunks: LootJunkItem[] = []
-            const weights: number[] = []
-            let canFillAllSockets = true
+            const selectedJunks: LootJunkItem[] = [];
+            const weights: number[] = [];
+            let canFillAllSockets = true;
 
             // Clone junkItemsByType to avoid modifying the original during evaluation
-            const availableJunksByType = { ...junkItemsByType }
+            const availableJunksByType = { ...junkItemsByType };
 
             // Make deep copies of the arrays
             Object.keys(availableJunksByType).forEach((key) => {
-                const atomType = key as LootAtomType
-                availableJunksByType[atomType] = [...(junkItemsByType[atomType] || [])]
-            })
+                const atomType = key as LootAtomType;
+                availableJunksByType[atomType] = [
+                    ...(junkItemsByType[atomType] || []),
+                ];
+            });
 
             // For each atom socket in the molecule, try to select a junk item
             for (const atomSocket of molecule.sockets) {
-                const availableJunksOfType = availableJunksByType[atomSocket.acceptType] || []
+                const availableJunksOfType =
+                    availableJunksByType[atomSocket.acceptType] || [];
 
                 if (availableJunksOfType.length === 0) {
-                    canFillAllSockets = false
-                    break
+                    canFillAllSockets = false;
+                    break;
                 }
 
                 // Select the junk with lowest degradation for better quality
-                availableJunksOfType.sort((a, b) => a.degradation - b.degradation)
-                const selectedJunk = availableJunksOfType.shift() // Take and remove the best one
+                availableJunksOfType.sort(
+                    (a, b) => a.degradation - b.degradation
+                );
+                const selectedJunk = availableJunksOfType.shift(); // Take and remove the best one
 
                 if (selectedJunk) {
-                    selectedJunks.push(selectedJunk)
-                    weights.push(atomSocket.relativeWeight || 1)
+                    selectedJunks.push(selectedJunk);
+                    weights.push(atomSocket.relativeWeight || 1);
                 } else {
-                    canFillAllSockets = false
-                    break
+                    canFillAllSockets = false;
+                    break;
                 }
             }
 
             if (canFillAllSockets) {
                 // Calculate a quality score for this molecule selection
-                const totalWeight = weights.reduce((sum, w) => sum + w, 0)
+                const totalWeight = weights.reduce((sum, w) => sum + w, 0);
                 const qualityScore = selectedJunks.reduce(
-                    (score, junk, i) => score + (100 - junk.degradation) * (weights[i] / totalWeight),
+                    (score, junk, i) =>
+                        score +
+                        (100 - junk.degradation) * (weights[i] / totalWeight),
                     0
-                )
+                );
 
                 moleculeSelections.push({
                     socketIndex,
@@ -1081,7 +1182,7 @@ export function craftLootItem(params: {
                     junkItems: selectedJunks,
                     weights,
                     qualityScore,
-                })
+                });
             }
         }
     }
@@ -1092,84 +1193,99 @@ export function craftLootItem(params: {
         const bestJunks = Object.values(junkItemsByType)
             .flat()
             .sort((a, b) => a.degradation - b.degradation)
-            .slice(0, Math.min(5, availableJunkItems.length)) // Take up to 5 best junk items
+            .slice(0, Math.min(5, availableJunkItems.length)); // Take up to 5 best junk items
 
-        selectedJunkItems = bestJunks
-        socketWeights = bestJunks.map(() => 1) // Equal weight for all
+        selectedJunkItems = bestJunks;
+        socketWeights = bestJunks.map(() => 1); // Equal weight for all
     } else {
         // Sort molecule selections by quality score (descending)
-        moleculeSelections.sort((a, b) => b.qualityScore - a.qualityScore)
+        moleculeSelections.sort((a, b) => b.qualityScore - a.qualityScore);
 
         // Group the best molecules by socket
-        const bestMoleculesBySocket: Record<number, (typeof moleculeSelections)[0]> = {}
+        const bestMoleculesBySocket: Record<
+            number,
+            (typeof moleculeSelections)[0]
+        > = {};
 
         for (const selection of moleculeSelections) {
             if (
                 !bestMoleculesBySocket[selection.socketIndex] ||
-                selection.qualityScore > bestMoleculesBySocket[selection.socketIndex].qualityScore
+                selection.qualityScore >
+                    bestMoleculesBySocket[selection.socketIndex].qualityScore
             ) {
-                bestMoleculesBySocket[selection.socketIndex] = selection
+                bestMoleculesBySocket[selection.socketIndex] = selection;
             }
         }
 
         // Combine all selected junk items from the best molecule per socket
         Object.values(bestMoleculesBySocket).forEach((selection) => {
-            selectedJunkItems.push(...selection.junkItems)
-            socketWeights.push(...selection.weights)
-        })
+            selectedJunkItems.push(...selection.junkItems);
+            socketWeights.push(...selection.weights);
+        });
     }
 
     // Step 4: Calculate combined material composition
     const materialCompositions = selectedJunkItems.map((junkItem, index) => ({
         composition: junkItem.materialComposition,
         weight: socketWeights[index] || 1, // Default to 1 if no weight specified
-    }))
+    }));
 
-    const combinedMaterialComposition = combineMaterialCompositions(materialCompositions)
+    const combinedMaterialComposition =
+        combineMaterialCompositions(materialCompositions);
 
     // Step 5: Find the most compatible item from potential items
 
     // Track the molecules we've selected (if any)
-    const selectedMolecules = new Set<string>()
+    const selectedMolecules = new Set<string>();
     if (moleculeSelections.length > 0) {
         Object.values(moleculeSelections).forEach((selection) => {
-            selectedMolecules.add(selection.molecule.id)
-        })
+            selectedMolecules.add(selection.molecule.id);
+        });
     }
 
     // Filter potential items that match the template
-    let potentialItems = Object.values(lootItems).filter((item) => item.templateId === lootItemTemplate.id)
+    let potentialItems = Object.values(lootItems).filter(
+        (item) => item.templateId === lootItemTemplate.id
+    );
 
     // If we found molecules, further refine by checking if any parts use our selected molecules
     if (selectedMolecules.size > 0) {
         potentialItems = potentialItems.filter((item) => {
             return item.subparts.some((partId) => {
-                const part = lootParts[partId]
-                if (!part) return false
-                return selectedMolecules.has(part.moleculeId)
-            })
-        })
+                const part = lootParts[partId];
+                if (!part) return false;
+                return selectedMolecules.has(part.moleculeId);
+            });
+        });
     }
 
     // If still no potential items, just use any item that matches the template
     if (potentialItems.length === 0) {
-        potentialItems = Object.values(lootItems).filter((item) => item.templateId === lootItemTemplate.id)
+        potentialItems = Object.values(lootItems).filter(
+            (item) => item.templateId === lootItemTemplate.id
+        );
     }
 
-    let bestMatch: LootItem
+    let bestMatch: LootItem;
 
     if (potentialItems.length === 0) {
-        throw new Error('No potential items found for crafting.')
+        throw new Error("No potential items found for crafting.");
     } else {
         // Find the item with the closest material composition
-        bestMatch = potentialItems[0]
-        let bestScore = calculateMaterialSimilarity(bestMatch.materialComposition, combinedMaterialComposition)
+        bestMatch = potentialItems[0];
+        let bestScore = calculateMaterialSimilarity(
+            bestMatch.materialComposition,
+            combinedMaterialComposition
+        );
 
         for (const item of potentialItems) {
-            const score = calculateMaterialSimilarity(item.materialComposition, combinedMaterialComposition)
+            const score = calculateMaterialSimilarity(
+                item.materialComposition,
+                combinedMaterialComposition
+            );
             if (score > bestScore) {
-                bestMatch = item
-                bestScore = score
+                bestMatch = item;
+                bestScore = score;
             }
         }
     }
@@ -1181,7 +1297,7 @@ export function craftLootItem(params: {
             failure: {
                 reason: CraftingFailureReason.TooLowTemperature,
             },
-        }
+        };
     }
 
     if (temperature > bestMatch.temperatureRange.max) {
@@ -1190,39 +1306,44 @@ export function craftLootItem(params: {
             failure: {
                 reason: CraftingFailureReason.TooHighTemperature,
             },
-        }
+        };
     }
 
     // Step 7: Calculate quality based on junk item degradation and temperature
     const avgDegradation =
-        selectedJunkItems.reduce((sum, junk, index) => sum + junk.degradation * (socketWeights[index] || 1), 0) /
-        socketWeights.reduce((sum, weight) => sum + (weight || 1), 0)
+        selectedJunkItems.reduce(
+            (sum, junk, index) =>
+                sum + junk.degradation * (socketWeights[index] || 1),
+            0
+        ) / socketWeights.reduce((sum, weight) => sum + (weight || 1), 0);
 
-    let quality = 100 - avgDegradation
+    let quality = 100 - avgDegradation;
 
     // Adjust quality based on temperature within optimal range
     const inMasterRange =
         temperature >= bestMatch.masterQualityTemperatureRange.min &&
-        temperature <= bestMatch.masterQualityTemperatureRange.max
+        temperature <= bestMatch.masterQualityTemperatureRange.max;
 
     if (inMasterRange) {
         // Boost quality if temperature is in master range
-        quality = Math.min(100, quality * 1.5)
+        quality = Math.min(100, quality * 1.5);
     } else {
         // Penalty based on how far from master temperature range
         const distanceToMasterRange = Math.min(
             Math.abs(temperature - bestMatch.masterQualityTemperatureRange.min),
             Math.abs(temperature - bestMatch.masterQualityTemperatureRange.max)
-        )
+        );
 
         const maxDistance = Math.max(
-            bestMatch.temperatureRange.max - bestMatch.masterQualityTemperatureRange.max,
-            bestMatch.masterQualityTemperatureRange.min - bestMatch.temperatureRange.min
-        )
+            bestMatch.temperatureRange.max -
+                bestMatch.masterQualityTemperatureRange.max,
+            bestMatch.masterQualityTemperatureRange.min -
+                bestMatch.temperatureRange.min
+        );
 
         // Quality penalty (up to 30%)
-        const penalty = (distanceToMasterRange / maxDistance) * 30
-        quality = Math.max(10, quality - penalty)
+        const penalty = (distanceToMasterRange / maxDistance) * 30;
+        quality = Math.max(10, quality - penalty);
     }
 
     // Step 8: Calculate final sell price
@@ -1232,58 +1353,74 @@ export function craftLootItem(params: {
         [Rarity.Rare]: 4,
         [Rarity.Epic]: 8,
         [Rarity.Legendary]: 16,
-    }
+    };
 
-    const rarityFactor = rarityMultipliers[bestMatch.rarity]
+    const rarityFactor = rarityMultipliers[bestMatch.rarity];
 
     // Calculate material value
-    const materialValue = combinedMaterialComposition.reduce((value, { materialId, percentage }) => {
-        const materialType = materialTypes.find((mt) => mt.id === materialId)
-        if (materialType) {
-            return value + materialType.basePrice * (percentage / 100)
-        }
-        return value
-    }, 0)
+    const materialValue = combinedMaterialComposition.reduce(
+        (value, { materialId, percentage }) => {
+            const materialType = materialTypes.find(
+                (mt) => mt.id === materialId
+            );
+            if (materialType) {
+                return value + materialType.basePrice * (percentage / 100);
+            }
+            return value;
+        },
+        0
+    );
 
     // Quality affects price (higher quality = higher price)
-    const qualityFactor = 0.5 + (quality / 100) * 1.5 // 0.5 to 2.0
+    const qualityFactor = 0.5 + (quality / 100) * 1.5; // 0.5 to 2.0
 
-    const sellPrice = Math.round(materialValue * rarityFactor * qualityFactor * 10)
+    const sellPrice = Math.round(
+        materialValue * rarityFactor * qualityFactor * 10
+    );
 
     return {
         success: true,
         item: bestMatch,
         quality,
         sellPrice,
-    }
+    };
 }
 
 // Helper function to calculate rarity based solely on material composition
-function calculateRarityFromMaterials(materialComposition: MaterialComposition[]): Rarity {
-    const materialRarityValue = calculateMaterialRarity(materialComposition)
-    return getValueRarity(materialRarityValue)
+function calculateRarityFromMaterials(
+    materialComposition: MaterialComposition[]
+): Rarity {
+    const materialRarityValue = calculateMaterialRarity(materialComposition);
+    return getValueRarity(materialRarityValue);
 }
 
 // Helper function to calculate similarity between material compositions
-function calculateMaterialSimilarity(composition1: MaterialComposition[], composition2: MaterialComposition[]): number {
-    let similarity = 0
+function calculateMaterialSimilarity(
+    composition1: MaterialComposition[],
+    composition2: MaterialComposition[]
+): number {
+    let similarity = 0;
 
     // Create maps of material percentages for easier comparison
-    const map1 = new Map(composition1.map((mc) => [mc.materialId, mc.percentage]))
-    const map2 = new Map(composition2.map((mc) => [mc.materialId, mc.percentage]))
+    const map1 = new Map(
+        composition1.map((mc) => [mc.materialId, mc.percentage])
+    );
+    const map2 = new Map(
+        composition2.map((mc) => [mc.materialId, mc.percentage])
+    );
 
     // Combine all material IDs
-    const allMaterials = new Set([...map1.keys(), ...map2.keys()])
+    const allMaterials = new Set([...map1.keys(), ...map2.keys()]);
 
     // For each material, calculate the similarity (100 - absolute difference)
     allMaterials.forEach((materialId) => {
-        const percentage1 = map1.get(materialId) || 0
-        const percentage2 = map2.get(materialId) || 0
+        const percentage1 = map1.get(materialId) || 0;
+        const percentage2 = map2.get(materialId) || 0;
 
-        const materialSimilarity = 100 - Math.abs(percentage1 - percentage2)
-        similarity += materialSimilarity
-    })
+        const materialSimilarity = 100 - Math.abs(percentage1 - percentage2);
+        similarity += materialSimilarity;
+    });
 
     // Normalize by the number of materials
-    return similarity / allMaterials.size
+    return similarity / allMaterials.size;
 }
