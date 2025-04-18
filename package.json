@@ -1,10 +1,39 @@
 {
-    "type": "module",
+    "name": "lootcycle",
+    "description": "This is a repo for a game made in less than 14 days for my favourite Gamedev.js (2025 Edition)",
+    "version": "0.0.1",
+    "author": "Possum Riot <hello@possumriot.com> (https://possumriot.com/)",
+    "license": "MIT",
+    "licenseUrl": "http://www.opensource.org/licenses/mit-license.php",
+    "keywords": [
+        "phaser",
+        "phaser3",
+        "react",
+        "vite",
+        "typescript"
+    ],
     "scripts": {
-        "logAll": "tsx ./craft/logAllObjects.ts",
-        "testCraft": "tsx ./craft/testCraft.ts"
+        "dev": "node log.js dev & vite --config vite/config.dev.mjs",
+        "build": "node log.js build & vite build --config vite/config.prod.mjs",
+        "dev-nolog": "vite --config vite/config.dev.mjs",
+        "build-nolog": "vite build --config vite/config.prod.mjs"
+    },
+    "dependencies": {
+        "phaser": "3.88.2",
+        "react": "18.2.0",
+        "react-dom": "18.2.0"
     },
     "devDependencies": {
-        "tsx": "^4.19.3"
+        "@types/react": "18.3.3",
+        "@types/react-dom": "18.3.0",
+        "@typescript-eslint/eslint-plugin": "7.13.1",
+        "@typescript-eslint/parser": "7.13.1",
+        "@vitejs/plugin-react": "4.3.1",
+        "eslint": "8.57.0",
+        "eslint-plugin-react-hooks": "4.6.2",
+        "eslint-plugin-react-refresh": "0.4.7",
+        "terser": "5.28.1",
+        "typescript": "5.2.2",
+        "vite": "5.3.1"
     }
 }
