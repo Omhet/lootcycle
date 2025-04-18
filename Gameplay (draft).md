@@ -95,4 +95,16 @@ Hybrid loot recipies (Hybrid loot templates)
 Loot Mixer
 
 -   It's a lottery machine that gets base templates and money as the input and returns a hybrid template as an output
--   It looks like a big barell with bumps on it's inner circle inside. There is a lid at the top and lit at the bottom. Is starts when money is paid and top lid opens up and base templates from the loot mixer set fall down inside, the top lids closes and the bottom one opens up and the barrel starts to rotate. Sometimes some of the items inside will drop to the bottom lid
+-   Loot mixer set is automatically filled by game from all player's aquired base templates and has a minimum of 2 and maximum of N items length. Player can change the set's contents to his liking before starting the mixer
+-   It looks like a big barell with bumps on it's inner circle inside. There is a lid at the top and lit at the bottom. Is starts when money is paid and top lid opens up and base templates from the loot mixer set fall down inside, the top lids closes and the bottom one opens up and the barrel starts to rotate. Sometimes some of the items inside will drop from the bottom lid into slots under the barrel. Thos slots when filled determine the hybrid template result of the mixer. The order is important and determines final result, e.g. Sword, Axe -> Swordaxe, Axe, Sword -> Axesword
+
+Game start
+
+-   Player start with Main Menu (there is a game logo, Play button, How to play button)
+-   After Play the first time the game starts from the start (after next times from the saved progress)
+-   The very first game will start with Shop screen where player is asked to buy a base template from the available ones. The player has initial money that is enough only for one of the 2 first templates (Sword or Axe) and not enough for anything else (although he can inspect what is available in the shop). After purchase he will be left with little amount of money and the first base template in Deck and nothing left for him to do but start a game Day
+-   On his very first day he will see an onboarding that will be implemented as a simple series of N modals where all the needed gameplay info is located. He cannot skip them and has to click through all and then proceed to gameplay. He can later look the onboarding modals in How to play button in Main Menu
+
+Progress save
+
+-   Players progress saved locally by days played. He will always start with the last day he played and didn't finish or the next day to the day he finished
