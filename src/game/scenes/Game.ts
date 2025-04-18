@@ -13,7 +13,6 @@ export class Game extends Scene {
 
     create() {
         this.camera = this.cameras.main;
-        this.camera.setBackgroundColor(0x00ff00);
 
         const centerX = this.cameras.main.width / 2;
         const centerY = this.cameras.main.height / 2;
@@ -23,22 +22,7 @@ export class Game extends Scene {
 
         // Add background to the container at its center (0, 0 relative to container)
         this.background = this.add.image(0, 0, "background");
-        this.background.setAlpha(0.5);
         this.container.add(this.background); // Add to container
-
-        // Add text to the container at its center (0, 0 relative to container)
-        this.gameText = this.add
-            .text(0, 0, "Game Scene", {
-                fontFamily: "Arial Black",
-                fontSize: 38,
-                color: "#ffffff",
-                stroke: "#000000",
-                strokeThickness: 8,
-                align: "center",
-            })
-            .setOrigin(0.5) // Center the text block itself
-            .setDepth(100);
-        this.container.add(this.gameText); // Add to container
 
         EventBus.emit("current-scene-ready", this);
     }

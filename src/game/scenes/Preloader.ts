@@ -14,10 +14,6 @@ export class Preloader extends Scene {
         // Create a container centered on the screen
         this.container = this.add.container(centerX, centerY);
 
-        // Add background to the container at its center (0, 0 relative to container)
-        const background = this.add.image(0, 0, "background");
-        this.container.add(background);
-
         // Progress bar elements relative to the container's center (0, 0)
         const barWidth = this.cameras.main.width * 0.8;
         const barHeight = 32;
@@ -47,8 +43,6 @@ export class Preloader extends Scene {
     preload() {
         //  Load the assets for the game
         this.load.setPath("assets");
-
-        this.load.image("logo", "logo.png");
     }
 
     create() {
