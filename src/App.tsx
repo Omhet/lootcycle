@@ -15,11 +15,6 @@ function App() {
     return (
         <div id="app">
             <PhaserGame ref={phaserRef} currentActiveScene={currentScene} />
-            <div>
-                <div>
-                    <button className="button">Change Scene</button>
-                </div>
-            </div>
         </div>
     );
 }

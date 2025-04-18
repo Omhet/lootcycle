@@ -1,24 +1,46 @@
 import { Scene } from "phaser";
 
 export class Preloader extends Scene {
+    container: Phaser.GameObjects.Container;
+
     constructor() {
         super("Preloader");
     }
 
     init() {
-        //  We loaded this image in our Boot Scene, so we can display it here
-        this.add.image(512, 384, "background");
+        const centerX = this.cameras.main.width / 2;
+        const centerY = this.cameras.main.height / 2;
 
-        //  A simple progress bar. This is the outline of the bar.
-        this.add.rectangle(512, 384, 468, 32).setStrokeStyle(1, 0xffffff);
+        // Create a container centered on the screen
+        this.container = this.add.container(centerX, centerY);
 
-        //  This is the progress bar itself. It will increase in size from the left based on the % of progress.
-        const bar = this.add.rectangle(512 - 230, 384, 4, 28, 0xffffff);
+        // Add background to the container at its center (0, 0 relative to container)
+        const background = this.add.image(0, 0, "background");
+        this.container.add(background);
 
-        //  Use the 'progress' event emitted by the LoaderPlugin to update the loading bar
+        // Progress bar elements relative to the container's center (0, 0)
+        const barWidth = this.cameras.main.width * 0.8;
+        const barHeight = 32;
+
+        // Outline rectangle centered at (0, 0) within the container
+        const progressBarOutline = this.add
+            .rectangle(0, 0, barWidth + 4, barHeight + 4)
+            .setStrokeStyle(1, 0xffffff);
+        this.container.add(progressBarOutline);
+
+        // Filling bar starting from the left edge relative to the container's center
+        const bar = this.add.rectangle(
+            -barWidth / 2, // Start from left edge relative to center
+            0, // Center vertically
+            4,
+            barHeight,
+            0xffffff
+        );
+        this.container.add(bar); // Add the bar itself to the container
+
+        // Update bar width based on progress
         this.load.on("progress", (progress: number) => {
-            //  Update the progress bar (our bar is 464px wide, so 100% = 464px)
-            bar.width = 4 + 460 * progress;
+            bar.width = 4 + barWidth * progress;
         });
     }
 
