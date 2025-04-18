@@ -32,12 +32,9 @@ body {
     transition: border color 0.3s;
 
     &:hover {
-        border: 1px solid #0ec3c9;
-        color: #0ec3c9;
-    }
-
-    &:active {
-        background-color: #0ec3c9;
+        background-color: #fff;
+        color: #000000;
+        border: 1px solid #000000;
     }
 
     /* Disabled styles */
