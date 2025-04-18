@@ -44,7 +44,7 @@ export class Preloader extends Scene {
         //  Load the assets for the game
         this.load.setPath("assets");
 
-        this.load.json("lootConfig", "assets/lootConfig.json");
+        this.load.json("lootConfig", "data/lootConfig.json?url");
     }
 
     create() {
