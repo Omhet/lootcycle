@@ -29,7 +29,7 @@ body {
     color: rgba(255, 255, 255, 0.87);
     border: 1px solid rgba(255, 255, 255, 0.87);
     cursor: pointer;
-    transition: all 0.3s;
+    transition: border color 0.3s;
 
     &:hover {
         border: 1px solid #0ec3c9;
@@ -74,8 +74,8 @@ body {
 /* Make buttons inside the UI interactive */
 #uiContainer button {
     pointer-events: auto; /* Make buttons clickable */
-    /* You can add specific button styling here or use the existing .button class */
-    padding: 10px 20px;
-    font-size: 1.2em;
-    cursor: pointer;
+    /* Use relative units for sizing and font */
+    width: 15vmin; /* Example: Width relative to the smaller viewport dimension */
+    padding: 1vmin 2vmin; /* Example: Padding relative to the smaller viewport dimension */
+    font-size: 2vmin; /* Example: Font size relative to the smaller viewport dimension */
 }
