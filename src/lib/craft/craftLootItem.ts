@@ -4,7 +4,7 @@ import {
     LootItem,
     LootItemTemplate,
     LootJunkItem,
-    LootPart, // Import LootPart if needed for type annotations
+    LootPart,
 } from "./craftModel.js";
 import {
     buildLootItemStructure,
@@ -55,7 +55,6 @@ export function craftLootItem(params: craftLootItemParams): CraftingResult {
             },
         };
     }
-    // setCraftingConfig(config); // Removed call
 
     const junkItemsWithValue = junkItems.map((junk) => ({
         ...junk,
@@ -63,15 +62,12 @@ export function craftLootItem(params: craftLootItemParams): CraftingResult {
     }));
 
     // --- Step 1 & 2: Determine Requirements & Select Junk ---
-    // Pass config explicitly if calculateRequiredMaterials needs it in the future
-    const requiredMaterials = calculateRequiredMaterials(
-        lootItemTemplate /*, config */
-    );
+    const requiredMaterials = calculateRequiredMaterials(lootItemTemplate);
     const selectedJunk = selectJunkItems(
         junkItemsWithValue,
         requiredMaterials,
         lootItemTemplate,
-        config // Pass config explicitly
+        config
     );
 
     if (!selectedJunk || selectedJunk.length === 0) {
@@ -101,12 +97,9 @@ export function craftLootItem(params: craftLootItemParams): CraftingResult {
     const potentialRarity = calculateAverageRarity(
         selectedJunk.map((j: LootJunkItem) => j.rarity)
     );
-    // Pass config explicitly if calculateTemperatureRanges needs it in the future
     const { regularRange, masterRange } = calculateTemperatureRanges(
         finalMaterialComposition,
-        potentialRarity,
-        lootItemTemplate
-        // config
+        potentialRarity
     );
 
     // --- Step 5: Check Temperature ---
@@ -154,7 +147,7 @@ export function craftLootItem(params: craftLootItemParams): CraftingResult {
         selectedJunk,
         finalMaterialComposition,
         potentialRarity,
-        config // Pass config explicitly
+        config
     );
 
     if (!structureResult || structureResult.parts.length === 0) {

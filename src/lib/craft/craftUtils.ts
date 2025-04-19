@@ -1,4 +1,3 @@
-import crypto from "crypto";
 import {
     initialMaterialTypes,
     LootAtom,
@@ -43,6 +42,17 @@ const materialTypeMap = new Map<string, MaterialType>(
 );
 
 // ======= HELPER FUNCTIONS =======
+
+// --- Simple Synchronous Hash Function (DJB2 variant) ---
+function simpleHash(str: string): string {
+    let hash = 5381;
+    for (let i = 0; i < str.length; i++) {
+        const char = str.charCodeAt(i);
+        hash = (hash << 5) + hash + char; /* hash * 33 + char */
+    }
+    // Convert to a positive hex string
+    return (hash >>> 0).toString(16);
+}
 
 // --- Value Calculation ---
 
@@ -336,8 +346,7 @@ function getWeightedAverageTemperature(composition: MaterialComposition[]): {
 
 export function calculateTemperatureRanges(
     finalComposition: MaterialComposition[],
-    potentialRarity: Rarity,
-    template: LootItemTemplate
+    potentialRarity: Rarity
 ): { regularRange: TemperatureRange; masterRange: TemperatureRange } {
     const { avgMin, avgMax } = getWeightedAverageTemperature(finalComposition);
     const baseWidth = Math.max(1, avgMax - avgMin);
@@ -421,40 +430,45 @@ export function calculateSellPrice(
 
 // --- Item Structure & ID Generation ---
 
+// Make generateItemId synchronous
 export function generateItemId(
     templateId: LootItemTemplateId,
     partIds: LootPartId[],
     materialComposition: MaterialComposition[]
 ): LootItemId {
-    const hash = crypto.createHash("sha256");
-    hash.update(templateId);
-    partIds.sort().forEach((id) => hash.update(id));
+    let hashInput = templateId;
+    partIds.sort().forEach((id) => (hashInput += id));
     materialComposition
         .slice()
         .sort((a, b) => a.materialId.localeCompare(b.materialId))
-        .forEach((mc) =>
-            hash.update(`${mc.materialId}:${mc.percentage.toFixed(2)}`)
+        .forEach(
+            (mc) =>
+                (hashInput += `${mc.materialId}:${mc.percentage.toFixed(2)}`)
         );
-    return `item-${hash.digest("hex").substring(0, 16)}`;
+    const fullHash = simpleHash(hashInput);
+    return `item-${fullHash.substring(0, 8)}`;
 }
 
+// Make generatePartId synchronous
 function generatePartId(
     moleculeId: LootMoleculeId,
     detailIds: LootDetailId[],
     materialComposition: MaterialComposition[]
 ): LootPartId {
-    const hash = crypto.createHash("sha256");
-    hash.update(moleculeId);
-    detailIds.sort().forEach((id) => hash.update(id));
+    let hashInput = moleculeId;
+    detailIds.sort().forEach((id) => (hashInput += id));
     materialComposition
         .slice()
         .sort((a, b) => a.materialId.localeCompare(b.materialId))
-        .forEach((mc) =>
-            hash.update(`${mc.materialId}:${mc.percentage.toFixed(2)}`)
+        .forEach(
+            (mc) =>
+                (hashInput += `${mc.materialId}:${mc.percentage.toFixed(2)}`)
         );
-    return `part-${hash.digest("hex").substring(0, 12)}`;
+    const fullHash = simpleHash(hashInput);
+    return `part-${fullHash.substring(0, 6)}`;
 }
 
+// Make buildLootItemStructure synchronous
 export function buildLootItemStructure(
     template: LootItemTemplate,
     selectedJunk: LootJunkItem[],
