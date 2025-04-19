@@ -101,6 +101,7 @@ export type PecipePartSocket = {
 export enum PecipePartType {
     BladeWeaponHilt = "hilt",
     ShortSwordBlade = "short_sword_blade",
+    LongBone = "long_bone",
 }
 
 export type PecipePart = {
@@ -120,6 +121,8 @@ export enum RecipeDetailType {
     Grip = "grip",
     Guard = "guard",
     ShortSwordBlade = "short_sword_blade",
+    Bone = "bone",
+    Gristle = "gristle",
 }
 
 export type RecipeDetailVariant = {

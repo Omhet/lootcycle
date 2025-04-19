@@ -12,6 +12,10 @@ import "./bladeWeapon/shortSword/basicShortSwordDetails";
 import "./bladeWeapon/shortSword/parts";
 import "./bladeWeapon/shortSword/recipe";
 
+// Other details
+import "./other/otherDetails";
+import "./other/otherParts";
+
 // Validate the configuration
 const validationIssues = validateLootConfig();
 if (validationIssues.length > 0) {
