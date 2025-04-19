@@ -16,7 +16,6 @@
     "scripts": {
         "dev": "node log.js dev & vite --config vite/config.dev.mjs",
         "build": "node log.js build & vite build --config vite/config.prod.mjs",
-        "generate:loot": "tsc -p tsconfig.node.json && node dist/scripts/scripts/generateLootConfig.js",
         "dev-nolog": "vite --config vite/config.dev.mjs",
         "build-nolog": "vite build --config vite/config.prod.mjs"
     },
@@ -36,7 +35,6 @@
         "eslint-plugin-react-hooks": "4.6.2",
         "eslint-plugin-react-refresh": "0.4.7",
         "terser": "5.28.1",
-        "ts-node": "^10.9.2",
         "typescript": "5.2.2",
         "vite": "5.3.1"
     }
