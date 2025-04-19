@@ -3,7 +3,6 @@ import { registerRecipePart } from "../../registry.js";
 
 // === Common Recipe Parts for all Short Swords ===
 
-// Register short sword blade part
 registerRecipePart(PecipePartType.ShortSwordBlade, {
     id: "short_sword_blade",
     type: PecipePartType.ShortSwordBlade,

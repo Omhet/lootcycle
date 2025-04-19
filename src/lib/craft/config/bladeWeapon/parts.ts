@@ -3,7 +3,6 @@ import { registerRecipePart } from "../registry.js";
 
 // === Common Recipe Parts for all Blade weapons ===
 
-// Register blade weapon hilt part
 registerRecipePart(PecipePartType.BladeWeaponHilt, {
     id: "blade_weapon_hilt",
     type: PecipePartType.BladeWeaponHilt,

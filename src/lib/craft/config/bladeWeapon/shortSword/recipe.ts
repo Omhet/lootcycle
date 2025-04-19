@@ -7,7 +7,6 @@ import {
 } from "../../../craftModel.js";
 import { registerRecipeItem } from "../../registry.js";
 
-// Register short sword recipe
 registerRecipeItem(RecipeItemType.BladeWeapon, {
     id: "short_sword",
     subCategory: ItemSubCategoryId.MeleeWeapon,
