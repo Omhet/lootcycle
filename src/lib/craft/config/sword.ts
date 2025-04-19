@@ -1,67 +1,60 @@
 import {
     ItemSubCategoryId,
-    LootAtom,
-    LootAtomType,
-    LootItemTemplate,
-    LootItemTemplateType,
-    LootMolecule,
-    LootMoleculeTag,
-    LootMoleculeType,
-    Rarity,
+    PecipePart,
+    PecipePartType,
+    RecipeDetailType,
+    RecipeDetailVariant,
+    RecipeItem,
+    RecipeItemType,
 } from "../craftModel.js";
 
-// === Atoms for Sword ===
+// === Recipe Details for Sword ===
 
-export const basicPommel: LootAtom = {
+export const basicPommel: RecipeDetailVariant = {
     id: "basic_pommel",
-    type: LootAtomType.Pommel,
+    detailId: "pommel_basic",
     name: "Basic Pommel",
-    rarity: Rarity.Common,
     assetPath: "atoms/pommel_basic.png",
 };
 
-export const basicGrip: LootAtom = {
+export const basicGrip: RecipeDetailVariant = {
     id: "basic_grip",
-    type: LootAtomType.Grip,
+    detailId: "grip_basic",
     name: "Basic Grip",
-    rarity: Rarity.Common,
     assetPath: "atoms/grip_basic.png",
 };
 
-export const basicGuard: LootAtom = {
+export const basicGuard: RecipeDetailVariant = {
     id: "basic_guard",
-    type: LootAtomType.Guard,
+    detailId: "guard_basic",
     name: "Basic Guard",
-    rarity: Rarity.Common,
     assetPath: "atoms/guard_basic.png",
 };
 
-export const basicBladeAtom: LootAtom = {
-    id: "basic_blade_atom",
-    type: LootAtomType.Blade,
+export const basicBladeDetail: RecipeDetailVariant = {
+    id: "basic_blade_detail",
+    detailId: "blade_basic",
     name: "Basic Blade Section",
-    rarity: Rarity.Common,
     assetPath: "atoms/blade_basic.png",
 };
 
-// Export all atoms defined in this file
-export const swordAtoms: LootAtom[] = [
+// Export all recipe detail variants defined in this file
+export const swordDetailVariants: RecipeDetailVariant[] = [
     basicPommel,
     basicGrip,
     basicGuard,
-    basicBladeAtom,
+    basicBladeDetail,
 ];
 
-// === Molecules for Sword ===
+// === Recipe Parts for Sword ===
 
-export const basicSwordHilt: LootMolecule = {
+export const basicSwordHilt: PecipePart = {
     id: "basic_sword_hilt",
-    type: LootMoleculeType.SwordHilt,
+    type: PecipePartType.Hilt,
     name: "Basic Sword Hilt",
-    tags: [LootMoleculeTag.Handheld],
     sockets: [
         {
-            acceptType: LootAtomType.Pommel,
+            acceptType: RecipeDetailType.Pommel,
             relativeWeight: 1,
             pinpoint: {
                 coords: { x: 0, y: 5 },
@@ -71,7 +64,7 @@ export const basicSwordHilt: LootMolecule = {
             },
         },
         {
-            acceptType: LootAtomType.Grip,
+            acceptType: RecipeDetailType.Grip,
             relativeWeight: 2,
             pinpoint: {
                 coords: { x: 0, y: 20 },
@@ -81,7 +74,7 @@ export const basicSwordHilt: LootMolecule = {
             },
         },
         {
-            acceptType: LootAtomType.Guard,
+            acceptType: RecipeDetailType.Guard,
             relativeWeight: 1.5,
             pinpoint: {
                 coords: { x: 0, y: 40 },
@@ -93,14 +86,13 @@ export const basicSwordHilt: LootMolecule = {
     ],
 };
 
-export const basicSwordBlade: LootMolecule = {
+export const basicSwordBlade: PecipePart = {
     id: "basic_sword_blade",
-    type: LootMoleculeType.SwordBlade,
+    type: PecipePartType.ShortSwordBlade,
     name: "Basic Sword Blade",
-    tags: [LootMoleculeTag.Sharp],
     sockets: [
         {
-            acceptType: LootAtomType.Blade,
+            acceptType: RecipeDetailType.ShortSwordBlade,
             relativeWeight: 5,
             pinpoint: {
                 coords: { x: 0, y: 100 },
@@ -112,20 +104,19 @@ export const basicSwordBlade: LootMolecule = {
     ],
 };
 
-// Export all molecules defined in this file
-export const swordMolecules: LootMolecule[] = [basicSwordHilt, basicSwordBlade];
+// Export all recipe parts defined in this file
+export const swordParts: PecipePart[] = [basicSwordHilt, basicSwordBlade];
 
-// === Template for Sword ===
+// === Recipe Item for Sword ===
 
-export const swordTemplate: LootItemTemplate = {
+export const swordRecipe: RecipeItem = {
     id: "basic_sword",
     subCategory: ItemSubCategoryId.MeleeWeapon,
-    type: LootItemTemplateType.Sword,
+    type: RecipeItemType.Blade,
     name: "Basic Sword",
     sockets: [
         {
-            acceptType: LootMoleculeType.SwordHilt,
-            acceptTags: [LootMoleculeTag.Handheld],
+            acceptType: PecipePartType.Hilt,
             relativeWeight: 3,
             pinpoint: {
                 coords: { x: 100, y: 300 },
@@ -135,8 +126,7 @@ export const swordTemplate: LootItemTemplate = {
             },
         },
         {
-            acceptType: LootMoleculeType.SwordBlade,
-            acceptTags: [LootMoleculeTag.Sharp],
+            acceptType: PecipePartType.ShortSwordBlade,
             relativeWeight: 5,
             pinpoint: {
                 coords: { x: 100, y: 250 },
@@ -146,7 +136,10 @@ export const swordTemplate: LootItemTemplate = {
             },
         },
     ],
+    baseSellPrice: 100,
+    perfectTemperature: 1000, // In Celsius
+    baseTemperatureOffset: 200, // In Celsius
 };
 
-// Export all templates defined in this file
-export const swordTemplates: LootItemTemplate[] = [swordTemplate];
+// Export all recipe items defined in this file
+export const swordRecipes: RecipeItem[] = [swordRecipe];
