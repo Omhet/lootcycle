@@ -1,8 +1,10 @@
-import { PecipePart, PecipePartType, RecipeDetailType } from "../../craftModel";
+import { PecipePartType, RecipeDetailType } from "../../craftModel.js";
+import { registerRecipePart } from "../registry.js";
 
 // === Common Recipe Parts for all Blade weapons ===
 
-export const bladeWeaponHilt: PecipePart = {
+// Register blade weapon hilt part
+registerRecipePart(PecipePartType.BladeWeaponHilt, {
     id: "blade_weapon_hilt",
     type: PecipePartType.BladeWeaponHilt,
     name: "Blade Hilt",
@@ -35,4 +37,4 @@ export const bladeWeaponHilt: PecipePart = {
             },
         },
     ],
-};
+});

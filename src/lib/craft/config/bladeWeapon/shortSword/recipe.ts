@@ -3,11 +3,12 @@
 import {
     ItemSubCategoryId,
     PecipePartType,
-    RecipeItem,
     RecipeItemType,
-} from "../../../craftModel";
+} from "../../../craftModel.js";
+import { registerRecipeItem } from "../../registry.js";
 
-export const shortSwordRecipe: RecipeItem = {
+// Register short sword recipe
+registerRecipeItem(RecipeItemType.BladeWeapon, {
     id: "short_sword",
     subCategory: ItemSubCategoryId.MeleeWeapon,
     type: RecipeItemType.BladeWeapon,
@@ -37,4 +38,4 @@ export const shortSwordRecipe: RecipeItem = {
     baseSellPrice: 10,
     perfectTemperature: 500,
     baseTemperatureOffset: 200,
-};
+});

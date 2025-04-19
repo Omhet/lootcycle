@@ -1,32 +1,22 @@
-import {
-    LootConfig,
-    PecipePartType,
-    RecipeDetailType,
-    RecipeItemType,
-} from "../craftModel.js";
-import { bladeWeaponHilt } from "./bladeWeapon/parts.js";
-import {
-    wodenShortSwordPommel,
-    woodenShortSwordBlade,
-    woodenShortSwordGrip,
-    woodenShortSwordGuard,
-} from "./bladeWeapon/shortSword/basicShortSwordDetails.js";
-import { shortSwordBlade } from "./bladeWeapon/shortSword/parts.js";
-import { shortSwordRecipe } from "./bladeWeapon/shortSword/recipe.js";
+import { LootConfig } from "../craftModel.js";
+import { generateLootConfig, validateLootConfig } from "./registry.js";
 
-// Assemble the final LootConfig object
-export const lootConfig: LootConfig = {
-    recipeItems: {
-        [RecipeItemType.BladeWeapon]: [shortSwordRecipe],
-    },
-    recipeParts: {
-        [PecipePartType.BladeWeaponHilt]: [bladeWeaponHilt],
-        [PecipePartType.ShortSwordBlade]: [shortSwordBlade],
-    },
-    recipeDetailVariants: {
-        [RecipeDetailType.Pommel]: [wodenShortSwordPommel],
-        [RecipeDetailType.Grip]: [woodenShortSwordGrip],
-        [RecipeDetailType.Guard]: [woodenShortSwordGuard],
-        [RecipeDetailType.ShortSwordBlade]: [woodenShortSwordBlade],
-    },
-};
+// Import all configuration files to register their items
+// The order doesn't matter as each file self-registers its items
+
+// Common parts
+import "./bladeWeapon/parts.js";
+
+// Short sword specific configurations
+import "./bladeWeapon/shortSword/basicShortSwordDetails.js";
+import "./bladeWeapon/shortSword/parts.js";
+import "./bladeWeapon/shortSword/recipe.js";
+
+// Validate the configuration
+const validationIssues = validateLootConfig();
+if (validationIssues.length > 0) {
+    console.warn("Loot configuration validation issues:", validationIssues);
+}
+
+// Export the dynamically generated configuration
+export const lootConfig: LootConfig = generateLootConfig();
