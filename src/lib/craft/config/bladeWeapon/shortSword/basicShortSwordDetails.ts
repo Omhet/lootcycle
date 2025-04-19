@@ -12,6 +12,17 @@ export const wodenShortSwordPommel: RecipeDetailVariant = {
     assetPath: "details/shortSword/pommel_wooden.png",
     type: RecipeDetailType.Pommel,
     rarity: Rarity.Common,
+    sellPriceCoefficient: 0.5,
+    temperatureCoefficient: 0.5,
+    durabilityCoefficient: 0.5,
+};
+
+export const ironShortSwordPommel: RecipeDetailVariant = {
+    id: "iron_short_sword_pommel",
+    name: "Iron Pommel",
+    assetPath: "details/shortSword/pommel_iron.png",
+    type: RecipeDetailType.Pommel,
+    rarity: Rarity.Common,
     sellPriceCoefficient: 1,
     temperatureCoefficient: 1,
     durabilityCoefficient: 1,
@@ -24,8 +35,8 @@ export const woodenShortSwordGrip: RecipeDetailVariant = {
     type: RecipeDetailType.Grip,
     rarity: Rarity.Common,
     sellPriceCoefficient: 1,
-    temperatureCoefficient: 1,
-    durabilityCoefficient: 1,
+    temperatureCoefficient: 0.5,
+    durabilityCoefficient: 0.5,
 };
 
 export const woodenShortSwordGuard: RecipeDetailVariant = {
@@ -34,15 +45,26 @@ export const woodenShortSwordGuard: RecipeDetailVariant = {
     assetPath: "details/shortSword/guard_wooden.png",
     type: RecipeDetailType.Guard,
     rarity: Rarity.Common,
+    sellPriceCoefficient: 0.5,
+    temperatureCoefficient: 0.5,
+    durabilityCoefficient: 0.5,
+};
+
+export const ironShortSwordGuard: RecipeDetailVariant = {
+    id: "iron_short_sword_guard",
+    name: "Iron Guard",
+    assetPath: "details/shortSword/guard_iron.png",
+    type: RecipeDetailType.Guard,
+    rarity: Rarity.Common,
     sellPriceCoefficient: 1,
     temperatureCoefficient: 1,
     durabilityCoefficient: 1,
 };
 
-export const woodenShortSwordBladeDetail: RecipeDetailVariant = {
-    id: "wooden_short_sword_blade_detail",
-    name: "Wooden Blade Section",
-    assetPath: "details/shortSword/blade_wooden.png",
+export const ironShortSwordBlade: RecipeDetailVariant = {
+    id: "iron_short_sword_blade_detail",
+    name: "Iron Short Sword Blade",
+    assetPath: "details/shortSword/blade_iron.png",
     type: RecipeDetailType.ShortSwordBlade,
     rarity: Rarity.Common,
     sellPriceCoefficient: 1,
@@ -50,9 +72,20 @@ export const woodenShortSwordBladeDetail: RecipeDetailVariant = {
     durabilityCoefficient: 1,
 };
 
+export const woodenShortSwordBlade: RecipeDetailVariant = {
+    id: "wooden_short_sword_blade",
+    name: "Wooden Short Sword Blade",
+    assetPath: "details/shortSword/blade_wooden.png",
+    type: RecipeDetailType.ShortSwordBlade,
+    rarity: Rarity.Common,
+    sellPriceCoefficient: 0.5,
+    temperatureCoefficient: 0.5,
+    durabilityCoefficient: 0.5,
+};
+
 export const woodenShortSwordDetailVariants: RecipeDetailVariant[] = [
     wodenShortSwordPommel,
     woodenShortSwordGrip,
     woodenShortSwordGuard,
-    woodenShortSwordBladeDetail,
+    woodenShortSwordBlade,
 ];
