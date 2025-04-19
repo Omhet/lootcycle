@@ -42,11 +42,6 @@ const materialTypeMap = new Map<string, MaterialType>(
     initialMaterialTypes.map((mt) => [mt.id, mt])
 );
 
-let config: LootConfig | null = null;
-export function setCraftingConfig(newConfig: LootConfig) {
-    config = newConfig;
-}
-
 // ======= HELPER FUNCTIONS =======
 
 // --- Value Calculation ---
@@ -102,17 +97,18 @@ export function calculateRequiredMaterials(
 export function selectJunkItems(
     junkItemsWithValue: (LootJunkItem & { value: number })[],
     requiredMaterials: Map<MaterialTypeId, number>,
-    template: LootItemTemplate
+    template: LootItemTemplate,
+    config: LootConfig
 ): LootJunkItem[] | null {
     if (!config) {
-        console.error("Crafting config not set!");
+        console.error("Crafting config not provided to selectJunkItems!");
         return null;
     }
     const fittingJunk = junkItemsWithValue.filter((junk) => {
         let junkAtomType: LootAtomType | undefined = undefined;
-        for (const type in config!.lootAtoms) {
+        for (const type in config.lootAtoms) {
             if (
-                config!.lootAtoms[type as LootAtomType].some(
+                config.lootAtoms[type as LootAtomType].some(
                     (atom: LootAtom) => atom.id === junk.atomId
                 )
             ) {
@@ -123,7 +119,7 @@ export function selectJunkItems(
         if (!junkAtomType) return false;
 
         return template.sockets.some((molSocket: LootMoleculeSocket) => {
-            const molecules = config!.lootMolecules[molSocket.acceptType] || [];
+            const molecules = config.lootMolecules[molSocket.acceptType] || [];
             return molecules.some((mol: LootMolecule) =>
                 mol.sockets.some(
                     (atomSocket: LootAtomSocket) =>
@@ -463,10 +459,13 @@ export function buildLootItemStructure(
     template: LootItemTemplate,
     selectedJunk: LootJunkItem[],
     finalItemComposition: MaterialComposition[],
-    finalItemRarity: Rarity
+    finalItemRarity: Rarity,
+    config: LootConfig
 ): { parts: LootPart[]; details: LootDetail[] } | null {
     if (!config) {
-        console.error("Crafting config not set!");
+        console.error(
+            "Crafting config not provided to buildLootItemStructure!"
+        );
         return null;
     }
     const generatedParts: LootPart[] = [];
