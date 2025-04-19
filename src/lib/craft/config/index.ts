@@ -1,16 +1,16 @@
-import { LootConfig } from "../craftModel.js";
-import { generateLootConfig, validateLootConfig } from "./registry.js";
+import { LootConfig } from "../craftModel";
+import { generateLootConfig, validateLootConfig } from "./registry";
 
 // Import all configuration files to register their items
 // The order doesn't matter as each file self-registers its items
 
 // Common parts
-import "./bladeWeapon/parts.js";
+import "./bladeWeapon/parts";
 
 // Short sword specific configurations
-import "./bladeWeapon/shortSword/basicShortSwordDetails.js";
-import "./bladeWeapon/shortSword/parts.js";
-import "./bladeWeapon/shortSword/recipe.js";
+import "./bladeWeapon/shortSword/basicShortSwordDetails";
+import "./bladeWeapon/shortSword/parts";
+import "./bladeWeapon/shortSword/recipe";
 
 // Validate the configuration
 const validationIssues = validateLootConfig();
