@@ -255,10 +255,6 @@ export interface LootConfig {
     // Add other config sections as needed (e.g., materials, categories)
 }
 
-// NOTE: The actual configuration data (like swordTemplate, basicPommel, etc.)
-// has been moved to the `craft/config/` directory and is assembled in `craft/config/index.ts`.
-// The `lootConfig` object should be imported from there when needed.
-
 // ======= LOOT OBJECTS TYPES =======
 
 export type LootItemId = string;

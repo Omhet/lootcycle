@@ -37,7 +37,7 @@ export const basicGuard: LootAtom = {
 };
 
 export const basicBladeAtom: LootAtom = {
-    id: "basic_blade_atom", // Note: This ID represents the *atom* part of the blade
+    id: "basic_blade_atom",
     type: LootAtomType.Blade,
     name: "Basic Blade Section",
     rarity: Rarity.Common,

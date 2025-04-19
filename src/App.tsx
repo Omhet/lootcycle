@@ -33,14 +33,13 @@ function App() {
     return (
         <div id="app">
             <PhaserGame ref={phaserRef} currentActiveScene={currentScene} />
-            {/* UI Container - Styles moved to style.css */}
+            {/* UI Container */}
             <div id="uiContainer">
                 {/* Main Menu Container - Visible only when in MainMenu scene */}
                 {currentSceneKey === "MainMenu" && (
                     <div id="mainMenuContainer">
                         {/* Can add title or other elements here */}
                         <div id="menuButtonsContainer">
-                            {/* Apply button class if desired, or rely on #uiContainer button styles */}
                             <button
                                 className="button"
                                 onClick={handlePlayClick}
