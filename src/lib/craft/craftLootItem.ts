@@ -1,6 +1,7 @@
 import {
     CraftingFailureReason,
     LootConfig,
+    LootDetail,
     LootItem,
     LootItemTemplate,
     LootJunkItem,
@@ -24,7 +25,8 @@ import {
 export interface CraftingResult {
     success: boolean;
     item?: LootItem;
-    parts?: LootPart[]; // Add parts here
+    parts?: LootPart[];
+    details?: LootDetail[]; // Add details here
     failure?: {
         reason: CraftingFailureReason;
         message?: string;
@@ -161,7 +163,7 @@ export function craftLootItem(params: craftLootItemParams): CraftingResult {
             failure: { reason: CraftingFailureReason.NotEnoughJunk, message },
         };
     }
-    const { parts } = structureResult;
+    const { parts, details } = structureResult; // Destructure details as well
 
     // --- Step 8: Calculate Sell Price ---
     const sellPrice = calculateSellPrice(
@@ -206,5 +208,6 @@ export function craftLootItem(params: craftLootItemParams): CraftingResult {
         success: true,
         item: craftedItem,
         parts: parts,
+        details: details,
     };
 }

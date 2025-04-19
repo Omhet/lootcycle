@@ -9,10 +9,11 @@ import {
     craftLootItemParams,
 } from "../../lib/craft/craftLootItem.js";
 import {
-    LootAtomId,
+    LootAtomId, // Import LootMoleculeType
+    LootAtomType,
     LootItemTemplateType,
     LootJunkItem,
-    LootMoleculeType, // Import LootMoleculeType
+    LootMoleculeType, // Import LootAtomType
     MaterialId,
     Rarity,
 } from "../../lib/craft/craftModel.js";
@@ -111,8 +112,14 @@ export class Game extends Scene {
             const result: CraftingResult = craftLootItem(params);
 
             // 6. Log the result
-            if (result.success && result.item && result.parts) {
+            if (
+                result.success &&
+                result.item &&
+                result.parts &&
+                result.details
+            ) {
                 console.log("Crafting Successful!", result.item);
+
                 console.log("--- Item Parts (Molecules) ---");
                 result.parts.forEach((part) => {
                     // Find the molecule definition in the config to get its type
@@ -132,6 +139,26 @@ export class Game extends Scene {
                     );
                 });
                 console.log("-----------------------------");
+
+                console.log("--- Item Details (Atoms) ---");
+                result.details.forEach((detail) => {
+                    // Find the atom definition in the config to get its type
+                    let atomType: LootAtomType | string = "Unknown";
+                    for (const type in lootConfig.lootAtoms) {
+                        if (
+                            lootConfig.lootAtoms[type as LootAtomType]?.some(
+                                (atom) => atom.id === detail.atomId
+                            )
+                        ) {
+                            atomType = type;
+                            break;
+                        }
+                    }
+                    console.log(
+                        `- Atom ID: ${detail.atomId}, Type: ${atomType}, Material: ${detail.material}`
+                    );
+                });
+                console.log("---------------------------");
             } else {
                 console.error("Crafting Failed:", result.failure);
             }
