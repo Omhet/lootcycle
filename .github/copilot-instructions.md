@@ -39,7 +39,6 @@
     3. Do you approve this plan? I'll proceed with Edit [number] after your confirmation.
     4. WAIT for explicit user confirmation before making ANY edits when user ok edit [number]
 
-
 ### EXECUTION PHASE
 
     - After each individual edit, clearly indicate progress:
@@ -47,7 +46,6 @@
     - If you discover additional needed changes during editing:
     - STOP and update the plan
     - Get approval before continuing
-
 
 ### REFACTORING GUIDANCE
 
@@ -57,14 +55,17 @@
     - Consider temporary duplication as a valid interim step
     - Always indicate the refactoring pattern being applied
 
-
 ### RATE LIMIT AVOIDANCE
 
     - For very large files, suggest splitting changes across multiple sessions
     - Prioritize changes that are logically complete units
     - Always provide clear stopping points
 
-
 ## General Requirements
 
-    Use modern technologies as described below for all code suggestions. Prioritize clean, maintainable code with appropriate comments.
+    Use modern technologies as described below for all code suggestions. Prioritize clean, maintainable code with appropriate comments. Do not write any redundant comments that just depicts that you did some changes (e.g. // Moved this to index.ts file OR // Added typeId)
+
+### Phaser
+
+    - Use the latest Phaser 3.87.0 version. Conuslt API docs if unsure https://docs.phaser.io/api-documentation/api-documentation
+    -
