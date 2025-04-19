@@ -289,7 +289,7 @@ export type LootPart = {
 export type LootDetail = {
     id: LootDetailId;
     atomId: LootAtomId;
-    materialComposition: MaterialComposition[];
+    material: MaterialId;
     rarity: Rarity;
 };
 

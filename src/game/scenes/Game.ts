@@ -55,56 +55,43 @@ export class Game extends Scene {
             const sampleJunk: LootJunkItem[] = [
                 {
                     id: "junk_1",
-                    atomId: "basic_pommel" as LootAtomId, // Use an existing atom ID from config
-                    materialComposition: [
-                        { materialId: "copper" as MaterialId, percentage: 80 },
-                        { materialId: "iron" as MaterialId, percentage: 20 },
-                    ],
+                    atomId: "basic_pommel" as LootAtomId,
+                    material: "copper" as MaterialId,
                     rarity: Rarity.Common,
                     degradation: 30,
-                    durability: 50, // Example value
+                    durability: 50,
                 },
                 {
                     id: "junk_2",
-                    atomId: "basic_grip" as LootAtomId, // Use an existing atom ID
-                    materialComposition: [
-                        { materialId: "pine" as MaterialId, percentage: 100 },
-                    ],
+                    atomId: "basic_grip" as LootAtomId,
+                    material: "pine" as MaterialId,
                     rarity: Rarity.Uncommon,
                     degradation: 10,
-                    durability: 70, // Example value
+                    durability: 70,
                 },
                 {
                     id: "junk_3",
-                    atomId: "basic_guard" as LootAtomId, // Use an existing atom ID
-                    materialComposition: [
-                        { materialId: "iron" as MaterialId, percentage: 100 },
-                    ],
+                    atomId: "basic_guard" as LootAtomId,
+                    material: "iron" as MaterialId,
                     rarity: Rarity.Common,
                     degradation: 50,
-                    durability: 60, // Example value
+                    durability: 60,
                 },
                 {
                     id: "junk_4",
-                    atomId: "basic_blade_atom" as LootAtomId, // Use an existing atom ID
-                    materialComposition: [
-                        { materialId: "iron" as MaterialId, percentage: 70 },
-                        { materialId: "silver" as MaterialId, percentage: 30 },
-                    ],
+                    atomId: "basic_blade_atom" as LootAtomId,
+                    material: "iron" as MaterialId,
                     rarity: Rarity.Rare,
                     degradation: 5,
-                    durability: 85, // Example value
+                    durability: 85,
                 },
                 {
                     id: "junk_5",
-                    atomId: "basic_blade_atom" as LootAtomId, // Use an existing atom ID
-                    materialComposition: [
-                        { materialId: "iron" as MaterialId, percentage: 90 },
-                        { materialId: "copper" as MaterialId, percentage: 10 },
-                    ],
+                    atomId: "basic_blade_atom" as LootAtomId,
+                    material: "iron" as MaterialId,
                     rarity: Rarity.Uncommon,
                     degradation: 25,
-                    durability: 75, // Example value
+                    durability: 75,
                 },
             ];
 

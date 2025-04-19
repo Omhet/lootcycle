@@ -59,19 +59,32 @@ function simpleHash(str: string): string {
 function getMaterialCompositionBaseValue(
     composition: MaterialComposition[]
 ): number {
-    return (
-        composition.reduce((sum, mc) => {
-            const materialType = materialTypeMap.get(mc.materialId);
-            const pricePerPercent = materialType?.basePrice ?? 0;
-            return sum + pricePerPercent * mc.percentage;
-        }, 0) / 100
-    );
+    let totalValue = 0;
+    let totalPercentage = 0;
+
+    composition.forEach((mc) => {
+        const materialType = materialTypeMap.get(mc.materialId);
+        if (materialType && mc.percentage > 0) {
+            totalValue += materialType.basePrice * (mc.percentage / 100); // Value contribution based on percentage
+            totalPercentage += mc.percentage;
+        }
+    });
+
+    // Adjust if total percentage isn't exactly 100 (due to filtering or rounding)
+    if (totalPercentage > 0 && totalPercentage !== 100) {
+        totalValue = (totalValue / totalPercentage) * 100;
+    }
+
+    // The base value represents the value as if it were 100% of this composition
+    // The actual sell price calculation will scale this by rarity/quality etc.
+    // We multiply by 100 because basePrice is defined per 1% in the model.
+    return totalValue * 100;
 }
 
 export function calculateJunkValue(junkItem: LootJunkItem): number {
-    const baseValue = getMaterialCompositionBaseValue(
-        junkItem.materialComposition
-    );
+    const materialType = materialTypeMap.get(junkItem.material);
+    const baseValue = materialType?.basePrice ?? 0;
+
     const rarityMultiplier = RarityMultipliers[junkItem.rarity];
     const degradationFactor = junkItem.degradation / 100;
     return baseValue * rarityMultiplier * (1 - degradationFactor);
@@ -219,63 +232,45 @@ export function selectJunkItems(
 export function combineMaterials(
     selectedJunk: (LootJunkItem & { value?: number })[]
 ): MaterialComposition[] {
-    const combined = new Map<
-        MaterialId,
-        { totalPercentage: number; totalValueWeight: number }
-    >();
+    const combined = new Map<MaterialId, { totalValueWeight: number }>();
     let totalValue = 0;
 
     selectedJunk.forEach((junk) => {
         const value = Math.max(0.001, junk.value ?? calculateJunkValue(junk));
         totalValue += value;
-        junk.materialComposition.forEach((mc) => {
-            const existing = combined.get(mc.materialId) || {
-                totalPercentage: 0,
-                totalValueWeight: 0,
-            };
-            existing.totalPercentage += mc.percentage * value;
-            existing.totalValueWeight += value;
-            combined.set(mc.materialId, existing);
-        });
+
+        const materialId = junk.material;
+        const existing = combined.get(materialId) || { totalValueWeight: 0 };
+        existing.totalValueWeight += value;
+        combined.set(materialId, existing);
     });
 
     if (totalValue <= 0.001 * selectedJunk.length) {
         console.warn(
             "Total value of selected junk is near zero, averaging materials equally."
         );
-        const combinedEqualWeight = new Map<
-            MaterialId,
-            { totalPercentage: number; count: number }
-        >();
-        let itemCount = 0;
+        const materialCounts = new Map<MaterialId, number>();
         selectedJunk.forEach((junk) => {
-            itemCount++;
-            junk.materialComposition.forEach((mc) => {
-                const existing = combinedEqualWeight.get(mc.materialId) || {
-                    totalPercentage: 0,
-                    count: 0,
-                };
-                existing.totalPercentage += mc.percentage;
-                existing.count += 1;
-                combinedEqualWeight.set(mc.materialId, existing);
+            materialCounts.set(
+                junk.material,
+                (materialCounts.get(junk.material) || 0) + 1
+            );
+        });
+
+        if (materialCounts.size === 0) return [];
+
+        const percentagePerMaterial = 100 / materialCounts.size;
+        const finalComposition: MaterialComposition[] = [];
+        materialCounts.forEach((_, materialId) => {
+            finalComposition.push({
+                materialId,
+                percentage: percentagePerMaterial,
             });
         });
-
-        if (itemCount === 0) return [];
-
-        const finalComposition: MaterialComposition[] = [];
-        let totalFinalPercentage = 0;
-        combinedEqualWeight.forEach((data, materialId) => {
-            const avgPercentage =
-                data.count > 0 ? data.totalPercentage / data.count : 0;
-            if (avgPercentage > 0) {
-                finalComposition.push({
-                    materialId,
-                    percentage: avgPercentage,
-                });
-                totalFinalPercentage += avgPercentage;
-            }
-        });
+        const totalFinalPercentage = finalComposition.reduce(
+            (sum, mc) => sum + mc.percentage,
+            0
+        );
         return finalComposition
             .map((mc) => ({
                 ...mc,
@@ -291,19 +286,17 @@ export function combineMaterials(
     }
 
     const finalComposition: MaterialComposition[] = [];
-    let totalFinalPercentage = 0;
-
     combined.forEach((data, materialId) => {
-        const avgPercentage =
-            data.totalValueWeight > 0
-                ? data.totalPercentage / data.totalValueWeight
-                : 0;
-        if (avgPercentage > 0) {
-            finalComposition.push({ materialId, percentage: avgPercentage });
-            totalFinalPercentage += avgPercentage;
+        const percentage = (data.totalValueWeight / totalValue) * 100;
+        if (percentage > 0.1) {
+            finalComposition.push({ materialId, percentage });
         }
     });
 
+    const totalFinalPercentage = finalComposition.reduce(
+        (sum, mc) => sum + mc.percentage,
+        0
+    );
     return finalComposition
         .map((mc) => ({
             ...mc,
@@ -425,7 +418,7 @@ export function calculateSellPrice(
     const qualityMultiplier = QualitySellPriceMultiplier(quality);
 
     const price = baseMaterialValue * rarityMultiplier * qualityMultiplier;
-    return Math.max(0, Math.round(price * 100) / 100);
+    return Math.max(0, Math.round(price * 100) / 100); // Keep rounding
 }
 
 // --- Item Structure & ID Generation ---
@@ -492,7 +485,7 @@ export function buildLootItemStructure(
             const detail: LootDetail = {
                 id: junk.atomId,
                 atomId: junk.atomId,
-                materialComposition: junk.materialComposition,
+                material: junk.material,
                 rarity: junk.rarity,
             };
             detailIdMap.set(detail.id, detail);
