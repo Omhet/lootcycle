@@ -8,9 +8,9 @@ import {
 
 // === Bad Variants ===
 
-export const wodenShortSwordPommel: RecipeDetailVariant = {
-    id: "wooden_short_sword_pommel",
-    name: "Wooden Pommel",
+export const wodenBasicShortSwordPommel: RecipeDetailVariant = {
+    id: "wooden_basic_short_sword_pommel",
+    name: "Wooden Basic Short Sword Pommel",
     assetPath: "details/shortSword/pommel_wooden.png",
     type: RecipeDetailType.Pommel,
     rarity: Rarity.Common,
@@ -19,9 +19,9 @@ export const wodenShortSwordPommel: RecipeDetailVariant = {
     durabilityCoefficient: 0.5,
 };
 
-export const woodenShortSwordGuard: RecipeDetailVariant = {
-    id: "wooden_short_sword_guard",
-    name: "Wooden Guard",
+export const woodenBasicShortSwordGuard: RecipeDetailVariant = {
+    id: "wooden_basic_short_sword_guard",
+    name: "Wooden Basic Short Sword Guard",
     assetPath: "details/shortSword/guard_wooden.png",
     type: RecipeDetailType.Guard,
     rarity: Rarity.Common,
@@ -30,9 +30,9 @@ export const woodenShortSwordGuard: RecipeDetailVariant = {
     durabilityCoefficient: 0.5,
 };
 
-export const woodenShortSwordBlade: RecipeDetailVariant = {
-    id: "wooden_short_sword_blade",
-    name: "Wooden Short Sword Blade",
+export const woodenBasicShortSwordBlade: RecipeDetailVariant = {
+    id: "wooden_basic_short_sword_blade",
+    name: "Wooden Basic Short Sword Blade",
     assetPath: "details/shortSword/blade_wooden.png",
     type: RecipeDetailType.ShortSwordBlade,
     rarity: Rarity.Common,
@@ -44,9 +44,9 @@ export const woodenShortSwordBlade: RecipeDetailVariant = {
 // === Good Variants ===
 
 // e.g. Iron Pommel, Wooden Grip, Iron Guard, Iron Blade
-export const ironShortSwordPommel: RecipeDetailVariant = {
-    id: "iron_short_sword_pommel",
-    name: "Iron Pommel",
+export const ironBasicShortSwordPommel: RecipeDetailVariant = {
+    id: "iron_basic_short_sword_pommel",
+    name: "Iron Basic Short Sword Pommel",
     assetPath: "details/shortSword/pommel_iron.png",
     type: RecipeDetailType.Pommel,
     rarity: Rarity.Common,
@@ -55,9 +55,9 @@ export const ironShortSwordPommel: RecipeDetailVariant = {
     durabilityCoefficient: 1,
 };
 
-export const woodenShortSwordGrip: RecipeDetailVariant = {
-    id: "wooden_short_sword_grip",
-    name: "Wooden Grip",
+export const woodenBasicShortSwordGrip: RecipeDetailVariant = {
+    id: "wooden_basic_short_sword_grip",
+    name: "Wooden Basic Short Sword Grip",
     assetPath: "details/shortSword/grip_wooden.png",
     type: RecipeDetailType.Grip,
     rarity: Rarity.Common,
@@ -66,9 +66,9 @@ export const woodenShortSwordGrip: RecipeDetailVariant = {
     durabilityCoefficient: 0.5,
 };
 
-export const ironShortSwordGuard: RecipeDetailVariant = {
-    id: "iron_short_sword_guard",
-    name: "Iron Guard",
+export const ironBasicShortSwordGuard: RecipeDetailVariant = {
+    id: "iron_basic_short_sword_guard",
+    name: "Iron Basic Short Sword Guard",
     assetPath: "details/shortSword/guard_iron.png",
     type: RecipeDetailType.Guard,
     rarity: Rarity.Common,
@@ -77,9 +77,9 @@ export const ironShortSwordGuard: RecipeDetailVariant = {
     durabilityCoefficient: 1,
 };
 
-export const ironShortSwordBlade: RecipeDetailVariant = {
-    id: "iron_short_sword_blade_detail",
-    name: "Iron Short Sword Blade",
+export const ironBasicShortSwordBlade: RecipeDetailVariant = {
+    id: "iron_basic_short_sword_blade",
+    name: "Iron Basic Short Sword Blade",
     assetPath: "details/shortSword/blade_iron.png",
     type: RecipeDetailType.ShortSwordBlade,
     rarity: Rarity.Common,
@@ -92,9 +92,9 @@ export const ironShortSwordBlade: RecipeDetailVariant = {
 
 // TODO: Add best variants for each part
 
-export const woodenShortSwordDetailVariants: RecipeDetailVariant[] = [
-    wodenShortSwordPommel,
-    woodenShortSwordGrip,
-    woodenShortSwordGuard,
-    woodenShortSwordBlade,
+export const woodenBasicShortSwordDetailVariants: RecipeDetailVariant[] = [
+    wodenBasicShortSwordPommel,
+    woodenBasicShortSwordGrip,
+    woodenBasicShortSwordGuard,
+    woodenBasicShortSwordBlade,
 ];
