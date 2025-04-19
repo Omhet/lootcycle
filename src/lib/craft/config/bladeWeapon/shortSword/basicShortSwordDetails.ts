@@ -133,10 +133,3 @@ export const goldenBasicShortSwordBlade: RecipeDetailVariant = {
     temperatureCoefficient: 1.5,
     durabilityCoefficient: 1.5,
 };
-
-export const woodenBasicShortSwordDetailVariants: RecipeDetailVariant[] = [
-    wodenBasicShortSwordPommel,
-    woodenBasicShortSwordGrip,
-    woodenBasicShortSwordGuard,
-    woodenBasicShortSwordBlade,
-];
