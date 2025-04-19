@@ -6,10 +6,10 @@ import {
 } from "../craftModel.js";
 import { bladeWeaponHilt } from "./bladeWeapon/parts.js";
 import {
-    basicShortSwordBladeDetail,
-    basicShortSwordGrip,
-    basicShortSwordGuard,
-    basicShortSwordPommel,
+    wodenShortSwordPommel,
+    woodenShortSwordBladeDetail,
+    woodenShortSwordGrip,
+    woodenShortSwordGuard,
 } from "./bladeWeapon/shortSword/basicShortSwordDetails.js";
 import { shortSwordBlade } from "./bladeWeapon/shortSword/parts.js";
 import { shortSwordRecipe } from "./bladeWeapon/shortSword/recipe.js";
@@ -24,9 +24,9 @@ export const lootConfig: LootConfig = {
         [PecipePartType.ShortSwordBlade]: [shortSwordBlade],
     },
     recipeDetailVariants: {
-        [RecipeDetailType.Pommel]: [basicShortSwordPommel],
-        [RecipeDetailType.Grip]: [basicShortSwordGrip],
-        [RecipeDetailType.Guard]: [basicShortSwordGuard],
-        [RecipeDetailType.ShortSwordBlade]: [basicShortSwordBladeDetail],
+        [RecipeDetailType.Pommel]: [wodenShortSwordPommel],
+        [RecipeDetailType.Grip]: [woodenShortSwordGrip],
+        [RecipeDetailType.Guard]: [woodenShortSwordGuard],
+        [RecipeDetailType.ShortSwordBlade]: [woodenShortSwordBladeDetail],
     },
 };
