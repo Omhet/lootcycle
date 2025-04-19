@@ -1,5 +1,19 @@
 // ======= BASIC TYPES AND ENUMERATIONS =======
 
+import {
+    buildLootItemStructure,
+    calculateAverageRarity,
+    calculateJunkValue,
+    calculateQuality,
+    calculateRequiredMaterials,
+    calculateSellPrice,
+    calculateTemperatureRanges,
+    combineMaterials,
+    generateItemId,
+    selectJunkItems,
+    setCraftingConfig,
+} from "./craftUtils.js";
+
 // Typed identifiers
 export type MaterialCategoryId = string;
 export type MaterialTypeId = string;
@@ -67,7 +81,6 @@ export interface MaterialComposition {
 export enum MaterialCategoryIdEnum {
     Metal = "metal",
     Wood = "wood",
-    // Can be easily extended with new categories
 }
 
 // Initial material categories
@@ -78,7 +91,6 @@ export const initialMaterialCategories: MaterialCategory[] = [
 
 // Initial material types with one of each rarity per category
 export const initialMaterialTypes: MaterialType[] = [
-    // Metal types
     {
         id: "copper",
         name: "Copper",
@@ -106,7 +118,6 @@ export const initialMaterialTypes: MaterialType[] = [
         basePrice: 8,
         optimalTemperatureRange: { min: 40, max: 90 },
     },
-    // Wood types
     {
         id: "pine",
         name: "Pine",
@@ -137,8 +148,6 @@ export const initialMaterialTypes: MaterialType[] = [
 ];
 
 // ======= ITEMS =======
-// TODO: Refactor to divide exact templates types that will be in config with corresponding molecules and atoms in its own files
-// (for example, sword template with sword molecules and atoms, axe template with axe molecules and atoms)
 
 export type Pinpoint = {
     coords: {
@@ -156,13 +165,11 @@ export type Pinpoint = {
 // Item category enum
 export enum ItemCategoryId {
     Weapon = "weapon",
-    // Future categories would go here: Armor, Magic, Accessories, etc.
 }
 
 // Item subcategory enum
 export enum ItemSubCategoryId {
     MeleeWeapon = "melee_weapon",
-    // Future subcategories would go here: Range Weapon, Light Armor, Heavy Armor, etc.
 }
 
 export type ItemCategory = {
@@ -188,10 +195,8 @@ export const initialItemSubCategories: ItemSubCategory[] = [
         name: "Melee Weapon",
         categoryId: ItemCategoryId.Weapon,
     },
-    // Future subcategories would go here: Range Weapon, Light Armor, Heavy Armor, etc.
 ];
 
-// export type JunkItemId = string
 export type LootItemTemplateId = string;
 export type LootMoleculeId = string;
 export type LootAtomId = string;
@@ -250,260 +255,25 @@ export type LootAtom = {
     id: LootAtomId;
     type: LootAtomType;
     name: string;
-    rarirty: Rarity;
+    rarity: Rarity;
     assetPath: string;
 };
 
-// ======= LOOT ITEMS =======
+// ======= LOOT CONFIGURATION =======
 
-const swordTemplate: LootItemTemplate = {
-    id: "sword",
-    subCategory: ItemSubCategoryId.MeleeWeapon,
-    type: LootItemTemplateType.Sword,
-    name: "Basic Sword",
-    sockets: [
-        {
-            acceptType: LootMoleculeType.SwordHilt,
-            acceptTags: [LootMoleculeTag.Handheld],
-            relativeWeight: 3,
-            pinpoint: {
-                coords: { x: 0, y: 0 },
-                localOffset: { x: 0, y: -0.5 },
-                localRotationAngle: 0,
-                zIndex: 0,
-            },
-        },
-        {
-            acceptType: LootMoleculeType.SwordBlade,
-            acceptTags: [LootMoleculeTag.Sharp],
-            relativeWeight: 7,
-            pinpoint: {
-                coords: { x: 0, y: 0 },
-                localOffset: { x: 0, y: 0.5 },
-                localRotationAngle: 0,
-                zIndex: 0,
-            },
-        },
-    ],
-};
+// Define the structure for the overall configuration
+export interface LootConfig {
+    lootItemTemplates: Record<LootItemTemplateType, LootItemTemplate[]>;
+    lootMolecules: Record<LootMoleculeType, LootMolecule[]>;
+    lootAtoms: Record<LootAtomType, LootAtom[]>;
+    // Add other config sections as needed (e.g., materials, categories)
+}
 
-export type LootItemTemplateConfig = Record<
-    LootItemTemplateType,
-    LootItemTemplate[]
->;
+// NOTE: The actual configuration data (like swordTemplate, basicPommel, etc.)
+// has been moved to the `craft/config/` directory and is assembled in `craft/config/index.ts`.
+// The `lootConfig` object should be imported from there when needed.
 
-// All loot item templates available in the game
-export const lootItemTemplateConfig: LootItemTemplateConfig = {
-    [LootItemTemplateType.Sword]: [swordTemplate],
-};
-
-// ======= LOOT MOLECULES =======
-
-// Sword molecules and atoms
-const swordHiltMolecule: LootMolecule = {
-    id: "sword_hilt",
-    type: LootMoleculeType.SwordHilt,
-    tags: [LootMoleculeTag.Handheld],
-    name: "Basic Sword Hilt",
-    sockets: [
-        {
-            acceptType: LootAtomType.Guard,
-            relativeWeight: 2,
-            pinpoint: {
-                coords: { x: 0, y: 0.5 },
-                localOffset: { x: 0, y: -0.5 },
-                localRotationAngle: 0,
-                zIndex: 0,
-            },
-        },
-        {
-            acceptType: LootAtomType.Grip,
-            relativeWeight: 1,
-            pinpoint: {
-                coords: { x: 0, y: 0 },
-                localOffset: { x: 0, y: 0 },
-                localRotationAngle: 0,
-                zIndex: 0,
-            },
-        },
-        {
-            acceptType: LootAtomType.Pommel,
-            relativeWeight: 1,
-            pinpoint: {
-                coords: { x: 0, y: -0.5 },
-                localOffset: { x: 0, y: 75 },
-                localRotationAngle: 0,
-                zIndex: 0,
-            },
-        },
-    ],
-};
-
-const swordBladeMolecule: LootMolecule = {
-    id: "sword_blade",
-    type: LootMoleculeType.SwordBlade,
-    tags: [LootMoleculeTag.Sharp],
-    name: "Basic Sword Blade",
-    sockets: [
-        {
-            acceptType: LootAtomType.Blade,
-            relativeWeight: 1,
-            pinpoint: {
-                coords: { x: 0, y: 0 },
-                localOffset: { x: 0, y: 0 },
-                localRotationAngle: 0,
-                zIndex: 0,
-            },
-        },
-    ],
-};
-
-// Elven sword molecules
-const elvenSwordHiltMolecule: LootMolecule = {
-    id: "elven_sword_hilt",
-    type: LootMoleculeType.SwordHilt,
-    tags: [LootMoleculeTag.Handheld],
-    name: "Elven Sword Hilt",
-    sockets: [
-        {
-            acceptType: LootAtomType.Guard,
-            relativeWeight: 2,
-            pinpoint: {
-                coords: { x: 0, y: 0.5 },
-                localOffset: { x: 0, y: -0.5 },
-                localRotationAngle: 0,
-                zIndex: 0,
-            },
-        },
-        {
-            acceptType: LootAtomType.Grip,
-            relativeWeight: 1,
-            pinpoint: {
-                coords: { x: 0, y: 0 },
-                localOffset: { x: 0, y: 0 },
-                localRotationAngle: 0,
-                zIndex: 0,
-            },
-        },
-        {
-            acceptType: LootAtomType.Pommel,
-            relativeWeight: 1,
-            pinpoint: {
-                coords: { x: 0, y: -0.5 },
-                localOffset: { x: 0, y: 0.75 },
-                localRotationAngle: 0,
-                zIndex: 0,
-            },
-        },
-    ],
-};
-
-const elvenSwordBladeMolecule: LootMolecule = {
-    id: "elven_sword_blade",
-    type: LootMoleculeType.SwordBlade,
-    tags: [LootMoleculeTag.Sharp],
-    name: "Elven Sword Blade",
-    sockets: [
-        {
-            acceptType: LootAtomType.Blade,
-            relativeWeight: 1,
-            pinpoint: {
-                coords: { x: 0, y: 0 },
-                localOffset: { x: 0, y: 0 },
-                localRotationAngle: 0,
-                zIndex: 0,
-            },
-        },
-    ],
-};
-
-const swordBasicGuardAtom: LootAtom = {
-    id: "sword_basic_guard",
-    type: LootAtomType.Guard,
-    name: "Basic Sword Guard",
-    rarirty: Rarity.Common,
-    assetPath: "assets/sword/guards/basic-guard.png",
-};
-const swordBasicGripAtom: LootAtom = {
-    id: "sword_basic_grip",
-    type: LootAtomType.Grip,
-    name: "Basic Sword Grip",
-    rarirty: Rarity.Common,
-    assetPath: "assets/sword/grips/basic-grip.png",
-};
-const swordBasicPommelAtom: LootAtom = {
-    id: "sword_basic_pommel",
-    type: LootAtomType.Pommel,
-    name: "Basic Sword Pommel",
-    rarirty: Rarity.Common,
-    assetPath: "assets/sword/pommels/basic-pommel.png",
-};
-const swordBasicBladeAtom: LootAtom = {
-    id: "sword_basic_blade",
-    type: LootAtomType.Blade,
-    name: "Basic Sword Blade",
-    rarirty: Rarity.Common,
-    assetPath: "assets/sword/blades/basic-blade.png",
-};
-
-// Elven sword atoms
-const elvenSwordGuardAtom: LootAtom = {
-    id: "elven_sword_guard",
-    type: LootAtomType.Guard,
-    name: "Elven Sword Guard",
-    rarirty: Rarity.Rare,
-    assetPath: "assets/sword/guards/elven-guard.png",
-};
-
-const elvenSwordGripAtom: LootAtom = {
-    id: "elven_sword_grip",
-    type: LootAtomType.Grip,
-    name: "Elven Sword Grip",
-    rarirty: Rarity.Rare,
-    assetPath: "assets/sword/grips/elven-grip.png",
-};
-
-const elvenSwordPommelAtom: LootAtom = {
-    id: "elven_sword_pommel",
-    type: LootAtomType.Pommel,
-    name: "Elven Sword Pommel",
-    rarirty: Rarity.Rare,
-    assetPath: "assets/sword/pommels/elven-pommel.png",
-};
-
-const elvenSwordBladeAtom: LootAtom = {
-    id: "elven_sword_blade",
-    type: LootAtomType.Blade,
-    name: "Elven Sword Blade",
-    rarirty: Rarity.Rare,
-    assetPath: "assets/sword/blades/elven-blade.png",
-};
-
-export type LootMoleculeConfig = Record<LootMoleculeType, LootMolecule[]>;
-// All molecules and atoms available in the game
-export const lootMoleculeConfig: Record<LootMoleculeType, LootMolecule[]> = {
-    [LootMoleculeType.SwordHilt]: [swordHiltMolecule, elvenSwordHiltMolecule],
-    [LootMoleculeType.SwordBlade]: [
-        swordBladeMolecule,
-        elvenSwordBladeMolecule,
-    ],
-};
-
-export type LootAtomConfig = Record<LootAtomType, LootAtom[]>;
-export const lootAtomConfig: Record<LootAtomType, LootAtom[]> = {
-    [LootAtomType.Guard]: [swordBasicGuardAtom, elvenSwordGuardAtom],
-    [LootAtomType.Grip]: [swordBasicGripAtom, elvenSwordGripAtom],
-    [LootAtomType.Pommel]: [swordBasicPommelAtom, elvenSwordPommelAtom],
-    [LootAtomType.Blade]: [swordBasicBladeAtom, elvenSwordBladeAtom],
-};
-
-export type LootConfig = {
-    lootItemTemplates: LootItemTemplateConfig;
-    lootMolecules: LootMoleculeConfig;
-    lootAtoms: LootAtomConfig;
-};
-
-// ======= LOOT OBJECTS TYPES (that will be generated in build time and then used in runtime) =======
+// ======= LOOT OBJECTS TYPES =======
 
 export type LootItemId = string;
 export type LootPartId = string;
@@ -512,9 +282,12 @@ export type LootDetailId = LootAtomId;
 export type LootItem = {
     id: LootItemId;
     templateId: LootItemTemplateId;
+    name: string;
     subparts: LootPartId[];
     materialComposition: MaterialComposition[];
     rarity: Rarity;
+    quality: number;
+    sellPrice: number;
     temperatureRange: TemperatureRange;
     masterQualityTemperatureRange: TemperatureRange;
 };
@@ -540,21 +313,23 @@ export type LootJunk = LootDetail & {
 };
 
 export type LootJunkItem = LootJunk & {
-    degradation: number; // from 0% to 100%. Degradation remains in the type for runtime use. Game will calculate degradation based on how many game days item was in the game compared to its durability
+    id: string;
+    degradation: number;
 };
 
 // ======= CRAFTING FUNCTION =======
 
+// Export the CraftingResult interface
 export interface CraftingResult {
     success: boolean;
     item?: LootItem;
-    quality?: number; // 0-100 quality percentage
-    sellPrice?: number;
     failure?: {
         reason: CraftingFailureReason;
+        message?: string;
     };
 }
 
+// Export the craftLootItemParams type
 export type craftLootItemParams = {
     lootItemTemplate: LootItemTemplate;
     junkItems: LootJunkItem[];
@@ -565,64 +340,154 @@ export type craftLootItemParams = {
 export function craftLootItem(params: craftLootItemParams): CraftingResult {
     const { lootItemTemplate, junkItems, temperature, config } = params;
 
-    // Step 1: Check if there is enough material proportional weight in the junk items overall material composition
-    // retutn NotEnoughJunk failure if not enough
+    if (!lootItemTemplate || !junkItems || junkItems.length === 0 || !config) {
+        return {
+            success: false,
+            failure: {
+                reason: CraftingFailureReason.NotEnoughJunk,
+                message: "Invalid input parameters.",
+            },
+        };
+    }
 
-    // Step 2: Select best junk items candidates to craft the item
-    // Firstly, sort by value (formula of material composition value, rarity, degradation. material composition value is a formula of material composition percentage and base price and rarity of the material type)
-    // Then, prioritise junk items that are fitted to the item template, then everything else
-    // The final list of junk items should be sorted by value
-    // Determine the best junk items to use for crafting (allow some luck factor for not the very best junk items to be used)
+    setCraftingConfig(config);
 
-    // Step 3: Determine wich materials will be used for crafting the item
+    const junkItemsWithValue = junkItems.map((junk) => ({
+        ...junk,
+        value: calculateJunkValue(junk),
+    }));
 
-    // Step 4: Check if temperature is appropriate for crafting.
-    // Needs to calculate temperature range (regular and master quality range) for the item based on the material composition of the junk items used
-    // Range is narrower if item is more rare (need to calculate this potential crafted loot item rarity)
-    // Range offset is determined by the material composition of the junk items used
-    // Master range is even narrower than regular range
-    // If temperature is too low or too high, return TooLowTemperature or TooHighTemperature failure
+    const requiredMaterials = calculateRequiredMaterials(lootItemTemplate);
+    const selectedJunk = selectJunkItems(
+        junkItemsWithValue,
+        requiredMaterials,
+        lootItemTemplate
+    );
 
-    // Step 7: Calculate quality based on
-    // junk items overall degradation and temperature (is it in master quality range or not)
+    if (!selectedJunk || selectedJunk.length === 0) {
+        return {
+            success: false,
+            failure: {
+                reason: CraftingFailureReason.NotEnoughJunk,
+                message: "Not enough suitable junk items selected.",
+            },
+        };
+    }
 
-    // Step 8: Calculate final sell price based on the item rarity, quality, and material composition
+    const finalMaterialComposition = combineMaterials(selectedJunk);
+    if (finalMaterialComposition.length === 0) {
+        return {
+            success: false,
+            failure: {
+                reason: CraftingFailureReason.NotEnoughJunk,
+                message:
+                    "Could not determine final material composition from selected junk.",
+            },
+        };
+    }
+
+    const potentialRarity = calculateAverageRarity(
+        selectedJunk.map((j: LootJunkItem) => j.rarity)
+    );
+    const { regularRange, masterRange } = calculateTemperatureRanges(
+        finalMaterialComposition,
+        potentialRarity,
+        lootItemTemplate
+    );
+
+    if (temperature < regularRange.min) {
+        return {
+            success: false,
+            failure: {
+                reason: CraftingFailureReason.TooLowTemperature,
+                message: `Temp ${temperature.toFixed(
+                    1
+                )}°C is BELOW range [${regularRange.min.toFixed(
+                    1
+                )}°C - ${regularRange.max.toFixed(
+                    1
+                )}°C]. Master: [${masterRange.min.toFixed(
+                    1
+                )}°C - ${masterRange.max.toFixed(1)}°C]`,
+            },
+        };
+    }
+    if (temperature > regularRange.max) {
+        return {
+            success: false,
+            failure: {
+                reason: CraftingFailureReason.TooHighTemperature,
+                message: `Temp ${temperature.toFixed(
+                    1
+                )}°C is ABOVE range [${regularRange.min.toFixed(
+                    1
+                )}°C - ${regularRange.max.toFixed(
+                    1
+                )}°C]. Master: [${masterRange.min.toFixed(
+                    1
+                )}°C - ${masterRange.max.toFixed(1)}°C]`,
+            },
+        };
+    }
+
+    const quality = calculateQuality(selectedJunk, temperature, masterRange);
+
+    const structureResult = buildLootItemStructure(
+        lootItemTemplate,
+        selectedJunk,
+        finalMaterialComposition,
+        potentialRarity
+    );
+
+    if (!structureResult || structureResult.parts.length === 0) {
+        const message =
+            structureResult === null
+                ? "Failed during item structure generation."
+                : "Failed to construct any item parts from selected junk.";
+        return {
+            success: false,
+            failure: { reason: CraftingFailureReason.NotEnoughJunk, message },
+        };
+    }
+    const { parts } = structureResult;
+
+    const sellPrice = calculateSellPrice(
+        finalMaterialComposition,
+        potentialRarity,
+        quality
+    );
+
+    const finalItemId = generateItemId(
+        lootItemTemplate.id,
+        parts.map((p: LootPart) => p.id),
+        finalMaterialComposition
+    );
+
+    const itemName = `${potentialRarity} ${
+        lootItemTemplate.name
+    } (Q${quality.toFixed(0)})`;
+
+    const craftedItem: LootItem = {
+        id: finalItemId,
+        templateId: lootItemTemplate.id,
+        name: itemName,
+        subparts: parts.map((p: LootPart) => p.id),
+        materialComposition: finalMaterialComposition,
+        rarity: potentialRarity,
+        quality: parseFloat(quality.toFixed(2)),
+        sellPrice: sellPrice,
+        temperatureRange: {
+            min: parseFloat(regularRange.min.toFixed(2)),
+            max: parseFloat(regularRange.max.toFixed(2)),
+        },
+        masterQualityTemperatureRange: {
+            min: parseFloat(masterRange.min.toFixed(2)),
+            max: parseFloat(masterRange.max.toFixed(2)),
+        },
+    };
 
     return {
         success: true,
-        item: {},
-        quality: 0,
-        sellPrice: 0,
+        item: craftedItem,
     };
-}
-
-// Helper function to calculate similarity between material compositions
-function calculateMaterialSimilarity(
-    composition1: MaterialComposition[],
-    composition2: MaterialComposition[]
-): number {
-    let similarity = 0;
-
-    // Create maps of material percentages for easier comparison
-    const map1 = new Map(
-        composition1.map((mc) => [mc.materialId, mc.percentage])
-    );
-    const map2 = new Map(
-        composition2.map((mc) => [mc.materialId, mc.percentage])
-    );
-
-    // Combine all material IDs
-    const allMaterials = new Set([...map1.keys(), ...map2.keys()]);
-
-    // For each material, calculate the similarity (100 - absolute difference)
-    allMaterials.forEach((materialId) => {
-        const percentage1 = map1.get(materialId) || 0;
-        const percentage2 = map2.get(materialId) || 0;
-
-        const materialSimilarity = 100 - Math.abs(percentage1 - percentage2);
-        similarity += materialSimilarity;
-    });
-
-    // Normalize by the number of materials
-    return similarity / allMaterials.size;
 }
