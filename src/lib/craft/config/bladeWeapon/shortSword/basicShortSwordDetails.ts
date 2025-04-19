@@ -5,7 +5,6 @@ import { registerRecipeDetailVariant } from "../../registry.js";
 
 // === Bad Variants ===
 
-// Register wooden pommel variant
 registerRecipeDetailVariant(RecipeDetailType.Pommel, {
     id: "wooden_basic_short_sword_pommel",
     name: "Wooden Basic Short Sword Pommel",
@@ -17,7 +16,6 @@ registerRecipeDetailVariant(RecipeDetailType.Pommel, {
     durabilityCoefficient: 0.5,
 });
 
-// Register wooden guard variant
 registerRecipeDetailVariant(RecipeDetailType.Guard, {
     id: "wooden_basic_short_sword_guard",
     name: "Wooden Basic Short Sword Guard",
@@ -29,7 +27,6 @@ registerRecipeDetailVariant(RecipeDetailType.Guard, {
     durabilityCoefficient: 0.5,
 });
 
-// Register wooden blade variant
 registerRecipeDetailVariant(RecipeDetailType.ShortSwordBlade, {
     id: "wooden_basic_short_sword_blade",
     name: "Wooden Basic Short Sword Blade",
@@ -43,7 +40,6 @@ registerRecipeDetailVariant(RecipeDetailType.ShortSwordBlade, {
 
 // === Good Variants ===
 
-// Register iron pommel variant
 registerRecipeDetailVariant(RecipeDetailType.Pommel, {
     id: "iron_basic_short_sword_pommel",
     name: "Iron Basic Short Sword Pommel",
@@ -55,7 +51,6 @@ registerRecipeDetailVariant(RecipeDetailType.Pommel, {
     durabilityCoefficient: 1,
 });
 
-// Register wooden grip variant
 registerRecipeDetailVariant(RecipeDetailType.Grip, {
     id: "wooden_basic_short_sword_grip",
     name: "Wooden Basic Short Sword Grip",
@@ -67,7 +62,6 @@ registerRecipeDetailVariant(RecipeDetailType.Grip, {
     durabilityCoefficient: 0.5,
 });
 
-// Register iron guard variant
 registerRecipeDetailVariant(RecipeDetailType.Guard, {
     id: "iron_basic_short_sword_guard",
     name: "Iron Basic Short Sword Guard",
@@ -79,7 +73,6 @@ registerRecipeDetailVariant(RecipeDetailType.Guard, {
     durabilityCoefficient: 1,
 });
 
-// Register iron blade variant
 registerRecipeDetailVariant(RecipeDetailType.ShortSwordBlade, {
     id: "iron_basic_short_sword_blade",
     name: "Iron Basic Short Sword Blade",
@@ -93,7 +86,6 @@ registerRecipeDetailVariant(RecipeDetailType.ShortSwordBlade, {
 
 // === Best Variants ===
 
-// Register golden pommel variant
 registerRecipeDetailVariant(RecipeDetailType.Pommel, {
     id: "golden_basic_short_sword_pommel",
     name: "Golden Basic Short Sword Pommel",
@@ -105,7 +97,6 @@ registerRecipeDetailVariant(RecipeDetailType.Pommel, {
     durabilityCoefficient: 1.5,
 });
 
-// Register golden grip variant
 registerRecipeDetailVariant(RecipeDetailType.Grip, {
     id: "golden_basic_short_sword_grip",
     name: "Golden Basic Short Sword Grip",
@@ -117,7 +108,6 @@ registerRecipeDetailVariant(RecipeDetailType.Grip, {
     durabilityCoefficient: 1.5,
 });
 
-// Register golden guard variant
 registerRecipeDetailVariant(RecipeDetailType.Guard, {
     id: "golden_basic_short_sword_guard",
     name: "Golden Basic Short Sword Guard",
@@ -129,7 +119,6 @@ registerRecipeDetailVariant(RecipeDetailType.Guard, {
     durabilityCoefficient: 1.5,
 });
 
-// Register golden blade variant
 registerRecipeDetailVariant(RecipeDetailType.ShortSwordBlade, {
     id: "golden_basic_short_sword_blade",
     name: "Golden Basic Short Sword Blade",
