@@ -12,6 +12,7 @@ import {
     LootAtomId,
     LootItemTemplateType,
     LootJunkItem,
+    LootMoleculeType, // Import LootMoleculeType
     MaterialId,
     Rarity,
 } from "../../lib/craft/craftModel.js";
@@ -110,8 +111,27 @@ export class Game extends Scene {
             const result: CraftingResult = craftLootItem(params);
 
             // 6. Log the result
-            if (result.success) {
+            if (result.success && result.item && result.parts) {
                 console.log("Crafting Successful!", result.item);
+                console.log("--- Item Parts (Molecules) ---");
+                result.parts.forEach((part) => {
+                    // Find the molecule definition in the config to get its type
+                    let moleculeType: LootMoleculeType | string = "Unknown";
+                    for (const type in lootConfig.lootMolecules) {
+                        if (
+                            lootConfig.lootMolecules[
+                                type as LootMoleculeType
+                            ]?.some((mol) => mol.id === part.moleculeId)
+                        ) {
+                            moleculeType = type;
+                            break;
+                        }
+                    }
+                    console.log(
+                        `- Molecule ID: ${part.moleculeId}, Type: ${moleculeType}`
+                    );
+                });
+                console.log("-----------------------------");
             } else {
                 console.error("Crafting Failed:", result.failure);
             }

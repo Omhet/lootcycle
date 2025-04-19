@@ -24,6 +24,7 @@ import {
 export interface CraftingResult {
     success: boolean;
     item?: LootItem;
+    parts?: LootPart[]; // Add parts here
     failure?: {
         reason: CraftingFailureReason;
         message?: string;
@@ -204,5 +205,6 @@ export function craftLootItem(params: craftLootItemParams): CraftingResult {
     return {
         success: true,
         item: craftedItem,
+        parts: parts,
     };
 }
