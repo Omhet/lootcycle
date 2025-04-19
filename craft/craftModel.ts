@@ -16,7 +16,7 @@ export enum Rarity {
 
 // Operation results
 export enum CraftingFailureReason {
-    NoJunkItems = "NO_JUNK_ITEMS",
+    NotEnoughJunk = "NOT_ENOUGH_JUNK",
     TooLowTemperature = "TOO_LOW_TEMPERATURE",
     TooHighTemperature = "TOO_HIGH_TEMPERATURE",
 }
@@ -534,46 +534,7 @@ export type LootJunk = LootDetail & {
 };
 
 export type LootJunkItem = LootJunk & {
-    degradation: number; // Degradation remains in the type for runtime use
-};
-
-// Helper to combine material compositions with weights
-const combineMaterialCompositions = (
-    compositions: Array<{ composition: MaterialComposition[]; weight: number }>
-): MaterialComposition[] => {
-    const materialMap = new Map<MaterialId, number>();
-    let totalWeight = 0;
-
-    // Sum all weights and accumulate material percentages
-    compositions.forEach(({ composition, weight }) => {
-        totalWeight += weight;
-        composition.forEach(({ materialId, percentage }) => {
-            const weightedPercentage = (percentage * weight) / 100;
-            materialMap.set(
-                materialId,
-                (materialMap.get(materialId) || 0) + weightedPercentage
-            );
-        });
-    });
-
-    // Normalize percentages based on total weight
-    const result: MaterialComposition[] = [];
-    materialMap.forEach((weightedPercentage, materialId) => {
-        const normalizedPercentage = (weightedPercentage / totalWeight) * 100;
-        result.push({
-            materialId,
-            percentage: parseFloat(normalizedPercentage.toFixed(2)),
-        });
-    });
-
-    // Ensure percentages sum to exactly 100%
-    if (result.length > 0) {
-        const sum = result.reduce((acc, { percentage }) => acc + percentage, 0);
-        const adjustment = 100 - sum;
-        result[0].percentage += parseFloat(adjustment.toFixed(2));
-    }
-
-    return result;
+    degradation: number; // from 0% to 100%. Degradation remains in the type for runtime use. Game will calculate degradation based on how many game days item was in the game compared to its durability
 };
 
 // ======= CRAFTING FUNCTION =======
@@ -588,330 +549,52 @@ export interface CraftingResult {
     };
 }
 
-export function craftLootItem(params: {
+export type craftLootItemParams = {
     lootItemTemplate: LootItemTemplate;
-    availableJunkItems: LootJunkItem[];
+    junkItems: LootJunkItem[];
     temperature: number;
     config: {
         lootItems: Record<LootItemId, LootItem>;
         lootParts: Record<LootPartId, LootPart>;
     };
-}): CraftingResult {
+};
+
+export function craftLootItem(params: craftLootItemParams): CraftingResult {
     const {
         lootItemTemplate,
-        availableJunkItems,
+        junkItems,
         temperature,
         config: { lootItems, lootParts },
     } = params;
 
-    // Step 1: Check if there are any junk items (keep this check as required)
-    if (availableJunkItems.length === 0) {
-        return {
-            success: false,
-            failure: { reason: CraftingFailureReason.NoJunkItems },
-        };
-    }
+    // Step 1: Check if there is enough material proportional weight in the junk items overall material composition
+    // retutn NotEnoughJunk failure if not enough
 
-    // Step 2: Organize junk items by atom type for selection
-    const junkItemsByType: Partial<Record<LootAtomType, LootJunkItem[]>> = {};
-    availableJunkItems.forEach((junkItem) => {
-        // Use the explicit atomId instead of parsing from the id string
-        const atomId = junkItem.atomId;
-        const atom = Object.values(lootAtomConfig)
-            .flat()
-            .find((a) => a.id === atomId);
-        if (atom) {
-            if (!junkItemsByType[atom.type]) {
-                junkItemsByType[atom.type] = [];
-            }
-            junkItemsByType[atom.type]?.push(junkItem);
-        }
-    });
+    // Step 2: Select best junk items candidates to craft the item
+    // Firstly, sort by value (formula of material composition value, rarity, degradation. material composition value is a formula of material composition percentage and base price and rarity of the material type)
+    // Then, prioritise junk items that are fitted to the item template, then everything else
+    // The final list of junk items should be sorted by value
+    // Determine the best junk items to use for crafting (allow some luck factor for not the very best junk items to be used)
 
-    // Step 3: Select junk items based on template requirements
-    let selectedJunkItems: LootJunkItem[] = [];
-    let socketWeights: number[] = [];
+    // Step 3: Determine wich materials will be used for crafting the item
 
-    // Try to find the best molecule configuration across all sockets
-    const moleculeSelections: Array<{
-        socketIndex: number;
-        molecule: LootMolecule;
-        junkItems: LootJunkItem[];
-        weights: number[];
-        qualityScore: number;
-    }> = [];
+    // Step 4: Check if temperature is appropriate for crafting.
+    // Needs to calculate temperature range (regular and master quality range) for the item based on the material composition of the junk items used
+    // Range is narrower if item is more rare (need to calculate this potential crafted loot item rarity)
+    // Range offset is determined by the material composition of the junk items used
+    // Master range is even narrower than regular range
+    // If temperature is too low or too high, return TooLowTemperature or TooHighTemperature failure
 
-    // For each socket in the template, evaluate all compatible molecules
-    for (
-        let socketIndex = 0;
-        socketIndex < lootItemTemplate.sockets.length;
-        socketIndex++
-    ) {
-        const socket = lootItemTemplate.sockets[socketIndex];
-        const compatibleMolecules = lootMoleculeConfig[socket.acceptType] || [];
+    // Step 7: Calculate quality based on
+    // junk items overall degradation and temperature (is it in master quality range or not)
 
-        if (compatibleMolecules.length === 0) continue;
-
-        // Try each compatible molecule
-        for (const molecule of compatibleMolecules) {
-            // Check if all atom sockets can be filled with available junk items
-            const selectedJunks: LootJunkItem[] = [];
-            const weights: number[] = [];
-            let canFillAllSockets = true;
-
-            // Clone junkItemsByType to avoid modifying the original during evaluation
-            const availableJunksByType = { ...junkItemsByType };
-
-            // Make deep copies of the arrays
-            Object.keys(availableJunksByType).forEach((key) => {
-                const atomType = key as LootAtomType;
-                availableJunksByType[atomType] = [
-                    ...(junkItemsByType[atomType] || []),
-                ];
-            });
-
-            // For each atom socket in the molecule, try to select a junk item
-            for (const atomSocket of molecule.sockets) {
-                const availableJunksOfType =
-                    availableJunksByType[atomSocket.acceptType] || [];
-
-                if (availableJunksOfType.length === 0) {
-                    canFillAllSockets = false;
-                    break;
-                }
-
-                // Select the junk with lowest degradation for better quality
-                availableJunksOfType.sort(
-                    (a, b) => a.degradation - b.degradation
-                );
-                const selectedJunk = availableJunksOfType.shift(); // Take and remove the best one
-
-                if (selectedJunk) {
-                    selectedJunks.push(selectedJunk);
-                    weights.push(atomSocket.relativeWeight || 1);
-                } else {
-                    canFillAllSockets = false;
-                    break;
-                }
-            }
-
-            if (canFillAllSockets) {
-                // Calculate a quality score for this molecule selection
-                const totalWeight = weights.reduce((sum, w) => sum + w, 0);
-                const qualityScore = selectedJunks.reduce(
-                    (score, junk, i) =>
-                        score +
-                        (100 - junk.degradation) * (weights[i] / totalWeight),
-                    0
-                );
-
-                moleculeSelections.push({
-                    socketIndex,
-                    molecule,
-                    junkItems: selectedJunks,
-                    weights,
-                    qualityScore,
-                });
-            }
-        }
-    }
-
-    // If we couldn't find any valid molecule configuration, use any available junk items
-    if (moleculeSelections.length === 0) {
-        // Just use the best junk items we have, regardless of strict compatibility
-        const bestJunks = Object.values(junkItemsByType)
-            .flat()
-            .sort((a, b) => a.degradation - b.degradation)
-            .slice(0, Math.min(5, availableJunkItems.length)); // Take up to 5 best junk items
-
-        selectedJunkItems = bestJunks;
-        socketWeights = bestJunks.map(() => 1); // Equal weight for all
-    } else {
-        // Sort molecule selections by quality score (descending)
-        moleculeSelections.sort((a, b) => b.qualityScore - a.qualityScore);
-
-        // Group the best molecules by socket
-        const bestMoleculesBySocket: Record<
-            number,
-            (typeof moleculeSelections)[0]
-        > = {};
-
-        for (const selection of moleculeSelections) {
-            if (
-                !bestMoleculesBySocket[selection.socketIndex] ||
-                selection.qualityScore >
-                    bestMoleculesBySocket[selection.socketIndex].qualityScore
-            ) {
-                bestMoleculesBySocket[selection.socketIndex] = selection;
-            }
-        }
-
-        // Combine all selected junk items from the best molecule per socket
-        Object.values(bestMoleculesBySocket).forEach((selection) => {
-            selectedJunkItems.push(...selection.junkItems);
-            socketWeights.push(...selection.weights);
-        });
-    }
-
-    // Step 4: Calculate combined material composition
-    const materialCompositions = selectedJunkItems.map((junkItem, index) => ({
-        composition: junkItem.materialComposition,
-        weight: socketWeights[index] || 1, // Default to 1 if no weight specified
-    }));
-
-    const combinedMaterialComposition =
-        combineMaterialCompositions(materialCompositions);
-
-    // Step 5: Find the most compatible item from potential items
-
-    // Track the molecules we've selected (if any)
-    const selectedMolecules = new Set<string>();
-    if (moleculeSelections.length > 0) {
-        Object.values(moleculeSelections).forEach((selection) => {
-            selectedMolecules.add(selection.molecule.id);
-        });
-    }
-
-    // Filter potential items that match the template
-    let potentialItems = Object.values(lootItems).filter(
-        (item) => item.templateId === lootItemTemplate.id
-    );
-
-    // If we found molecules, further refine by checking if any parts use our selected molecules
-    if (selectedMolecules.size > 0) {
-        potentialItems = potentialItems.filter((item) => {
-            return item.subparts.some((partId) => {
-                const part = lootParts[partId];
-                if (!part) return false;
-                return selectedMolecules.has(part.moleculeId);
-            });
-        });
-    }
-
-    // If still no potential items, just use any item that matches the template
-    if (potentialItems.length === 0) {
-        potentialItems = Object.values(lootItems).filter(
-            (item) => item.templateId === lootItemTemplate.id
-        );
-    }
-
-    let bestMatch: LootItem;
-
-    if (potentialItems.length === 0) {
-        throw new Error("No potential items found for crafting.");
-    } else {
-        // Find the item with the closest material composition
-        bestMatch = potentialItems[0];
-        let bestScore = calculateMaterialSimilarity(
-            bestMatch.materialComposition,
-            combinedMaterialComposition
-        );
-
-        for (const item of potentialItems) {
-            const score = calculateMaterialSimilarity(
-                item.materialComposition,
-                combinedMaterialComposition
-            );
-            if (score > bestScore) {
-                bestMatch = item;
-                bestScore = score;
-            }
-        }
-    }
-
-    // Step 6: Check if temperature is appropriate for crafting (keep this check as required)
-    if (temperature < bestMatch.temperatureRange.min) {
-        return {
-            success: false,
-            failure: {
-                reason: CraftingFailureReason.TooLowTemperature,
-            },
-        };
-    }
-
-    if (temperature > bestMatch.temperatureRange.max) {
-        return {
-            success: false,
-            failure: {
-                reason: CraftingFailureReason.TooHighTemperature,
-            },
-        };
-    }
-
-    // Step 7: Calculate quality based on junk item degradation and temperature
-    const avgDegradation =
-        selectedJunkItems.reduce(
-            (sum, junk, index) =>
-                sum + junk.degradation * (socketWeights[index] || 1),
-            0
-        ) / socketWeights.reduce((sum, weight) => sum + (weight || 1), 0);
-
-    let quality = 100 - avgDegradation;
-
-    // Adjust quality based on temperature within optimal range
-    const inMasterRange =
-        temperature >= bestMatch.masterQualityTemperatureRange.min &&
-        temperature <= bestMatch.masterQualityTemperatureRange.max;
-
-    if (inMasterRange) {
-        // Boost quality if temperature is in master range
-        quality = Math.min(100, quality * 1.5);
-    } else {
-        // Penalty based on how far from master temperature range
-        const distanceToMasterRange = Math.min(
-            Math.abs(temperature - bestMatch.masterQualityTemperatureRange.min),
-            Math.abs(temperature - bestMatch.masterQualityTemperatureRange.max)
-        );
-
-        const maxDistance = Math.max(
-            bestMatch.temperatureRange.max -
-                bestMatch.masterQualityTemperatureRange.max,
-            bestMatch.masterQualityTemperatureRange.min -
-                bestMatch.temperatureRange.min
-        );
-
-        // Quality penalty (up to 30%)
-        const penalty = (distanceToMasterRange / maxDistance) * 30;
-        quality = Math.max(10, quality - penalty);
-    }
-
-    // Step 8: Calculate final sell price
-    const rarityMultipliers: Record<Rarity, number> = {
-        [Rarity.Common]: 1,
-        [Rarity.Uncommon]: 2,
-        [Rarity.Rare]: 4,
-        [Rarity.Epic]: 8,
-        [Rarity.Legendary]: 16,
-    };
-
-    const rarityFactor = rarityMultipliers[bestMatch.rarity];
-
-    // Calculate material value
-    const materialValue = combinedMaterialComposition.reduce(
-        (value, { materialId, percentage }) => {
-            const materialType = initialMaterialTypes.find(
-                (mt) => mt.id === materialId
-            );
-            if (materialType) {
-                return value + materialType.basePrice * (percentage / 100);
-            }
-            return value;
-        },
-        0
-    );
-
-    // Quality affects price (higher quality = higher price)
-    const qualityFactor = 0.5 + (quality / 100) * 1.5; // 0.5 to 2.0
-
-    const sellPrice = Math.round(
-        materialValue * rarityFactor * qualityFactor * 10
-    );
+    // Step 8: Calculate final sell price based on the item rarity, quality, and material composition
 
     return {
         success: true,
-        item: bestMatch,
-        quality,
-        sellPrice,
+        item: {},
+        quality: 0,
+        sellPrice: 0,
     };
 }
 
