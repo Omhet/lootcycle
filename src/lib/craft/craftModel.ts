@@ -74,11 +74,10 @@ export const initialItemSubCategories: ItemSubCategory[] = [
 
 export type RecipeItemId = string;
 export type PecipePartId = string;
-export type RecipeDetailId = string;
 export type RecipeDetailVariantId = string;
 
 export enum RecipeItemType {
-    Blade = "blade",
+    BladeWeapon = "blade_weapon",
 }
 
 // Loot item template
@@ -95,12 +94,12 @@ export interface RecipeItem {
 
 export type PecipePartSocket = {
     acceptType: PecipePartType;
-    relativeWeight?: number;
+    relativeWeight: number;
     pinpoint: Pinpoint;
 };
 
 export enum PecipePartType {
-    Hilt = "hilt",
+    BladeWeaponHilt = "hilt",
     ShortSwordBlade = "short_sword_blade",
 }
 
@@ -113,7 +112,6 @@ export type PecipePart = {
 
 export type RecipeDetailSocket = {
     acceptType: RecipeDetailType;
-    relativeWeight?: number;
     pinpoint: Pinpoint;
 };
 
@@ -124,27 +122,24 @@ export enum RecipeDetailType {
     ShortSwordBlade = "short_sword_blade",
 }
 
-export type RecipeDetail = {
-    id: RecipeDetailId;
-    type: RecipeDetailType;
-    name: string;
-    rarity: Rarity;
-};
-
 export type RecipeDetailVariant = {
     id: RecipeDetailVariantId;
-    detailId: RecipeDetailId;
+    type: RecipeDetailType;
     name: string;
     assetPath: string;
+    rarity: Rarity;
+    sellPriceCoefficient: number;
+    temperatureCoefficient: number;
+    durabilityCoefficient: number;
 };
 
 // ======= GAME LOOT CONFIGURATION =======
 
 // Define the structure for the overall configuration
 export interface LootConfig {
-    RecipeItems: Record<RecipeItemType, RecipeItem[]>;
-    PecipeParts: Record<PecipePartType, PecipePart[]>;
-    RecipeDetails: Record<RecipeDetailType, RecipeDetailVariant[]>;
+    recipeItems: Record<RecipeItemType, RecipeItem[]>;
+    recipeParts: Record<PecipePartType, PecipePart[]>;
+    recipeDetailVariants: Record<RecipeDetailType, RecipeDetailVariant[]>;
 }
 
 // ======= LOOT OBJECTS TYPES =======
