@@ -90,7 +90,49 @@ export const ironBasicShortSwordBlade: RecipeDetailVariant = {
 
 // === Best Variants ===
 
-// TODO: Add best variants for each part
+export const goldenBasicShortSwordPommel: RecipeDetailVariant = {
+    id: "golden_basic_short_sword_pommel",
+    name: "Golden Basic Short Sword Pommel",
+    assetPath: "details/shortSword/pommel_golden.png",
+    type: RecipeDetailType.Pommel,
+    rarity: Rarity.Rare,
+    sellPriceCoefficient: 2.0,
+    temperatureCoefficient: 1.5,
+    durabilityCoefficient: 1.5,
+};
+
+export const goldenBasicShortSwordGrip: RecipeDetailVariant = {
+    id: "golden_basic_short_sword_grip",
+    name: "Golden Basic Short Sword Grip",
+    assetPath: "details/shortSword/grip_golden.png",
+    type: RecipeDetailType.Grip,
+    rarity: Rarity.Rare,
+    sellPriceCoefficient: 2.0,
+    temperatureCoefficient: 1.5,
+    durabilityCoefficient: 1.5,
+};
+
+export const goldenBasicShortSwordGuard: RecipeDetailVariant = {
+    id: "golden_basic_short_sword_guard",
+    name: "Golden Basic Short Sword Guard",
+    assetPath: "details/shortSword/guard_golden.png",
+    type: RecipeDetailType.Guard,
+    rarity: Rarity.Rare,
+    sellPriceCoefficient: 2.0,
+    temperatureCoefficient: 1.5,
+    durabilityCoefficient: 1.5,
+};
+
+export const goldenBasicShortSwordBlade: RecipeDetailVariant = {
+    id: "golden_basic_short_sword_blade",
+    name: "Golden Basic Short Sword Blade",
+    assetPath: "details/shortSword/blade_golden.png",
+    type: RecipeDetailType.ShortSwordBlade,
+    rarity: Rarity.Rare,
+    sellPriceCoefficient: 2.0,
+    temperatureCoefficient: 1.5,
+    durabilityCoefficient: 1.5,
+};
 
 export const woodenBasicShortSwordDetailVariants: RecipeDetailVariant[] = [
     wodenBasicShortSwordPommel,
