@@ -91,12 +91,20 @@ The game progresses through four distinct phases in a loop:
 -   Raw materials falling from the Pipe.
 -   Used as ingredients (in Cauldron) or fuel (in Intake/Furnace).
 -   Different types may have different properties (e.g., fuel value, suitability for recipes).
+-   Composed of molecules that may contain multiple atoms (details).
+-   Available junk is determined by player's favorite recipes.
+
+For detailed information about the junk system, see the [Complete Crafting System Documentation](Crafting.md#junk-parts).
 
 ### Loot Items
 
 -   Valuable items created through successful crafting.
 -   Stored in the Stall until sold.
--   Value determined by recipe, potentially quality modifiers, and Cauldron upgrades/cleanliness.
+-   Value determined by recipe base price, parts coefficients, and potential synergies.
+-   Quality affected by hitting the ideal temperature during crafting.
+-   Final price is also affected by Cauldron upgrades/cleanliness.
+
+For detailed information about loot item creation and pricing, see the [Complete Crafting System Documentation](Crafting.md#crafting-process).
 
 ### Recipes (Templates)
 
@@ -104,6 +112,9 @@ The game progresses through four distinct phases in a loop:
 -   **Hybrid Recipes:** Combinations of two base recipes (e.g., Swordaxe). Created via the Loot Mixer in the Shop, added permanently to the Deck.
 -   **Deck:** The player's collection of all acquired recipes. Limitless. Recipes cannot be removed.
 -   **Recipe Queue:** UI element (left of Cauldron) showing the next 3 recipes drawn randomly (non-unique) from the Deck. The leftmost recipe is the target for the current craft. Shifts after a craft attempt (success or failure that consumes ingredients). Refilled at Day Start and as slots become empty.
+-   **Favorite Recipes:** Players can "like" recipes to determine which parts appear in the junk pile.
+
+For comprehensive details about recipes and their properties, see the [Complete Crafting System Documentation](Crafting.md#recipes).
 
 ### Stall
 

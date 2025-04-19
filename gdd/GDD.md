@@ -66,11 +66,16 @@ TODO
 
 ### 2. Crafting System
 
--   Player selects junk items with the Claw and drops them into either the Cauldron (ingredients) or the Intake (fuel).
--   Starting the craft burns fuel in the Furnace, heating the Cauldron.
--   Player stops the process at the desired temperature.
--   Success depends on correct temperature range and ingredients matching a recipe from the queue.
--   Results: Successful craft (Loot Item), failure (too hot/cold, ingredients lost or returned), or wasted fuel.
+-   **Recipe System**: Recipes define what can be crafted and have properties such as base price, ideal temperature, and temperature offset. Each recipe has a template for assembling items from parts and a default configuration.
+-   **Junk Management**: Junk consists of various parts (molecules) that can be recipe-specific or universal. The composition of the junk pile is determined by the player's favorite recipes.
+-   **Crafting Process**: The cauldron follows a specific algorithm to craft items:
+    -   Analyzes available junk and distributes parts into appropriate categories
+    -   Selects optimal parts configuration based on value
+    -   Calculates temperature requirements and price based on parts used
+-   **Temperature Control**: Player stops heating at the desired temperature, with success dependent on hitting the recipe's temperature window (modified by the parts used).
+-   **Quality & Price**: Item price and quality are determined by recipe base price and the coefficients of parts used.
+
+For detailed information about the crafting system, see the [Complete Crafting System Documentation](Crafting.md).
 
 ### 3. Wearing and Fixing
 
