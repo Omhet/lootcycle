@@ -497,6 +497,12 @@ export const lootAtomConfig: Record<LootAtomType, LootAtom[]> = {
     [LootAtomType.Blade]: [swordBasicBladeAtom, elvenSwordBladeAtom],
 };
 
+export type LootConfig = {
+    lootItemTemplates: LootItemTemplateConfig;
+    lootMolecules: LootMoleculeConfig;
+    lootAtoms: LootAtomConfig;
+};
+
 // ======= LOOT OBJECTS TYPES (that will be generated in build time and then used in runtime) =======
 
 export type LootItemId = string;
@@ -553,19 +559,11 @@ export type craftLootItemParams = {
     lootItemTemplate: LootItemTemplate;
     junkItems: LootJunkItem[];
     temperature: number;
-    config: {
-        lootItems: Record<LootItemId, LootItem>;
-        lootParts: Record<LootPartId, LootPart>;
-    };
+    config: LootConfig;
 };
 
 export function craftLootItem(params: craftLootItemParams): CraftingResult {
-    const {
-        lootItemTemplate,
-        junkItems,
-        temperature,
-        config: { lootItems, lootParts },
-    } = params;
+    const { lootItemTemplate, junkItems, temperature, config } = params;
 
     // Step 1: Check if there is enough material proportional weight in the junk items overall material composition
     // retutn NotEnoughJunk failure if not enough
