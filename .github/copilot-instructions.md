@@ -30,6 +30,7 @@
     - Focus on one conceptual change at a time
     - Show clear "before" and "after" snippets when proposing changes
     - Include concise explanations of what changed and why
+    - Always add the line number and the filename when you reference code
     - Always check if the edit maintains the project's coding style
 
 ### Edit sequence:
@@ -78,3 +79,29 @@
     - **Performance:** Be mindful of performance. Use object pooling for frequently created/destroyed objects. Optimize code within the `update` loop. Use Texture Atlases where appropriate.
     - **Cleanup:** Ensure proper cleanup of resources. Remove event listeners, timers, and destroy game objects when they are no longer needed, especially when a scene shuts down (use the `shutdown` event: `this.events.on('shutdown', () => { ... })`).
     -
+
+### TypeScript
+
+    - **Strict Mode:** Enable `strict` mode in `tsconfig.json` for maximum type safety.
+    - **Explicit Types:** Use explicit types for function parameters, return values, and variables where type inference isn't obvious or sufficient. Avoid `any` unless absolutely necessary and provide justification.
+    - **Interfaces vs. Types:** Prefer `interface` for defining object shapes and `type` for unions, intersections, or more complex types.
+    - **Readonly:** Use the `readonly` modifier for properties that should not be reassigned after initialization.
+    - **Enums:** Use string enums for better readability and debugging unless numeric enums offer a specific advantage.
+    - **Utility Types:** Leverage built-in utility types like `Partial`, `Required`, `Readonly`, `Pick`, `Omit` to create new types based on existing ones.
+    - **Modules:** Organize code into modules (`import`/`export`) for better maintainability and encapsulation. Use relative paths for internal module imports.
+
+### React
+
+    - **Component Composition:** Break down UI into small, reusable components. Favor composition over inheritance.
+    - **State Management:** For simple state, use `useState`. For complex state shared across components, use `useContext` with `useReducer` or consider a dedicated state management library if needed (though prefer simpler solutions first). Use the existing `EventBus` to communicate between React UI and the Phaser game.
+    - **Props:** Pass data down via props. Use TypeScript interfaces (`interface Props { ... }`) to define prop types.
+    - **Keys:** Always provide stable and unique `key` props when rendering lists of elements.
+    - **Effect Cleanup:** Always clean up side effects in `useEffect` (e.g., subscriptions, timers) by returning a cleanup function.
+
+### Architecture
+
+    - **Separation of Concerns:** Clearly separate data, game logic (Phaser), and UI presentation (React). Avoid mixing concerns within a single module or component.
+    - **SOLID Principles:** Strive to follow SOLID principles (Single Responsibility, Open/Closed, Liskov Substitution, Interface Segregation, Dependency Inversion) where applicable to create maintainable and scalable code.
+    - **Modularity:** Design systems as loosely coupled modules with well-defined interfaces. Use the `EventBus` for inter-module communication where direct coupling isn't necessary.
+    - **Data Flow:** Define clear data flow patterns. For UI-Game interaction, use the `EventBus` or dedicated state management solutions. Avoid direct manipulation of game state from the UI layer and vice-versa, except through defined channels.
+    - **Configuration:** Externalize configuration values (e.g., API endpoints, game balance settings) rather than hardcoding them.
