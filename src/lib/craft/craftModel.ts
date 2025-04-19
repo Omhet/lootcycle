@@ -89,8 +89,8 @@ export interface RecipeItem {
     name: string;
     sockets: PecipePartSocket[];
     baseSellPrice: number;
-    perfectTemperature: number;
-    baseTemperatureOffset: number;
+    perfectTemperature: number; // In Celsius
+    baseTemperatureOffset: number; // In Celsius
 }
 
 export type PecipePartSocket = {
@@ -161,7 +161,7 @@ export type LootItem = {
     parts: LootPartId[];
     rarity: Rarity;
     sellPrice: number;
-    temperatureRange: TemperatureRange;
+    temperatureRange: TemperatureRange; // In Celsius
 };
 
 export type LootPart = {

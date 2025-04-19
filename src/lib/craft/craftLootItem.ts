@@ -1,12 +1,12 @@
 import {
     CraftingFailureReason,
+    JunkPiece,
     LootConfig,
     LootDetail,
     LootItem,
-    LootItemTemplate,
-    LootJunkItem,
     LootPart,
     Rarity,
+    RecipeItemId,
 } from "./craftModel.js";
 
 // ======= CRAFTING FUNCTION TYPES =======
@@ -23,8 +23,8 @@ export interface CraftingResult {
 }
 
 export type craftLootItemParams = {
-    lootItemTemplate: LootItemTemplate;
-    junkItems: LootJunkItem[];
+    lootItemRecipeId: RecipeItemId;
+    junkPieces: JunkPiece[];
     temperature: number;
     config: LootConfig;
 };
@@ -32,29 +32,23 @@ export type craftLootItemParams = {
 // ======= CRAFTING FUNCTION =======
 
 /**
- * Attempts to craft a LootItem from a template and junk items at a specific temperature.
+ * Attempts to craft a LootItem from a recipe and junk items at a specific temperature.
  * // TODO: For now it is a stub, it will always return a success. It will be updated after GDD is refined
  */
 export function craftLootItem(params: craftLootItemParams): CraftingResult {
-    const { lootItemTemplate } = params;
+    const { lootItemRecipeId } = params;
 
     const craftedItem: LootItem = {
         id: "loot-item-id",
-        templateId: lootItemTemplate.id,
+        recipeId: lootItemRecipeId,
         name: "Item Name",
-        subparts: [],
-        materialComposition: [],
         rarity: Rarity.Common,
-        quality: 100,
         sellPrice: 100,
         temperatureRange: {
             min: 0,
             max: 100,
         },
-        masterQualityTemperatureRange: {
-            min: 20,
-            max: 80,
-        },
+        parts: [], // This will be filled with actual parts after crafting logic is implemented
     };
 
     const parts: LootPart[] = [];
