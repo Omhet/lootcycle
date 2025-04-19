@@ -1,4 +1,5 @@
 import { Scene } from "phaser";
+import { lootConfig } from "../../lib/craft/config";
 import { EventBus } from "../EventBus";
 
 export class Game extends Scene {
@@ -23,6 +24,11 @@ export class Game extends Scene {
         // Add background to the container at its center (0, 0 relative to container)
         this.background = this.add.image(0, 0, "background");
         this.container.add(this.background);
+
+        // Add keyboard input handling
+        this.input.keyboard?.on("keydown-ENTER", () => {
+            console.log(lootConfig);
+        });
 
         EventBus.emit("current-scene-ready", this);
     }
