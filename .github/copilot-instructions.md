@@ -67,5 +67,14 @@
 
 ### Phaser
 
-    - Use the latest Phaser 3.87.0 version. Conuslt API docs if unsure https://docs.phaser.io/api-documentation/api-documentation
+    - Use the latest Phaser 3.87.0 version. Consult API docs if unsure https://docs.phaser.io/api-documentation/api-documentation
+    - **Scene Management:** Utilize Phaser's scene lifecycle methods (`init`, `preload`, `create`, `update`). Use `this.scene.start()` and `this.scene.stop()` for scene transitions. Pass data between scenes using the optional data argument in `this.scene.start(key, data)`.
+    - **Asset Loading:** Load all assets in a dedicated `Preloader` scene. Use specific loader methods (e.g., `this.load.image`, `this.load.spritesheet`, `this.load.aseprite`, `this.load.audio`). Ensure asset keys are unique and descriptive.
+    - **Game Objects:** Create game objects using scene factories (e.g., `this.add.image()`, `this.add.sprite()`, `this.physics.add.sprite()`). Add game objects to Containers or Groups for better organization and management.
+    - **Physics:** Default to Matter.js physics unless specified otherwise. Use `this.matter.world` for world configuration (e.g., gravity, bounds). Create physics-enabled sprites using `this.matter.add.sprite()`. Set up collisions using collision categories and masks (`gameObject.setCollisionCategory()`, `gameObject.setCollidesWith()`). Use `this.matter.add.collider()` for specific pair collisions if needed. For complex shapes, consider using physics editors (like PhysicsEditor) and loading the data, or manually creating compound bodies.
+    - **TypeScript:** Leverage TypeScript for type safety. Define interfaces for scene data, custom game object properties, and configuration objects. Use Phaser's provided types (e.g., `Phaser.Scene`, `Phaser.GameObjects.Sprite`, `Phaser.Types.Physics.Arcade.SpriteWithDynamicBody`).
+    - **State & Events:** Use the existing `EventBus` for decoupled communication between scenes or systems. Avoid relying on global variables for state management where possible.
+    - **Input:** Use Phaser's Input Plugin (`this.input.on('pointerdown', ...)`), Keyboard Plugin (`this.input.keyboard.addKey(...)`), or specific Gamepad/Pointer methods as needed.
+    - **Performance:** Be mindful of performance. Use object pooling for frequently created/destroyed objects. Optimize code within the `update` loop. Use Texture Atlases where appropriate.
+    - **Cleanup:** Ensure proper cleanup of resources. Remove event listeners, timers, and destroy game objects when they are no longer needed, especially when a scene shuts down (use the `shutdown` event: `this.events.on('shutdown', () => { ... })`).
     -
