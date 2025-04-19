@@ -84,7 +84,6 @@
 
     - **Strict Mode:** Enable `strict` mode in `tsconfig.json` for maximum type safety.
     - **Explicit Types:** Use explicit types for function parameters, return values, and variables where type inference isn't obvious or sufficient. Avoid `any` unless absolutely necessary and provide justification.
-    - **Interfaces vs. Types:** Prefer `interface` for defining object shapes and `type` for unions, intersections, or more complex types.
     - **Readonly:** Use the `readonly` modifier for properties that should not be reassigned after initialization.
     - **Enums:** Use string enums for better readability and debugging unless numeric enums offer a specific advantage.
     - **Utility Types:** Leverage built-in utility types like `Partial`, `Required`, `Readonly`, `Pick`, `Omit` to create new types based on existing ones.
