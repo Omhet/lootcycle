@@ -19,8 +19,27 @@ export class JunkPileManager {
     private junkPile: JunkPileItem[] = []; // Total accumulated junk collection
     private spawnTimers: Phaser.Time.TimerEvent[] = [];
 
+    // Spawn point coordinates
+    private spawnX: number;
+    private spawnY: number;
+
     constructor(scene: Scene) {
         this.scene = scene;
+
+        // Set default spawn point to top right corner with margin
+        this.spawnX = this.scene.cameras.main.width - 200;
+        this.spawnY = 100;
+    }
+
+    /**
+     * Sets the spawn point for junk items
+     * @param x The X coordinate of the spawn point
+     * @param y The Y coordinate of the spawn point
+     */
+    public setSpawnPoint(x: number, y: number): void {
+        this.spawnX = x;
+        this.spawnY = y;
+        console.log(`Junk pile spawn point set to: (${x}, ${y})`);
     }
 
     /**
@@ -29,9 +48,9 @@ export class JunkPileManager {
      * @returns The created junk pile item with physics body
      */
     private spawnJunkItem(junkDetail: JunkDetail): JunkPileItem {
-        // Define spawn point (top right corner with some margin)
-        const spawnX = this.scene.cameras.main.width - 200;
-        const spawnY = 100;
+        // Use the configurable spawn point
+        const spawnX = this.spawnX;
+        const spawnY = this.spawnY;
 
         // Random parameters for the physics body
         const shapeSize = Phaser.Math.Between(30, 50);

@@ -17,6 +17,10 @@ export class Game extends Scene {
     private groundCollider: MatterJS.BodyType;
     private containerSprite: Phaser.Physics.Matter.Sprite;
 
+    // Pipe related objects
+    private pipeContainer: Phaser.GameObjects.Container;
+    private pipeSpawnPoint: Phaser.Math.Vector2;
+
     constructor() {
         super("Game");
     }
@@ -58,8 +62,17 @@ export class Game extends Scene {
         // Moved after groundHeight is defined so we can use it for positioning
         this.createContainer();
 
+        // Set up the pipe in the top right corner
+        this.setupPipe();
+
         // Initialize JunkPileManager
         this.junkPileManager = new JunkPileManager(this);
+
+        // Pass the pipe spawn point to the JunkPileManager
+        this.junkPileManager.setSpawnPoint(
+            this.pipeContainer.x + this.pipeSpawnPoint.x,
+            this.pipeContainer.y + this.pipeSpawnPoint.y
+        );
 
         this.input.keyboard?.on("keydown-ENTER", () => {
             // Generate next junk portion
@@ -147,5 +160,66 @@ export class Game extends Scene {
         // Set the sprite properties
         this.containerSprite.setStatic(true);
         this.containerSprite.setName("container");
+    }
+
+    /**
+     * Sets up the pipe in the top right corner with front and back layers
+     */
+    private setupPipe(): void {
+        // Position in the top right corner with some margin
+        const pipeX = this.cameras.main.width; // Right edge with small margin
+        const pipeY = 64; // Top edge with small margin
+
+        // Add the back layer of the pipe
+        const pipeBack = this.add.image(0, 0, "pipe_back");
+
+        // Add the front layer of the pipe
+        const pipeFront = this.add.image(0, 0, "pipe_front");
+
+        // Get the dimensions of the pipe sprite
+        const pipeWidth = pipeBack.width;
+        const pipeHeight = pipeBack.height;
+
+        // Create a container for the pipe layers
+        // Containers don't have origin/pivot like Images, so we need to position the elements inside
+        this.pipeContainer = this.add.container(pipeX, pipeY);
+
+        // Adjust the images' positions within the container
+        // For top-right pivot, position both images with their top-right corner at (0,0)
+        // This means shifting them to the left by their width
+        pipeBack.setOrigin(1, 0); // Set origin to top-right for both images
+        pipeFront.setOrigin(1, 0);
+
+        // Add both layers to the container
+        this.pipeContainer.add(pipeBack);
+        this.pipeContainer.add(pipeFront);
+
+        // Debug visualization to confirm pipe position
+        // Uncomment if needed
+        const marker = this.add.rectangle(0, 0, 5, 5, 0xff0000);
+        this.pipeContainer.add(marker);
+
+        // Set the spawn point to be at the lower left corner of the pipe
+        // Since our pivot is at the container's position (top-right of the pipe),
+        // the lower left corner is at:
+        // X = -pipeWidth (full width to the left)
+        // Y = pipeHeight (full height down)
+        const spawnOffsetX = -pipeWidth;
+        const spawnOffsetY = pipeHeight;
+
+        // Create the spawn point vector
+        this.pipeSpawnPoint = new Phaser.Math.Vector2(
+            spawnOffsetX + 80,
+            spawnOffsetY - 80
+        );
+
+        // Optional: Add a debug marker at the spawn point
+        const spawnMarker = this.add.circle(
+            this.pipeSpawnPoint.x,
+            this.pipeSpawnPoint.y,
+            5,
+            0x00ff00
+        );
+        this.pipeContainer.add(spawnMarker);
     }
 }
