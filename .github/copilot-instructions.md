@@ -37,16 +37,13 @@
 
     1. [First specific change] - Purpose: [why]
     2. [Second specific change] - Purpose: [why]
-    3. Do you approve this plan? I'll proceed with Edit [number] after your confirmation.
-    4. WAIT for explicit user confirmation before making ANY edits when user ok edit [number]
+    3. Make the planned edits
 
 ### EXECUTION PHASE
 
-    - After each individual edit, clearly indicate progress:
-    	"✅ Completed edit [#] of [total]. Ready for next edit?"
     - If you discover additional needed changes during editing:
     - STOP and update the plan
-    - Get approval before continuing
+    - Say about them and then continue
 
 ### REFACTORING GUIDANCE
 
