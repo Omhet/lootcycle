@@ -1,8 +1,14 @@
-import { Durability, Rarity, RecipeDetailType } from "../../../craftModel";
+import {
+    Durability,
+    JunkDetailType,
+    Rarity,
+    RecipeDetailType,
+} from "../../../craftModel";
 import { registerJunkDetail } from "../../registry";
 
-registerJunkDetail(RecipeDetailType.Bone, {
+registerJunkDetail(JunkDetailType.Bone, {
     id: "junk_bone",
+    type: JunkDetailType.Bone,
     suitableForRecipeDetails: [RecipeDetailType.Grip],
     name: "Bone",
     assetPath: "details/junk/bone.png",
@@ -12,8 +18,9 @@ registerJunkDetail(RecipeDetailType.Bone, {
     temperatureCoefficient: 0.5,
 });
 
-registerJunkDetail(RecipeDetailType.Gristle, {
+registerJunkDetail(JunkDetailType.Gristle, {
     id: "junk_gristle",
+    type: JunkDetailType.Gristle,
     suitableForRecipeDetails: [RecipeDetailType.Pommel],
     name: "Gristle",
     assetPath: "details/junk/gristle.png",

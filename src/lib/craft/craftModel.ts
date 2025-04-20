@@ -121,8 +121,6 @@ export enum RecipeDetailType {
     Grip = "grip",
     Guard = "guard",
     ShortSwordBlade = "short_sword_blade",
-    Bone = "bone",
-    Gristle = "gristle",
 }
 
 export type RecipeDetail = {
@@ -149,8 +147,18 @@ export type JunkPart = {
     details: JunkDetailId[];
 };
 
+export enum JunkDetailType {
+    Pommel = "pommel",
+    Grip = "grip",
+    Guard = "guard",
+    ShortSwordBlade = "short_sword_blade",
+    Bone = "bone",
+    Gristle = "gristle",
+}
+
 export type JunkDetail = {
     id: JunkDetailId;
+    type: JunkDetailType;
     suitableForRecipeDetails: RecipeDetailType[];
     name: string;
     assetPath: string;
@@ -163,7 +171,7 @@ export type JunkDetail = {
 // Particular instance of junk in game runtime
 export type JunkPiece = {
     id: JunkPartId | JunkDetailId;
-    type: "part" | "detail";
+    pieceType: "part" | "detail";
     degradation: number; // Degradation level of any junk piece in runtime (from 0% to 100%)
 };
 
@@ -201,5 +209,5 @@ export type LootDetail = {
 export interface LootConfig {
     recipeItems: Record<RecipeItemType, RecipeItem[]>;
     recipeParts: Record<PecipePartType, PecipePart[]>;
-    junkDetails: Record<RecipeDetailType, JunkDetail[]>;
+    junkDetails: Record<JunkDetailType, JunkDetail[]>;
 }
