@@ -62,9 +62,6 @@ export class Game extends Scene {
         // Moved after groundHeight is defined so we can use it for positioning
         this.createContainer();
 
-        // Set up the pipe in the top right corner
-        this.setupPipe();
-
         // Initialize JunkPileManager
         this.junkPileManager = new JunkPileManager(this);
 
@@ -93,7 +90,7 @@ export class Game extends Scene {
         this.backgroundLayers = this.add.container(0, 0);
 
         // Add background layers in order from back to front
-        // Starting from the bottom: bg, bg_walls, bg_frame, bg_decor
+        // Starting from the bottom: bg, bg_walls, pipe, bg_frame, bg_decor
 
         // Base background layer
         const bg = this.add.image(
@@ -110,6 +107,11 @@ export class Game extends Scene {
             "bg_walls"
         );
         this.backgroundLayers.add(bgWalls);
+
+        // Set up the pipe here - between walls and frame
+        this.setupPipe();
+        // Add the pipe container to the background layers
+        this.backgroundLayers.add(this.pipeContainer);
 
         // Frame layer
         const bgFrame = this.add.image(
