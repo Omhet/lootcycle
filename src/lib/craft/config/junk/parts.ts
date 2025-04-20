@@ -1,13 +1,13 @@
-import { PecipePartType, RecipeDetailType } from "../../craftModel";
-import { registerRecipePart } from "../registry";
+import { JunkDetailType, JunkPartType } from "../../craftModel";
+import { registerJunkPart } from "../registry";
 
-registerRecipePart(PecipePartType.LongBone, {
+registerJunkPart(JunkPartType.LongBone, {
     id: "long_bone",
-    type: PecipePartType.LongBone,
+    type: JunkPartType.LongBone,
     name: "Long Bone",
     sockets: [
         {
-            acceptType: RecipeDetailType.Gristle,
+            acceptType: JunkDetailType.Gristle,
             pinpoint: {
                 coords: { x: 0, y: 0 },
                 localOffset: { x: 0, y: 0.5 },
@@ -16,7 +16,7 @@ registerRecipePart(PecipePartType.LongBone, {
             },
         },
         {
-            acceptType: RecipeDetailType.Bone,
+            acceptType: JunkDetailType.Bone,
             pinpoint: {
                 coords: { x: 0, y: 0 },
                 localOffset: { x: 0, y: 0 },
@@ -25,7 +25,7 @@ registerRecipePart(PecipePartType.LongBone, {
             },
         },
         {
-            acceptType: RecipeDetailType.Gristle,
+            acceptType: JunkDetailType.Gristle,
             pinpoint: {
                 coords: { x: 0, y: 0 },
                 localOffset: { x: 0, y: -0.5 },

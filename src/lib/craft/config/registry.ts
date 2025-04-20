@@ -1,6 +1,8 @@
 import {
     JunkDetail,
     JunkDetailType,
+    JunkPart,
+    JunkPartType,
     LootConfig,
     PecipePart,
     PecipePartType,
@@ -17,10 +19,12 @@ import {
 const registry: {
     recipeItems: Map<RecipeItemType, RecipeItem[]>;
     recipeParts: Map<PecipePartType, PecipePart[]>;
+    junkParts: Map<JunkPartType, JunkPart[]>;
     junkDetails: Map<JunkDetailType, JunkDetail[]>;
 } = {
     recipeItems: new Map(),
     recipeParts: new Map(),
+    junkParts: new Map(),
     junkDetails: new Map(),
 };
 
@@ -55,6 +59,18 @@ export function registerRecipePart(
 }
 
 /**
+ * Register a junk part with the registry
+ * @param type The type of the junk part
+ * @param part The junk part to register
+ */
+export function registerJunkPart(type: JunkPartType, part: JunkPart): void {
+    if (!registry.junkParts.has(type)) {
+        registry.junkParts.set(type, []);
+    }
+    registry.junkParts.get(type)?.push(part);
+}
+
+/**
  * Register a junk detail with the registry
  * @param type The type of the junk detail
  * @param detail The junk detail to register
@@ -76,7 +92,8 @@ export function generateLootConfig(): LootConfig {
     const config: LootConfig = {
         recipeItems: {},
         recipeParts: {},
-        junkDetails: {}, // Note: We're keeping recipeDetails key to match the LootConfig interface
+        junkParts: {},
+        junkDetails: {},
     } as LootConfig;
 
     // Convert Maps to the expected format in LootConfig
@@ -88,7 +105,10 @@ export function generateLootConfig(): LootConfig {
         config.recipeParts[type] = parts;
     });
 
-    // Map junkDetails to recipeDetails in the config
+    registry.junkParts.forEach((parts, type) => {
+        config.junkParts[type] = parts;
+    });
+
     registry.junkDetails.forEach((details, type) => {
         config.junkDetails[type] = details;
     });
@@ -110,6 +130,10 @@ export function validateLootConfig(): string[] {
 
     if (registry.recipeParts.size === 0) {
         issues.push("No recipe parts registered");
+    }
+
+    if (registry.junkParts.size === 0) {
+        issues.push("No junk parts registered");
     }
 
     if (registry.junkDetails.size === 0) {

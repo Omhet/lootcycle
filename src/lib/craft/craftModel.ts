@@ -101,7 +101,6 @@ export type PecipePartSocket = {
 export enum PecipePartType {
     BladeWeaponHilt = "hilt",
     ShortSwordBlade = "short_sword_blade",
-    LongBone = "long_bone",
 }
 
 export type PecipePart = {
@@ -141,10 +140,20 @@ export enum Durability {
 export type JunkPartId = string;
 export type JunkDetailId = string;
 
+export enum JunkPartType {
+    LongBone = "long_bone",
+}
+
 export type JunkPart = {
     id: JunkPartId;
-    recipePartId: PecipePartId;
-    details: JunkDetailId[];
+    type: JunkPartType;
+    name: string;
+    sockets: JunkDetailSocket[];
+};
+
+export type JunkDetailSocket = {
+    acceptType: JunkDetailType;
+    pinpoint: Pinpoint;
 };
 
 export enum JunkDetailType {
@@ -209,5 +218,6 @@ export type LootDetail = {
 export interface LootConfig {
     recipeItems: Record<RecipeItemType, RecipeItem[]>;
     recipeParts: Record<PecipePartType, PecipePart[]>;
+    junkParts: Record<JunkPartType, JunkPart[]>;
     junkDetails: Record<JunkDetailType, JunkDetail[]>;
 }
