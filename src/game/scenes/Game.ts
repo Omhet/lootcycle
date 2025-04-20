@@ -1,4 +1,6 @@
 import { Scene } from "phaser";
+import { craftLootItem } from "../../lib/craft/craftLootItem";
+import { LootConfig, LootItem } from "../../lib/craft/craftModel";
 import { EventBus } from "../EventBus";
 import { JunkPileManager } from "./logic/JunkPileManager";
 
@@ -25,6 +27,12 @@ export class Game extends Scene {
 
     // Game managers
     private junkPileManager: JunkPileManager;
+
+    // Crafted item display
+    private craftedItemRT: Phaser.GameObjects.RenderTexture;
+    private craftedItemContainer: Phaser.GameObjects.Container;
+    private craftedItem: LootItem | null = null;
+    private itemPartSprites: Phaser.GameObjects.Sprite[] = [];
 
     // Physics bodies
     private groundHeight = 38;
@@ -94,12 +102,134 @@ export class Game extends Scene {
         this.input.keyboard?.on("keydown-ENTER", () => {
             // Generate next junk portion
             this.junkPileManager.generateNextPortion();
+
+            // Craft and render a new item
+            this.craftAndRenderItem();
         });
 
         // Generate the initial junk portion
         this.junkPileManager.generateJunkPortion();
 
+        // Initialize render texture for crafted items
+        this.initCraftedItemDisplay();
+
         EventBus.emit("current-scene-ready", this);
+    }
+
+    /**
+     * Initializes the render texture and container for displaying crafted items
+     */
+    private initCraftedItemDisplay(): void {
+        // Create a render texture in the center of the screen
+        const rtWidth = 400;
+        const rtHeight = 200;
+        const rtX = this.cameras.main.width / 2 - rtWidth / 2;
+        const rtY = this.cameras.main.height / 2 - rtHeight / 2;
+
+        this.craftedItemRT = this.add.renderTexture(
+            rtX,
+            rtY,
+            rtWidth,
+            rtHeight
+        );
+        this.craftedItemRT.setDepth(DepthLayers.UI);
+        this.craftedItemRT.setVisible(false);
+
+        // Add a background to the render texture
+        this.craftedItemRT.fill(0x000000, 0.7);
+
+        // Create a container for item parts
+        this.craftedItemContainer = this.add.container(
+            rtX + rtWidth / 2,
+            rtY + rtHeight / 2
+        );
+        this.craftedItemContainer.setDepth(DepthLayers.UI);
+        this.craftedItemContainer.setVisible(false);
+    }
+
+    /**
+     * Crafts a new item and renders it in the center of the screen
+     */
+    private craftAndRenderItem(): void {
+        // Clear previous item if any
+        this.clearCraftedItem();
+
+        // Get mock junk pieces and temperature (will be implemented for real later)
+        const mockJunkPieces: any[] = [];
+        const mockTemperature = 50;
+
+        // Get a stub config (will be implemented for real later)
+        const mockConfig = {} as LootConfig;
+
+        // Call the craftLootItem function to get a stub item
+        const craftResult = craftLootItem({
+            lootItemRecipeId: "short_sword", // Mock ID
+            junkPieces: mockJunkPieces,
+            temperature: mockTemperature,
+            config: mockConfig,
+        });
+
+        // If the crafting was successful, store and render the item
+        if (craftResult.success && craftResult.item) {
+            this.craftedItem = craftResult.item;
+            this.renderCraftedItem();
+        }
+    }
+
+    /**
+     * Renders the current crafted item in the center of the screen
+     */
+    private renderCraftedItem(): void {
+        if (!this.craftedItem) return;
+
+        // Make the render texture visible
+        this.craftedItemRT.setVisible(true);
+        this.craftedItemContainer.setVisible(true);
+
+        // For now, we'll render the details with their actual sprites side by side
+        const details = this.craftedItem.details;
+        const gap = 80; // Gap between details
+
+        // Calculate total width needed for all details
+        const totalWidth = details.length * gap;
+        const startX = -totalWidth / 2 + gap / 2;
+
+        // Create sprites for each detail
+        details.forEach((detailId, index) => {
+            // Get the correct sprite frame name based on junk detail id
+            const frameName = `${detailId}.png`;
+
+            // Create a sprite with the detail texture
+            const detailSprite = this.add.sprite(
+                startX + index * gap,
+                0,
+                "details-sprites",
+                frameName
+            );
+            detailSprite.setName(`detail_${detailId}`);
+
+            // Add to the main container
+            this.craftedItemContainer.add(detailSprite);
+
+            // Keep track of the sprite for cleanup
+            this.itemPartSprites.push(detailSprite);
+        });
+    }
+
+    /**
+     * Clears the current crafted item display
+     */
+    private clearCraftedItem(): void {
+        // Hide the render texture
+        this.craftedItemRT.setVisible(false);
+        this.craftedItemContainer.setVisible(false);
+
+        // Clear the container
+        this.craftedItemContainer.removeAll(true);
+
+        // Clear the stored references
+        this.itemPartSprites = [];
+        this.craftedItem = null;
     }
 
     /**

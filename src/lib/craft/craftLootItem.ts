@@ -2,9 +2,7 @@ import {
     CraftingFailureReason,
     JunkPiece,
     LootConfig,
-    LootDetail,
     LootItem,
-    LootPart,
     Rarity,
     RecipeItemId,
 } from "./craftModel";
@@ -14,8 +12,6 @@ import {
 export interface CraftingResult {
     success: boolean;
     item?: LootItem;
-    parts?: LootPart[];
-    details?: LootDetail[]; // Add details here
     failure?: {
         reason: CraftingFailureReason;
         message?: string;
@@ -48,21 +44,17 @@ export function craftLootItem(params: craftLootItemParams): CraftingResult {
             min: 0,
             max: 100,
         },
-        parts: [
+        // This will be filled with actual parts after crafting logic is implemented
+        details: [
             "junk_iron_basic_short_sword_pommel",
             "junk_wooden_basic_short_sword_grip",
             "junk_iron_basic_short_sword_guard",
             "junk_iron_basic_short_sword_blade",
-        ], // This will be filled with actual parts after crafting logic is implemented
+        ],
     };
-
-    const parts: LootPart[] = [];
-    const details: LootDetail[] = [];
 
     return {
         success: true,
         item: craftedItem,
-        parts: parts,
-        details: details,
     };
 }
