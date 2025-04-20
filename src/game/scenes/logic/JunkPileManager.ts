@@ -92,41 +92,25 @@ export class JunkPileManager {
             ) {
                 (physicsBody.body as any).parts[0].label = junkDetail.id;
             }
+
+            // Apply initial velocity and rotation
+            physicsBody.setVelocity(velocityX, velocityY);
+            physicsBody.setAngularVelocity(
+                Phaser.Math.FloatBetween(-0.05, 0.05)
+            );
+
+            physicsBody.setDepth(DepthLayers.JunkPile);
+
+            // Return the complete junk pile item
+            return {
+                junkDetail,
+                body: physicsBody,
+            };
         } else {
-            // Fallback to basic shape if no matching physics shape is found
-            console.warn(
+            throw new Error(
                 `No physics shape found for junk detail: ${junkDetail.id}`
             );
-
-            // Create sprite with a basic circular physics body
-            physicsBody = this.scene.matter.add.sprite(
-                spawnX,
-                spawnY,
-                "details-sprites",
-                frameName
-            );
-
-            // Create a circular body as fallback using Phaser's built-in methods
-            const circleRadius =
-                Math.max(physicsBody.width, physicsBody.height) / 2;
-            this.scene.matter.add.circle(spawnX, spawnY, circleRadius, {
-                restitution: 0.5,
-                friction: 0.1,
-                label: junkDetail.id,
-            });
         }
-
-        // Apply initial velocity and rotation
-        physicsBody.setVelocity(velocityX, velocityY);
-        physicsBody.setAngularVelocity(Phaser.Math.FloatBetween(-0.05, 0.05));
-
-        physicsBody.setDepth(DepthLayers.JunkPile);
-
-        // Return the complete junk pile item
-        return {
-            junkDetail,
-            body: physicsBody,
-        };
     }
 
     /**
