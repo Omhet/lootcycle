@@ -20,6 +20,9 @@ export class MainMenu extends Scene {
         this.container = this.add.container(centerX, centerY);
 
         EventBus.emit("current-scene-ready", this);
+
+        // Temporary start game right away to debug
+        this.startGame();
     }
 
     // Method to change scene to Game
