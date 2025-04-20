@@ -9,6 +9,22 @@ export enum Rarity {
     Legendary = "legendary",
 }
 
+export enum Quality {
+    Worst = "worst",
+    Bad = "bad",
+    Good = "good",
+    Better = "better",
+    Best = "best",
+}
+
+// Chance tables for quality and rarity distribution
+export type ChanceTable = Record<string, number>;
+
+export interface ChanceTables {
+    qualityChanceTables: Record<number, ChanceTable>;
+    rarityChanceTables: Record<number, ChanceTable>;
+}
+
 // Operation results
 export enum CraftingFailureReason {
     NotEnoughJunk = "NOT_ENOUGH_JUNK",

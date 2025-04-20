@@ -4,6 +4,9 @@ import { generateLootConfig, validateLootConfig } from "./registry";
 // Import all configuration files to register their items
 // The order doesn't matter as each file self-registers its items
 
+// Import chance tables
+import "./chanceTables";
+
 // Common parts
 import "./recipe/bladeWeapon/parts";
 
