@@ -8,8 +8,6 @@ import {
 } from "../../../../craftModel";
 import { registerJunkDetail } from "../../../registry";
 
-// === Bad Variants ===
-
 registerJunkDetail(JunkDetailType.Pommel, {
     id: "junk_wooden_basic_short_sword_pommel",
     type: JunkDetailType.Pommel,
@@ -45,8 +43,6 @@ registerJunkDetail(JunkDetailType.ShortSwordBlade, {
     sellPriceCoefficient: 0.5,
     temperatureCoefficient: 0.5,
 });
-
-// === Good Variants ===
 
 registerJunkDetail(JunkDetailType.Pommel, {
     id: "junk_iron_basic_short_sword_pommel",
@@ -95,8 +91,6 @@ registerJunkDetail(JunkDetailType.ShortSwordBlade, {
     sellPriceCoefficient: 1,
     temperatureCoefficient: 1,
 });
-
-// === Best Variants ===
 
 registerJunkDetail(JunkDetailType.Pommel, {
     id: "junk_golden_basic_short_sword_pommel",
