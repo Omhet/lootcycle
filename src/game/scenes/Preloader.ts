@@ -43,6 +43,12 @@ export class Preloader extends Scene {
     preload() {
         //  Load the assets for the game
         this.load.setPath("assets");
+
+        // Load background assets
+        this.load.image("bg", "game/bg/bg.png");
+        this.load.image("bg_walls", "game/bg/bg_walls.png");
+        this.load.image("bg_frame", "game/bg/bg_frame.png");
+        this.load.image("bg_decor", "game/bg/bg_decor.png");
     }
 
     create() {
