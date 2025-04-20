@@ -130,7 +130,10 @@ export class Game extends Scene {
         const horizontalMargin = 154; // Margin from the right edge of the screen
         const xPos =
             this.cameras.main.width - frame.width / 2 - horizontalMargin;
-        const yPos = this.cameras.main.height - frame.height / 2;
+        const yPos =
+            this.cameras.main.height -
+            frame.height / 2 +
+            (this.groundHeight / 2 + 2);
 
         // Create the container sprite with physics directly at the correct position
         this.containerSprite = this.matter.add.sprite(
