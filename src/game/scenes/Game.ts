@@ -2,10 +2,24 @@ import { Scene } from "phaser";
 import { EventBus } from "../EventBus";
 import { JunkPileManager } from "./logic/JunkPileManager";
 
+/**
+ * Enum for managing consistent depth layers throughout the game
+ * Lower numbers are rendered behind higher numbers
+ */
+export enum DepthLayers {
+    Background = 0,
+    BackgroundWalls = 10,
+    PipeBack = 20,
+    SpawnedObjects = 30,
+    JunkPile = 30, // Same depth as SpawnedObjects for consistency
+    PipeFront = 40,
+    BackgroundFrame = 50,
+    BackgroundDecor = 60,
+    UI = 100,
+}
+
 export class Game extends Scene {
     camera: Phaser.Cameras.Scene2D.Camera;
-    container: Phaser.GameObjects.Container;
-    backgroundLayers: Phaser.GameObjects.Container;
     gameText: Phaser.GameObjects.Text;
 
     // Game managers
@@ -18,8 +32,8 @@ export class Game extends Scene {
     private containerSprite: Phaser.Physics.Matter.Sprite;
 
     // Pipe related objects
-    private pipeContainer: Phaser.GameObjects.Container;
     private pipeSpawnPoint: Phaser.Math.Vector2;
+    private pipePosition: Phaser.Math.Vector2;
 
     constructor() {
         super("Game");
@@ -28,13 +42,7 @@ export class Game extends Scene {
     create() {
         this.camera = this.cameras.main;
 
-        const centerX = this.cameras.main.width / 2;
-        const centerY = this.cameras.main.height / 2;
-
-        // Create a container centered on the screen
-        this.container = this.add.container(centerX, centerY);
-
-        // Create background layers container
+        // Setup background layers with proper depth ordering
         this.setupBackgroundLayers();
 
         // Set up physics world
@@ -59,7 +67,6 @@ export class Game extends Scene {
         );
 
         // Create the container sprite with physics from the PhysicsEditor JSON data
-        // Moved after groundHeight is defined so we can use it for positioning
         this.createContainer();
 
         // Initialize JunkPileManager
@@ -67,8 +74,8 @@ export class Game extends Scene {
 
         // Pass the pipe spawn point to the JunkPileManager
         this.junkPileManager.setSpawnPoint(
-            this.pipeContainer.x + this.pipeSpawnPoint.x,
-            this.pipeContainer.y + this.pipeSpawnPoint.y
+            this.pipePosition.x + this.pipeSpawnPoint.x,
+            this.pipePosition.y + this.pipeSpawnPoint.y
         );
 
         this.input.keyboard?.on("keydown-ENTER", () => {
@@ -86,19 +93,13 @@ export class Game extends Scene {
      * Sets up the background layers in the correct order
      */
     private setupBackgroundLayers(): void {
-        // Create a container for background layers
-        this.backgroundLayers = this.add.container(0, 0);
-
-        // Add background layers in order from back to front
-        // Starting from the bottom: bg, bg_walls, pipe, bg_frame, bg_decor
-
-        // Base background layer
+        // Base background layer (lowest depth)
         const bg = this.add.image(
             this.cameras.main.width / 2,
             this.cameras.main.height / 2,
             "bg"
         );
-        this.backgroundLayers.add(bg);
+        bg.setDepth(DepthLayers.Background);
 
         // Walls layer
         const bgWalls = this.add.image(
@@ -106,12 +107,10 @@ export class Game extends Scene {
             this.cameras.main.height / 2,
             "bg_walls"
         );
-        this.backgroundLayers.add(bgWalls);
+        bgWalls.setDepth(DepthLayers.BackgroundWalls);
 
-        // Set up the pipe here - between walls and frame
+        // Set up the pipe - between walls and frame
         this.setupPipe();
-        // Add the pipe container to the background layers
-        this.backgroundLayers.add(this.pipeContainer);
 
         // Frame layer
         const bgFrame = this.add.image(
@@ -119,15 +118,15 @@ export class Game extends Scene {
             this.cameras.main.height / 2,
             "bg_frame"
         );
-        this.backgroundLayers.add(bgFrame);
+        bgFrame.setDepth(DepthLayers.BackgroundFrame);
 
-        // Decoration layer
+        // Decoration layer (highest depth)
         const bgDecor = this.add.image(
             this.cameras.main.width / 2,
             this.cameras.main.height / 2,
             "bg_decor"
         );
-        this.backgroundLayers.add(bgDecor);
+        bgDecor.setDepth(DepthLayers.BackgroundDecor);
     }
 
     /**
@@ -162,6 +161,7 @@ export class Game extends Scene {
         // Set the sprite properties
         this.containerSprite.setStatic(true);
         this.containerSprite.setName("container");
+        this.containerSprite.setDepth(DepthLayers.SpawnedObjects); // Set appropriate depth
     }
 
     /**
@@ -172,27 +172,22 @@ export class Game extends Scene {
         const pipeX = this.cameras.main.width; // Right edge
         const pipeY = 64; // Top edge with small margin
 
+        // Store pipe position for later reference
+        this.pipePosition = new Phaser.Math.Vector2(pipeX, pipeY);
+
         // Add the back layer of the pipe directly to the scene
         const pipeBack = this.add.image(pipeX, pipeY, "pipe_back");
         pipeBack.setOrigin(1, 0); // Set origin to top-right
-        pipeBack.setDepth(10);
+        pipeBack.setDepth(DepthLayers.PipeBack);
 
         // Add the front layer of the pipe directly to the scene
         const pipeFront = this.add.image(pipeX, pipeY, "pipe_front");
         pipeFront.setOrigin(1, 0); // Set origin to top-right
-        pipeFront.setDepth(30);
+        pipeFront.setDepth(DepthLayers.PipeFront);
 
         // Get the dimensions of the pipe sprite
         const pipeWidth = pipeBack.width;
         const pipeHeight = pipeBack.height;
-
-        // Create a dummy container just to keep track of the position
-        // We're not adding our pipe images to this container
-        this.pipeContainer = this.add.container(pipeX, pipeY);
-
-        // Optional: Add debug visualization markers
-        const centerMarker = this.add.rectangle(pipeX, pipeY, 5, 5, 0xff0000);
-        centerMarker.setDepth(40); // Above everything for visibility
 
         // Set the spawn point to be at the lower left corner of the pipe
         // X = -pipeWidth (full width to the left from the right edge)
@@ -213,6 +208,6 @@ export class Game extends Scene {
             5,
             0x00ff00
         );
-        spawnMarker.setDepth(40); // Above everything for visibility
+        spawnMarker.setDepth(DepthLayers.UI); // Above everything for visibility
     }
 }
