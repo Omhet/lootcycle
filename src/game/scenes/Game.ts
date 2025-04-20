@@ -99,7 +99,7 @@ export class Game extends Scene {
         // Apply a small random angle for the initial velocity direction
         // This creates the effect of items coming out of a bent pipe
         const angle = Phaser.Math.Between(-45, -15);
-        const speed = Phaser.Math.Between(3, 6);
+        const speed = Phaser.Math.Between(-6, -3);
         const velocityX = Math.cos(Phaser.Math.DegToRad(angle)) * speed;
         const velocityY = Math.sin(Phaser.Math.DegToRad(angle)) * speed;
 
