@@ -169,59 +169,50 @@ export class Game extends Scene {
      */
     private setupPipe(): void {
         // Position in the top right corner with some margin
-        const pipeX = this.cameras.main.width; // Right edge with small margin
+        const pipeX = this.cameras.main.width; // Right edge
         const pipeY = 64; // Top edge with small margin
 
-        // Add the back layer of the pipe
-        const pipeBack = this.add.image(0, 0, "pipe_back");
+        // Add the back layer of the pipe directly to the scene
+        const pipeBack = this.add.image(pipeX, pipeY, "pipe_back");
+        pipeBack.setOrigin(1, 0); // Set origin to top-right
+        pipeBack.setDepth(10);
 
-        // Add the front layer of the pipe
-        const pipeFront = this.add.image(0, 0, "pipe_front");
+        // Add the front layer of the pipe directly to the scene
+        const pipeFront = this.add.image(pipeX, pipeY, "pipe_front");
+        pipeFront.setOrigin(1, 0); // Set origin to top-right
+        pipeFront.setDepth(30);
 
         // Get the dimensions of the pipe sprite
         const pipeWidth = pipeBack.width;
         const pipeHeight = pipeBack.height;
 
-        // Create a container for the pipe layers
-        // Containers don't have origin/pivot like Images, so we need to position the elements inside
+        // Create a dummy container just to keep track of the position
+        // We're not adding our pipe images to this container
         this.pipeContainer = this.add.container(pipeX, pipeY);
 
-        // Adjust the images' positions within the container
-        // For top-right pivot, position both images with their top-right corner at (0,0)
-        // This means shifting them to the left by their width
-        pipeBack.setOrigin(1, 0); // Set origin to top-right for both images
-        pipeFront.setOrigin(1, 0);
-
-        // Add both layers to the container
-        this.pipeContainer.add(pipeBack);
-        this.pipeContainer.add(pipeFront);
-
-        // Debug visualization to confirm pipe position
-        // Uncomment if needed
-        const marker = this.add.rectangle(0, 0, 5, 5, 0xff0000);
-        this.pipeContainer.add(marker);
+        // Optional: Add debug visualization markers
+        const centerMarker = this.add.rectangle(pipeX, pipeY, 5, 5, 0xff0000);
+        centerMarker.setDepth(40); // Above everything for visibility
 
         // Set the spawn point to be at the lower left corner of the pipe
-        // Since our pivot is at the container's position (top-right of the pipe),
-        // the lower left corner is at:
-        // X = -pipeWidth (full width to the left)
-        // Y = pipeHeight (full height down)
-        const spawnOffsetX = -pipeWidth;
-        const spawnOffsetY = pipeHeight;
+        // X = -pipeWidth (full width to the left from the right edge)
+        // Y = pipeHeight (full height down from top edge)
+        const spawnOffsetX = -pipeWidth + 80;
+        const spawnOffsetY = pipeHeight - 80;
 
-        // Create the spawn point vector
+        // Create the spawn point vector relative to top-right corner
         this.pipeSpawnPoint = new Phaser.Math.Vector2(
-            spawnOffsetX + 80,
-            spawnOffsetY - 80
+            spawnOffsetX,
+            spawnOffsetY
         );
 
         // Optional: Add a debug marker at the spawn point
         const spawnMarker = this.add.circle(
-            this.pipeSpawnPoint.x,
-            this.pipeSpawnPoint.y,
+            pipeX + spawnOffsetX,
+            pipeY + spawnOffsetY,
             5,
             0x00ff00
         );
-        this.pipeContainer.add(spawnMarker);
+        spawnMarker.setDepth(40); // Above everything for visibility
     }
 }

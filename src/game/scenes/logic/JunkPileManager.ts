@@ -109,6 +109,9 @@ export class JunkPileManager {
         physicsBody.setVelocity(velocityX, velocityY);
         physicsBody.setAngularVelocity(Phaser.Math.FloatBetween(-0.05, 0.05));
 
+        // Set depth to be between pipe_back (10) and pipe_front (30)
+        physicsBody.setDepth(20);
+
         // Return the complete junk pile item
         return {
             junkDetail,
