@@ -15,6 +15,7 @@ export enum DepthLayers {
     PipeFront = 40,
     BackgroundFrame = 50,
     BackgroundDecor = 60,
+    Ground = 70,
     UI = 100,
 }
 
@@ -161,7 +162,7 @@ export class Game extends Scene {
         // Set the sprite properties
         this.containerSprite.setStatic(true);
         this.containerSprite.setName("container");
-        this.containerSprite.setDepth(DepthLayers.SpawnedObjects); // Set appropriate depth
+        this.containerSprite.setDepth(DepthLayers.Ground);
     }
 
     /**
