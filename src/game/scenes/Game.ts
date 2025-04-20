@@ -188,16 +188,8 @@ export class Game extends Scene {
         const cauldronTexture = this.textures.get("cauldron");
         const frame = cauldronTexture.get();
 
-        // Position cauldron above the furnace
-        const xPos = this.cameras.main.width / 2;
-
-        // Calculate vertical position to place cauldron above furnace
-        // Use the furnace bounds to position the cauldron properly
-        const furnaceHeight = this.furnaceSprite.height;
-        const furnaceTop = this.furnaceSprite.y - furnaceHeight / 2;
-
-        // Position the cauldron so its bottom aligns with the top of the furnace
-        const yPos = furnaceTop - frame.height / 2 + 10; // +10 to slightly overlap with furnace
+        const xPos = this.cameras.main.width / 2 - 180;
+        const yPos = this.cameras.main.height - frame.height / 2 - 250;
 
         // Create the cauldron sprite with physics directly at the correct position
         this.cauldronSprite = this.matter.add.sprite(
@@ -225,13 +217,8 @@ export class Game extends Scene {
         const intakeTexture = this.textures.get("intake");
         const frame = intakeTexture.get();
 
-        // Calculate position to the left of the cauldron
-        const horizontalOffset = 150; // Distance to the left of the cauldron
-        const xPos = this.cameras.main.width / 2 - horizontalOffset;
-        const yPos =
-            this.cameras.main.height -
-            frame.height / 2 +
-            (this.groundHeight / 2 + 2);
+        const xPos = this.cameras.main.width / 2 - 535;
+        const yPos = this.cameras.main.height - frame.height / 2 - 40;
 
         // Create the intake sprite with physics directly at the correct position
         this.intakeSprite = this.matter.add.sprite(
@@ -257,11 +244,8 @@ export class Game extends Scene {
         const frame = furnaceTexture.get();
 
         // Position furnace in the middle of the screen at the bottom
-        const xPos = this.cameras.main.width / 2;
-        const yPos =
-            this.cameras.main.height -
-            frame.height / 2 +
-            (this.groundHeight / 2 + 2);
+        const xPos = this.cameras.main.width / 2 - 180;
+        const yPos = this.cameras.main.height - frame.height / 2 - 20;
 
         // Create the furnace sprite (no physics)
         this.furnaceSprite = this.add.sprite(xPos, yPos, "furnace");
