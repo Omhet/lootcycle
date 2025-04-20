@@ -1,9 +1,9 @@
 import {
+    JunkDetail,
     LootConfig,
     PecipePart,
     PecipePartType,
     RecipeDetailType,
-    RecipeDetailVariant,
     RecipeItem,
     RecipeItemType,
 } from "../craftModel.js";
@@ -17,11 +17,11 @@ import {
 const registry: {
     recipeItems: Map<RecipeItemType, RecipeItem[]>;
     recipeParts: Map<PecipePartType, PecipePart[]>;
-    recipeDetailVariants: Map<RecipeDetailType, RecipeDetailVariant[]>;
+    junkDetails: Map<RecipeDetailType, JunkDetail[]>;
 } = {
     recipeItems: new Map(),
     recipeParts: new Map(),
-    recipeDetailVariants: new Map(),
+    junkDetails: new Map(),
 };
 
 /**
@@ -55,18 +55,18 @@ export function registerRecipePart(
 }
 
 /**
- * Register a recipe detail variant with the registry
- * @param type The type of the recipe detail variant
- * @param variant The recipe detail variant to register
+ * Register a junk detail with the registry
+ * @param type The type of the junk detail
+ * @param detail The junk detail to register
  */
-export function registerRecipeDetailVariant(
+export function registerJunkDetail(
     type: RecipeDetailType,
-    variant: RecipeDetailVariant
+    detail: JunkDetail
 ): void {
-    if (!registry.recipeDetailVariants.has(type)) {
-        registry.recipeDetailVariants.set(type, []);
+    if (!registry.junkDetails.has(type)) {
+        registry.junkDetails.set(type, []);
     }
-    registry.recipeDetailVariants.get(type)?.push(variant);
+    registry.junkDetails.get(type)?.push(detail);
 }
 
 /**
@@ -76,7 +76,7 @@ export function generateLootConfig(): LootConfig {
     const config: LootConfig = {
         recipeItems: {},
         recipeParts: {},
-        recipeDetails: {},
+        junkDetails: {}, // Note: We're keeping recipeDetails key to match the LootConfig interface
     } as LootConfig;
 
     // Convert Maps to the expected format in LootConfig
@@ -88,8 +88,9 @@ export function generateLootConfig(): LootConfig {
         config.recipeParts[type] = parts;
     });
 
-    registry.recipeDetailVariants.forEach((variants, type) => {
-        config.recipeDetails[type] = variants;
+    // Map junkDetails to recipeDetails in the config
+    registry.junkDetails.forEach((details, type) => {
+        config.junkDetails[type] = details;
     });
 
     return config;
@@ -111,8 +112,8 @@ export function validateLootConfig(): string[] {
         issues.push("No recipe parts registered");
     }
 
-    if (registry.recipeDetailVariants.size === 0) {
-        issues.push("No recipe detail variants registered");
+    if (registry.junkDetails.size === 0) {
+        issues.push("No junk details registered");
     }
 
     // More complex validation can be added here

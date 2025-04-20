@@ -201,5 +201,5 @@ export type LootDetail = {
 export interface LootConfig {
     recipeItems: Record<RecipeItemType, RecipeItem[]>;
     recipeParts: Record<PecipePartType, PecipePart[]>;
-    recipeDetails: Record<RecipeDetailType, RecipeDetail[]>;
+    junkDetails: Record<RecipeDetailType, JunkDetail[]>;
 }
