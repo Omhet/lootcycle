@@ -62,6 +62,9 @@ export class Preloader extends Scene {
         this.load.image("intake", "game/elements/intake.png");
         this.load.json("intakePhysics", "game/elements/intake.json");
 
+        // Load furnace resource
+        this.load.image("furnace", "game/elements/furnace.png");
+
         // Load pipe assets
         this.load.image("pipe_back", "game/elements/pipe_back.png");
         this.load.image("pipe_front", "game/elements/pipe_front.png");

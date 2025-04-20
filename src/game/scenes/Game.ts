@@ -33,6 +33,7 @@ export class Game extends Scene {
     private containerSprite: Phaser.Physics.Matter.Sprite;
     private cauldronSprite: Phaser.Physics.Matter.Sprite;
     private intakeSprite: Phaser.Physics.Matter.Sprite;
+    private furnaceSprite: Phaser.GameObjects.Sprite; // New furnace sprite without physics
 
     // Pipe related objects
     private pipeSpawnPoint: Phaser.Math.Vector2;
@@ -71,6 +72,9 @@ export class Game extends Scene {
 
         // Create the container sprite with physics from the PhysicsEditor JSON data
         this.createContainer();
+
+        // Create the furnace sprite (no physics)
+        this.createFurnace();
 
         // Create the cauldron sprite with physics from the PhysicsEditor JSON data
         this.createCauldron();
@@ -184,12 +188,16 @@ export class Game extends Scene {
         const cauldronTexture = this.textures.get("cauldron");
         const frame = cauldronTexture.get();
 
-        // Position cauldron in the middle of the screen
+        // Position cauldron above the furnace
         const xPos = this.cameras.main.width / 2;
-        const yPos =
-            this.cameras.main.height -
-            frame.height / 2 +
-            (this.groundHeight / 2 + 2);
+
+        // Calculate vertical position to place cauldron above furnace
+        // Use the furnace bounds to position the cauldron properly
+        const furnaceHeight = this.furnaceSprite.height;
+        const furnaceTop = this.furnaceSprite.y - furnaceHeight / 2;
+
+        // Position the cauldron so its bottom aligns with the top of the furnace
+        const yPos = furnaceTop - frame.height / 2 + 10; // +10 to slightly overlap with furnace
 
         // Create the cauldron sprite with physics directly at the correct position
         this.cauldronSprite = this.matter.add.sprite(
@@ -238,6 +246,29 @@ export class Game extends Scene {
         this.intakeSprite.setStatic(true);
         this.intakeSprite.setName("intake");
         this.intakeSprite.setDepth(DepthLayers.Ground);
+    }
+
+    /**
+     * Creates the furnace sprite (without physics)
+     */
+    private createFurnace(): void {
+        // Get the furnace texture dimensions from the texture manager
+        const furnaceTexture = this.textures.get("furnace");
+        const frame = furnaceTexture.get();
+
+        // Position furnace in the middle of the screen at the bottom
+        const xPos = this.cameras.main.width / 2;
+        const yPos =
+            this.cameras.main.height -
+            frame.height / 2 +
+            (this.groundHeight / 2 + 2);
+
+        // Create the furnace sprite (no physics)
+        this.furnaceSprite = this.add.sprite(xPos, yPos, "furnace");
+
+        // Set the sprite properties
+        this.furnaceSprite.setName("furnace");
+        this.furnaceSprite.setDepth(DepthLayers.Ground);
     }
 
     /**

@@ -48,7 +48,12 @@ export function craftLootItem(params: craftLootItemParams): CraftingResult {
             min: 0,
             max: 100,
         },
-        parts: [], // This will be filled with actual parts after crafting logic is implemented
+        parts: [
+            "junk_iron_basic_short_sword_pommel",
+            "junk_wooden_basic_short_sword_grip",
+            "junk_iron_basic_short_sword_guard",
+            "junk_iron_basic_short_sword_blade",
+        ], // This will be filled with actual parts after crafting logic is implemented
     };
 
     const parts: LootPart[] = [];
