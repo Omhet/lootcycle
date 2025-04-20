@@ -57,6 +57,14 @@ export class Preloader extends Scene {
         // Load pipe assets
         this.load.image("pipe_back", "game/elements/pipe_back.png");
         this.load.image("pipe_front", "game/elements/pipe_front.png");
+
+        // Load junk details assets
+        this.load.atlas(
+            "details-sprites",
+            "game/details/details-sprites.png",
+            "game/details/details-sprites.json"
+        );
+        this.load.json("details-shapes", "game/details/details-shapes.json");
     }
 
     create() {

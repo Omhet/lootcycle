@@ -53,14 +53,15 @@ export class JunkPileManager {
         const spawnX = this.spawnX;
         const spawnY = this.spawnY;
 
-        // Random parameters for the physics body
-        const shapeSize = Phaser.Math.Between(30, 50);
-        const shapeType = Phaser.Math.Between(0, 1); // 0: circle, 1: rectangle
-        const colorValue = Phaser.Display.Color.GetColor(
-            Phaser.Math.Between(100, 255),
-            Phaser.Math.Between(100, 255),
-            Phaser.Math.Between(100, 255)
-        );
+        // Get the correct sprite frame name based on junk detail id
+        const frameName = `${junkDetail.id}.png`;
+
+        // Get physics shapes data
+        const shapesData = this.scene.cache.json.get("details-shapes");
+
+        // Check if we have a matching physics shape for this junk detail
+        const physicsKey = junkDetail.id;
+        const hasPhysicsShape = shapesData && shapesData[physicsKey];
 
         // Apply a small random angle for the initial velocity direction
         // This creates the effect of items coming out of a bent pipe
@@ -69,41 +70,50 @@ export class JunkPileManager {
         const velocityX = Math.cos(Phaser.Math.DegToRad(angle)) * speed;
         const velocityY = Math.sin(Phaser.Math.DegToRad(angle)) * speed;
 
-        let physicsBody: Phaser.Physics.Matter.Image;
+        let physicsBody: Phaser.Physics.Matter.Sprite;
 
-        if (shapeType === 0) {
-            // Circle
-            const circle = this.scene.add.circle(
-                0,
-                0,
-                shapeSize / 2,
-                colorValue
+        if (hasPhysicsShape) {
+            // Create a sprite with the correct physics shape
+            physicsBody = this.scene.matter.add.sprite(
+                spawnX,
+                spawnY,
+                "details-sprites",
+                frameName,
+                {
+                    shape: shapesData[physicsKey],
+                }
             );
-            physicsBody = this.scene.matter.add.gameObject(circle, {
-                shape: { type: "circle" },
+
+            // Set the label through body.parts[0] which is the main body part
+            if (
+                physicsBody.body &&
+                (physicsBody.body as any).parts &&
+                (physicsBody.body as any).parts.length > 0
+            ) {
+                (physicsBody.body as any).parts[0].label = junkDetail.id;
+            }
+        } else {
+            // Fallback to basic shape if no matching physics shape is found
+            console.warn(
+                `No physics shape found for junk detail: ${junkDetail.id}`
+            );
+
+            // Create sprite with a basic circular physics body
+            physicsBody = this.scene.matter.add.sprite(
+                spawnX,
+                spawnY,
+                "details-sprites",
+                frameName
+            );
+
+            // Create a circular body as fallback using Phaser's built-in methods
+            const circleRadius =
+                Math.max(physicsBody.width, physicsBody.height) / 2;
+            this.scene.matter.add.circle(spawnX, spawnY, circleRadius, {
                 restitution: 0.5,
                 friction: 0.1,
                 label: junkDetail.id,
-            }) as Phaser.Physics.Matter.Image;
-            physicsBody.setPosition(spawnX, spawnY);
-        } else {
-            // Rectangle
-            const width = shapeSize;
-            const height = shapeSize * Phaser.Math.FloatBetween(0.5, 1.5);
-
-            const rect = this.scene.add.rectangle(
-                0,
-                0,
-                width,
-                height,
-                colorValue
-            );
-            physicsBody = this.scene.matter.add.gameObject(rect, {
-                restitution: 0.3,
-                friction: 0.2,
-                label: junkDetail.id,
-            }) as Phaser.Physics.Matter.Image;
-            physicsBody.setPosition(spawnX, spawnY);
+            });
         }
 
         // Apply initial velocity and rotation

@@ -1,0 +1,101 @@
+{
+	"generator_info": "Shape definitions generated with PhysicsEditor. Visit https://www.codeandweb.com/physicseditor",
+	"junk_golden_basic_short_sword_pommel": {
+		"type": "fromPhysicsEditor",
+		"label": "junk_golden_basic_short_sword_pommel",
+		"isStatic": false,
+		"density": 0.1,
+		"restitution": 0,
+		"friction": 0.1,
+		"frictionAir": 0.01,
+		"frictionStatic": 0.5,
+		"collisionFilter": {
+			"group": 0,
+			"category": 1,
+			"mask": 255
+		},
+		"fixtures": [
+			{
+				"label": "",
+				"isSensor": false,
+				"vertices": [
+					[ { "x":7, "y":-0.5 }, { "x":3.5, "y":1 }, { "x":-0.5, "y":6 }, { "x":-0.5, "y":15 }, { "x":21.5, "y":15 }, { "x":21.5, "y":6 }, { "x":15, "y":-0.5 } ],
+					[ { "x":-0.5, "y":15 }, { "x":6, "y":21.5 }, { "x":15, "y":21.5 }, { "x":21.5, "y":15 } ]
+				]
+			}
+		]
+	},
+	"junk_iron_basic_short_sword_blade": {
+		"type": "fromPhysicsEditor",
+		"label": "junk_iron_basic_short_sword_blade",
+		"isStatic": false,
+		"density": 0.10000000149011612,
+		"restitution": 0,
+		"friction": 0.10000000149011612,
+		"frictionAir": 0.009999999776482582,
+		"frictionStatic": 0.5,
+		"collisionFilter": {
+			"group": 0,
+			"category": 1,
+			"mask": 255
+		},
+		"fixtures": [
+			{
+				"label": "",
+				"isSensor": false,
+				"vertices": [
+					[ { "x":12.5, "y":0 }, { "x":10.5, "y":0 }, { "x":-0.5, "y":34 }, { "x":12.5, "y":1 } ],
+					[ { "x":27.5, "y":35 }, { "x":12.5, "y":1 }, { "x":-0.5, "y":34 }, { "x":-0.5, "y":90 }, { "x":0, "y":91.5 }, { "x":26, "y":91.5 }, { "x":27.5, "y":91 } ]
+				]
+			}
+		]
+	},
+	"junk_iron_basic_short_sword_guard": {
+		"type": "fromPhysicsEditor",
+		"label": "junk_iron_basic_short_sword_guard",
+		"isStatic": false,
+		"density": 0.10000000149011612,
+		"restitution": 0,
+		"friction": 0.10000000149011612,
+		"frictionAir": 0.009999999776482582,
+		"frictionStatic": 0.5,
+		"collisionFilter": {
+			"group": 0,
+			"category": 1,
+			"mask": 255
+		},
+		"fixtures": [
+			{
+				"label": "",
+				"isSensor": false,
+				"vertices": [
+					[ { "x":47, "y":-0.5 }, { "x":1, "y":-0.5 }, { "x":-0.5, "y":0 }, { "x":0, "y":9.5 }, { "x":47.5, "y":9 } ]
+				]
+			}
+		]
+	},
+	"junk_wooden_basic_short_sword_grip": {
+		"type": "fromPhysicsEditor",
+		"label": "junk_wooden_basic_short_sword_grip",
+		"isStatic": false,
+		"density": 0.10000000149011612,
+		"restitution": 0,
+		"friction": 0.10000000149011612,
+		"frictionAir": 0.009999999776482582,
+		"frictionStatic": 0.5,
+		"collisionFilter": {
+			"group": 0,
+			"category": 1,
+			"mask": 255
+		},
+		"fixtures": [
+			{
+				"label": "",
+				"isSensor": false,
+				"vertices": [
+					[ { "x":0, "y":27.5 }, { "x":15.5, "y":27 }, { "x":15, "y":-0.5 }, { "x":1, "y":-0.5 }, { "x":-0.5, "y":0 } ]
+				]
+			}
+		]
+	}
+}
