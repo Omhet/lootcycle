@@ -11,7 +11,7 @@ import { registerJunkDetail } from "../../../registry";
 // === Bad Variants ===
 
 registerJunkDetail(JunkDetailType.Pommel, {
-    id: "wooden_basic_short_sword_pommel",
+    id: "junk_wooden_basic_short_sword_pommel",
     type: JunkDetailType.Pommel,
     suitableForRecipeDetails: [RecipeDetailType.Pommel],
     name: "Wooden Basic Short Sword Pommel",
@@ -23,7 +23,7 @@ registerJunkDetail(JunkDetailType.Pommel, {
 });
 
 registerJunkDetail(JunkDetailType.Guard, {
-    id: "wooden_basic_short_sword_guard",
+    id: "junk_wooden_basic_short_sword_guard",
     type: JunkDetailType.Guard,
     suitableForRecipeDetails: [RecipeDetailType.Guard],
     name: "Wooden Basic Short Sword Guard",
@@ -35,7 +35,7 @@ registerJunkDetail(JunkDetailType.Guard, {
 });
 
 registerJunkDetail(JunkDetailType.ShortSwordBlade, {
-    id: "wooden_basic_short_sword_blade",
+    id: "junk_wooden_basic_short_sword_blade",
     type: JunkDetailType.ShortSwordBlade,
     suitableForRecipeDetails: [RecipeDetailType.ShortSwordBlade],
     name: "Wooden Basic Short Sword Blade",
@@ -49,7 +49,7 @@ registerJunkDetail(JunkDetailType.ShortSwordBlade, {
 // === Good Variants ===
 
 registerJunkDetail(JunkDetailType.Pommel, {
-    id: "iron_basic_short_sword_pommel",
+    id: "junk_iron_basic_short_sword_pommel",
     type: JunkDetailType.Pommel,
     suitableForRecipeDetails: [RecipeDetailType.Pommel],
     name: "Iron Basic Short Sword Pommel",
@@ -61,7 +61,7 @@ registerJunkDetail(JunkDetailType.Pommel, {
 });
 
 registerJunkDetail(JunkDetailType.Grip, {
-    id: "wooden_basic_short_sword_grip",
+    id: "junk_wooden_basic_short_sword_grip",
     type: JunkDetailType.Grip,
     suitableForRecipeDetails: [RecipeDetailType.Grip],
     name: "Wooden Basic Short Sword Grip",
@@ -73,7 +73,7 @@ registerJunkDetail(JunkDetailType.Grip, {
 });
 
 registerJunkDetail(JunkDetailType.Guard, {
-    id: "iron_basic_short_sword_guard",
+    id: "junk_iron_basic_short_sword_guard",
     type: JunkDetailType.Guard,
     suitableForRecipeDetails: [RecipeDetailType.Guard],
     name: "Iron Basic Short Sword Guard",
@@ -85,7 +85,7 @@ registerJunkDetail(JunkDetailType.Guard, {
 });
 
 registerJunkDetail(JunkDetailType.ShortSwordBlade, {
-    id: "iron_basic_short_sword_blade",
+    id: "junk_iron_basic_short_sword_blade",
     type: JunkDetailType.ShortSwordBlade,
     suitableForRecipeDetails: [RecipeDetailType.ShortSwordBlade],
     name: "Iron Basic Short Sword Blade",
@@ -99,7 +99,7 @@ registerJunkDetail(JunkDetailType.ShortSwordBlade, {
 // === Best Variants ===
 
 registerJunkDetail(JunkDetailType.Pommel, {
-    id: "golden_basic_short_sword_pommel",
+    id: "junk_golden_basic_short_sword_pommel",
     type: JunkDetailType.Pommel,
     suitableForRecipeDetails: [RecipeDetailType.Pommel],
     name: "Golden Basic Short Sword Pommel",
@@ -111,7 +111,7 @@ registerJunkDetail(JunkDetailType.Pommel, {
 });
 
 registerJunkDetail(JunkDetailType.Grip, {
-    id: "golden_basic_short_sword_grip",
+    id: "junk_golden_basic_short_sword_grip",
     type: JunkDetailType.Grip,
     suitableForRecipeDetails: [RecipeDetailType.Grip],
     name: "Golden Basic Short Sword Grip",
@@ -123,7 +123,7 @@ registerJunkDetail(JunkDetailType.Grip, {
 });
 
 registerJunkDetail(JunkDetailType.Guard, {
-    id: "golden_basic_short_sword_guard",
+    id: "junk_golden_basic_short_sword_guard",
     type: JunkDetailType.Guard,
     suitableForRecipeDetails: [RecipeDetailType.Guard],
     name: "Golden Basic Short Sword Guard",
@@ -135,7 +135,7 @@ registerJunkDetail(JunkDetailType.Guard, {
 });
 
 registerJunkDetail(JunkDetailType.ShortSwordBlade, {
-    id: "golden_basic_short_sword_blade",
+    id: "junk_golden_basic_short_sword_blade",
     type: JunkDetailType.ShortSwordBlade,
     suitableForRecipeDetails: [RecipeDetailType.ShortSwordBlade],
     name: "Golden Basic Short Sword Blade",
