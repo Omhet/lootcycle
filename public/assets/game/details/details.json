@@ -1,0 +1,104 @@
+{
+	"textures": [
+		{
+			"image": "details.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 54,
+				"h": 106
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "junk_iron_basic_short_sword_guard.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 48,
+						"h": 10
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 48,
+						"h": 10
+					},
+					"frame": {
+						"x": 1,
+						"y": 1,
+						"w": 48,
+						"h": 10
+					}
+				},
+				{
+					"filename": "junk_iron_basic_short_sword_blade.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 28,
+						"h": 92
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 28,
+						"h": 92
+					},
+					"frame": {
+						"x": 1,
+						"y": 13,
+						"w": 28,
+						"h": 92
+					}
+				},
+				{
+					"filename": "junk_golden_basic_short_sword_pommel.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 22,
+						"h": 22
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 22,
+						"h": 22
+					},
+					"frame": {
+						"x": 31,
+						"y": 13,
+						"w": 22,
+						"h": 22
+					}
+				},
+				{
+					"filename": "junk_wooden_basic_short_sword_grip.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 16,
+						"h": 28
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 16,
+						"h": 28
+					},
+					"frame": {
+						"x": 31,
+						"y": 37,
+						"w": 16,
+						"h": 28
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:f066a227dca168db34d7a7021ed05059:fbd0f545cf9729a62fdaf680873c6f7a:c4ec797ea2d2e6e2f7488b782ab99285$"
+	}
+}
