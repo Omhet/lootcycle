@@ -12,7 +12,10 @@ export class Game extends Scene {
     private junkPileManager: JunkPileManager;
 
     // Physics bodies
+    private groundHeight = 38;
+    // @ts-ignore
     private groundCollider: MatterJS.BodyType;
+    private containerSprite: Phaser.Physics.Matter.Sprite;
 
     constructor() {
         super("Game");
@@ -40,17 +43,20 @@ export class Game extends Scene {
         this.matter.world.setGravity(0, 1); // Standard downward gravity
 
         // Create ground collider - invisible rectangle at the bottom of the screen
-        const groundHeight = 50;
         this.groundCollider = this.matter.add.rectangle(
             this.cameras.main.width / 2,
-            this.cameras.main.height - groundHeight / 2,
+            this.cameras.main.height - this.groundHeight / 2,
             this.cameras.main.width,
-            groundHeight,
+            this.groundHeight,
             {
                 isStatic: true,
                 label: "ground",
             }
         );
+
+        // Create the container sprite with physics from the PhysicsEditor JSON data
+        // Moved after groundHeight is defined so we can use it for positioning
+        this.createContainer();
 
         // Initialize JunkPileManager
         this.junkPileManager = new JunkPileManager(this);
@@ -107,5 +113,36 @@ export class Game extends Scene {
             "bg_decor"
         );
         this.backgroundLayers.add(bgDecor);
+    }
+
+    /**
+     * Creates the container sprite with physics using the PhysicsEditor JSON data
+     */
+    private createContainer(): void {
+        // Get the physics data from the loaded JSON
+        const containerPhysics = this.cache.json.get("containerPhysics");
+
+        // Get the container texture dimensions from the texture manager
+        const containerTexture = this.textures.get("container");
+        const frame = containerTexture.get();
+
+        // Calculate position in the bottom right corner
+        const horizontalMargin = 154; // Margin from the right edge of the screen
+        const xPos =
+            this.cameras.main.width - frame.width / 2 - horizontalMargin;
+        const yPos = this.cameras.main.height - frame.height / 2;
+
+        // Create the container sprite with physics directly at the correct position
+        this.containerSprite = this.matter.add.sprite(
+            xPos,
+            yPos,
+            "container",
+            undefined,
+            { shape: containerPhysics.container }
+        );
+
+        // Set the sprite properties
+        this.containerSprite.setStatic(true);
+        this.containerSprite.setName("container");
     }
 }
