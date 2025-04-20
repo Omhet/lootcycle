@@ -76,7 +76,7 @@ export function generateLootConfig(): LootConfig {
     const config: LootConfig = {
         recipeItems: {},
         recipeParts: {},
-        recipeDetailVariants: {},
+        recipeDetails: {},
     } as LootConfig;
 
     // Convert Maps to the expected format in LootConfig
@@ -89,7 +89,7 @@ export function generateLootConfig(): LootConfig {
     });
 
     registry.recipeDetailVariants.forEach((variants, type) => {
-        config.recipeDetailVariants[type] = variants;
+        config.recipeDetails[type] = variants;
     });
 
     return config;

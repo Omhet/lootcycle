@@ -74,7 +74,7 @@ export const initialItemSubCategories: ItemSubCategory[] = [
 
 export type RecipeItemId = string;
 export type PecipePartId = string;
-export type RecipeDetailVariantId = string;
+export type RecipeDetailId = string;
 
 export enum RecipeItemType {
     BladeWeapon = "blade_weapon",
@@ -125,25 +125,47 @@ export enum RecipeDetailType {
     Gristle = "gristle",
 }
 
-export type RecipeDetailVariant = {
-    id: RecipeDetailVariantId;
+export type RecipeDetail = {
+    id: RecipeDetailId;
     type: RecipeDetailType;
+};
+
+// ======= JUNK OBJECTS TYPES =======
+
+export enum Durability {
+    Lowest = 1,
+    Low = 2,
+    Medium = 3,
+    High = 4,
+    Highest = 5,
+}
+
+export type JunkPartId = string;
+export type JunkDetailId = string;
+
+export type JunkPart = {
+    id: JunkPartId;
+    recipePartId: PecipePartId;
+    details: JunkDetailId[];
+};
+
+export type JunkDetail = {
+    id: JunkDetailId;
+    suitableForRecipeDetails: RecipeDetailType[];
     name: string;
     assetPath: string;
     rarity: Rarity;
+    durability: Durability; // Deterimines how long junk particular instance will last after spawning (in crafting times)
     sellPriceCoefficient: number;
     temperatureCoefficient: number;
-    durabilityCoefficient: number;
 };
 
-// ======= GAME LOOT CONFIGURATION =======
-
-// Define the structure for the overall configuration
-export interface LootConfig {
-    recipeItems: Record<RecipeItemType, RecipeItem[]>;
-    recipeParts: Record<PecipePartType, PecipePart[]>;
-    recipeDetailVariants: Record<RecipeDetailType, RecipeDetailVariant[]>;
-}
+// Particular instance of junk in game runtime
+export type JunkPiece = {
+    id: JunkPartId | JunkDetailId;
+    type: "part" | "detail";
+    degradation: number; // Degradation level of any junk piece in runtime (from 0% to 100%)
+};
 
 // ======= LOOT OBJECTS TYPES =======
 
@@ -166,36 +188,18 @@ export type LootPart = {
     id: LootPartId;
     recipePartId: PecipePartId;
     details: LootDetailId[];
-    rarity: Rarity;
 };
 
 export type LootDetail = {
     id: LootDetailId;
-    recipeDetailVariantId: RecipeDetailVariantId;
-    rarity: Rarity;
+    junkDetailId: JunkDetailId;
 };
 
-// ======= JUNK OBJECTS TYPES =======
+// ======= GAME LOOT CONFIGURATION =======
 
-export type JunkPartId = string;
-export type JunkDetailId = string;
-
-export type JunkPart = {
-    id: JunkPartId;
-    recipePartId: PecipePartId;
-    details: JunkDetailId[];
-};
-
-export type JunkDetail = {
-    id: JunkDetailId;
-    recipeDetailVariantId: RecipeDetailVariantId;
-    suitableForRecipeDetails: RecipeDetailType[];
-};
-
-// Particular instance of junk in game
-export type JunkPiece = {
-    id: JunkPartId | JunkDetailId;
-    type: "part" | "detail";
-    durability: number; // How long junk particular instance will last after spawning (in crafting times)
-    degradation: number; // Degradation level of any junk piece (from 0% to 100%)
-};
+// Define the structure for the overall configuration
+export interface LootConfig {
+    recipeItems: Record<RecipeItemType, RecipeItem[]>;
+    recipeParts: Record<PecipePartType, PecipePart[]>;
+    recipeDetails: Record<RecipeDetailType, RecipeDetail[]>;
+}
