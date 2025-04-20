@@ -5,16 +5,16 @@ import { generateLootConfig, validateLootConfig } from "./registry";
 // The order doesn't matter as each file self-registers its items
 
 // Common parts
-import "./bladeWeapon/parts";
+import "./recipe/bladeWeapon/parts";
 
 // Short sword specific configurations
-import "./bladeWeapon/shortSword/basicShortSwordDetails";
-import "./bladeWeapon/shortSword/parts";
-import "./bladeWeapon/shortSword/recipe";
+import "./recipe/bladeWeapon/shortSword/parts";
+import "./recipe/bladeWeapon/shortSword/recipe";
 
-// Other details
-import "./other/otherDetails";
-import "./other/otherParts";
+// Junk
+import "./junk/details/otherDetails";
+import "./junk/details/weaponDetails/shortSword";
+import "./junk/parts";
 
 // Validate the configuration
 const validationIssues = validateLootConfig();

@@ -1,7 +1,7 @@
-import { PecipePartType, RecipeDetailType } from "../../../craftModel.js";
-import { registerRecipePart } from "../../registry.js";
-
 // === Common Recipe Parts for all Short Swords ===
+
+import { PecipePartType, RecipeDetailType } from "../../../../craftModel";
+import { registerRecipePart } from "../../../registry";
 
 registerRecipePart(PecipePartType.ShortSwordBlade, {
     id: "short_sword_blade",

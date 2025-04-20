@@ -1,5 +1,5 @@
-import { Durability, Rarity, RecipeDetailType } from "../../../craftModel.js";
-import { registerJunkDetail } from "../../registry.js";
+import { Durability, Rarity, RecipeDetailType } from "../../../craftModel";
+import { registerJunkDetail } from "../../registry";
 
 registerJunkDetail(RecipeDetailType.Bone, {
     id: "junk_bone",

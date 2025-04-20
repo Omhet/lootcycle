@@ -1,4 +1,4 @@
-import { Rarity } from "./craftModel.js";
+import { Rarity } from "./craftModel";
 
 // ======= CONSTANTS =======
 

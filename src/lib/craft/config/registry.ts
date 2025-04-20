@@ -6,7 +6,7 @@ import {
     RecipeDetailType,
     RecipeItem,
     RecipeItemType,
-} from "../craftModel.js";
+} from "../craftModel";
 
 /**
  * Registry system for dynamically collecting and exporting loot configurations

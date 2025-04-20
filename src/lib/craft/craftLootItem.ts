@@ -7,7 +7,7 @@ import {
     LootPart,
     Rarity,
     RecipeItemId,
-} from "./craftModel.js";
+} from "./craftModel";
 
 // ======= CRAFTING FUNCTION TYPES =======
 

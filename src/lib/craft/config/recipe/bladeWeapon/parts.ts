@@ -1,5 +1,5 @@
-import { PecipePartType, RecipeDetailType } from "../../craftModel.js";
-import { registerRecipePart } from "../registry.js";
+import { PecipePartType, RecipeDetailType } from "../../../craftModel";
+import { registerRecipePart } from "../../registry";
 
 // === Common Recipe Parts for all Blade weapons ===
 

@@ -1,11 +1,11 @@
-// === Recipe Item for Sword ===
-
 import {
     ItemSubCategoryId,
     PecipePartType,
     RecipeItemType,
-} from "../../../craftModel.js";
-import { registerRecipeItem } from "../../registry.js";
+} from "../../../../craftModel";
+import { registerRecipeItem } from "../../../registry";
+
+// === Recipe Item for Sword ===
 
 registerRecipeItem(RecipeItemType.BladeWeapon, {
     id: "short_sword",
