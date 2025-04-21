@@ -1,8 +1,8 @@
 import { GameObjects, Scene } from "phaser"; // Removed Textures import
 import { lootConfig } from "../../lib/craft/config";
 import {
-    JunkDetail,
-    JunkDetailId,
+    JunkPiece,
+    JunkPieceId,
     LootItem,
     Pinpoint,
     RecipeDetailSocket,
@@ -227,8 +227,8 @@ export class CraftedItemRenderer {
 
     private findRepresentativeDetail(
         detailType: RecipeDetailType,
-        map: Map<JunkDetailId, JunkDetail>
-    ): JunkDetail | undefined {
+        map: Map<JunkPieceId, JunkPiece>
+    ): JunkPiece | undefined {
         for (const detail of map.values()) {
             if (detail.suitableForRecipeDetails.includes(detailType)) {
                 return detail;
@@ -237,9 +237,9 @@ export class CraftedItemRenderer {
         return undefined;
     }
 
-    private getJunkDetailMap(): Map<JunkDetailId, JunkDetail> {
-        const map = new Map<JunkDetailId, JunkDetail>();
-        Object.values(lootConfig.junkDetails)
+    private getJunkDetailMap(): Map<JunkPieceId, JunkPiece> {
+        const map = new Map<JunkPieceId, JunkPiece>();
+        Object.values(lootConfig.junkPieces)
             .flat()
             .forEach((detail) => {
                 map.set(detail.id, detail);
@@ -280,7 +280,7 @@ export class CraftedItemRenderer {
     ): RenderedDetailInfo[] {
         const detailsToDraw: RenderedDetailInfo[] = [];
         const junkDetailDataMap = this.getJunkDetailMap();
-        const availableDetailIds = new Set<JunkDetailId>(item.details);
+        const availableDetailIds = new Set<JunkPieceId>(item.details);
         const rtAnchor = { x: 0, y: 0 }; // Base anchor for parts is the center of the conceptual RT
 
         // Sort parts by zIndex first
@@ -314,7 +314,7 @@ export class CraftedItemRenderer {
 
             sortedDetailSockets.forEach((detailSocket) => {
                 const requiredDetailType = detailSocket.acceptType;
-                let foundDetailId: JunkDetailId | null = null;
+                let foundDetailId: JunkPieceId | null = null;
 
                 for (const detailId of availableDetailIds) {
                     const detailData = junkDetailDataMap.get(detailId);

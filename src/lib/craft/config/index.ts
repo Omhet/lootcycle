@@ -17,7 +17,6 @@ import "./recipe/bladeWeapon/shortSword/recipe";
 // Junk
 import "./junk/details/reusableDetails";
 import "./junk/details/weaponDetails/shortSword";
-import "./junk/parts";
 
 // Validate the configuration
 const validationIssues = validateLootConfig();

@@ -1,8 +1,6 @@
 import {
-    JunkDetail,
-    JunkDetailType,
-    JunkPart,
-    JunkPartType,
+    JunkPiece,
+    JunkPieceId,
     LootConfig,
     RecipeItem,
     RecipeItemType,
@@ -19,13 +17,11 @@ import {
 const registry: {
     recipeItems: Map<RecipeItemType, RecipeItem[]>;
     recipeParts: Map<RecipePartType, RecipePart[]>;
-    junkParts: Map<JunkPartType, JunkPart[]>;
-    junkDetails: Map<JunkDetailType, JunkDetail[]>;
+    junkPieces: Map<JunkPieceId, JunkPiece[]>;
 } = {
     recipeItems: new Map(),
     recipeParts: new Map(),
-    junkParts: new Map(),
-    junkDetails: new Map(),
+    junkPieces: new Map(),
 };
 
 /**
@@ -59,30 +55,18 @@ export function registerRecipePart(
 }
 
 /**
- * Register a junk part with the registry
- * @param type The type of the junk part
- * @param part The junk part to register
- */
-export function registerJunkPart(type: JunkPartType, part: JunkPart): void {
-    if (!registry.junkParts.has(type)) {
-        registry.junkParts.set(type, []);
-    }
-    registry.junkParts.get(type)?.push(part);
-}
-
-/**
  * Register a junk detail with the registry
  * @param type The type of the junk detail
  * @param detail The junk detail to register
  */
 export function registerJunkDetail(
-    type: JunkDetailType,
-    detail: JunkDetail
+    id: JunkPieceId,
+    detail: Omit<JunkPiece, "id">
 ): void {
-    if (!registry.junkDetails.has(type)) {
-        registry.junkDetails.set(type, []);
+    if (!registry.junkPieces.has(id)) {
+        registry.junkPieces.set(id, []);
     }
-    registry.junkDetails.get(type)?.push(detail);
+    registry.junkPieces.get(id)?.push({ ...detail, id });
 }
 
 /**
@@ -92,8 +76,7 @@ export function generateLootConfig(): LootConfig {
     const config: LootConfig = {
         recipeItems: {},
         recipeParts: {},
-        junkParts: {},
-        junkDetails: {},
+        junkPieces: {},
     } as LootConfig;
 
     // Convert Maps to the expected format in LootConfig
@@ -105,12 +88,8 @@ export function generateLootConfig(): LootConfig {
         config.recipeParts[type] = parts;
     });
 
-    registry.junkParts.forEach((parts, type) => {
-        config.junkParts[type] = parts;
-    });
-
-    registry.junkDetails.forEach((details, type) => {
-        config.junkDetails[type] = details;
+    registry.junkPieces.forEach((details, type) => {
+        config.junkPieces[type] = details;
     });
 
     return config;
@@ -132,11 +111,7 @@ export function validateLootConfig(): string[] {
         issues.push("No recipe parts registered");
     }
 
-    if (registry.junkParts.size === 0) {
-        issues.push("No junk parts registered");
-    }
-
-    if (registry.junkDetails.size === 0) {
+    if (registry.junkPieces.size === 0) {
         issues.push("No junk details registered");
     }
 

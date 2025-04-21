@@ -2,8 +2,8 @@ import { GameObjects, Scene } from "phaser";
 
 import { lootConfig } from "../../lib/craft/config"; // Import lootConfig
 import {
-    JunkDetail,
-    JunkDetailId,
+    JunkPiece,
+    JunkPieceId,
     LootItem,
     Rarity,
     RecipeDetailSocket,
@@ -47,9 +47,9 @@ export class MainMenu extends Scene {
     }
 
     // --- Helper: Get Junk Detail Map ---
-    private getJunkDetailMap(): Map<JunkDetailId, JunkDetail> {
-        const map = new Map<JunkDetailId, JunkDetail>();
-        Object.values(lootConfig.junkDetails)
+    private getJunkDetailMap(): Map<JunkPieceId, JunkPiece> {
+        const map = new Map<JunkPieceId, JunkPiece>();
+        Object.values(lootConfig.junkPieces)
             .flat()
             .forEach((detail) => {
                 map.set(detail.id, detail);
@@ -71,18 +71,18 @@ export class MainMenu extends Scene {
      * Ensures that each detail is used at most once per combination.
      *
      * @param socketsToFill The remaining RecipeDetailSockets to find details for.
-     * @param availableDetailsMap A map of all JunkDetails available for consideration.
+     * @param availableDetailsMap A map of all junkPieces available for consideration.
      * @param currentCombination The combination being built in the current recursion path.
      * @param usedDetailIds A set of JunkDetailIds already used in the current combination.
      * @param allCombinations The array to accumulate valid combinations.
      */
     private _generateDetailCombinations(
         socketsToFill: RecipeDetailSocket[],
-        availableDetailsMap: Map<JunkDetailId, JunkDetail>,
-        currentCombination: JunkDetailId[] = [],
-        usedDetailIds: Set<JunkDetailId> = new Set(),
-        allCombinations: JunkDetailId[][] = []
-    ): JunkDetailId[][] {
+        availableDetailsMap: Map<JunkPieceId, JunkPiece>,
+        currentCombination: JunkPieceId[] = [],
+        usedDetailIds: Set<JunkPieceId> = new Set(),
+        allCombinations: JunkPieceId[][] = []
+    ): JunkPieceId[][] {
         // Base case: All sockets have been filled
         if (socketsToFill.length === 0) {
             if (currentCombination.length > 0) {
@@ -97,7 +97,7 @@ export class MainMenu extends Scene {
         const requiredType = currentSocket.acceptType;
 
         // Find all details suitable for the current socket that haven't been used yet
-        const suitableDetails: JunkDetail[] = [];
+        const suitableDetails: JunkPiece[] = [];
         for (const detail of availableDetailsMap.values()) {
             if (
                 !usedDetailIds.has(detail.id) &&
@@ -137,7 +137,7 @@ export class MainMenu extends Scene {
     public async downloadRecipeImages(): Promise<void> {
         console.log("Starting recipe image generation for all combinations...");
         const allRecipes = Object.values(lootConfig.recipeItems).flat();
-        const allJunkDetailsMap = this.getJunkDetailMap();
+        const alljunkPiecesMap = this.getJunkDetailMap();
         const tempRTWidth = 512; // Define size for temporary textures
         const tempRTHeight = 512;
 
@@ -172,7 +172,7 @@ export class MainMenu extends Scene {
             );
             const detailCombinations = this._generateDetailCombinations(
                 requiredDetailSockets,
-                allJunkDetailsMap,
+                alljunkPiecesMap,
                 [], // Start with empty combination
                 new Set(), // Start with empty used set
                 [] // Start with empty results array

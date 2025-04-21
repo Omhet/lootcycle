@@ -1,6 +1,6 @@
 import {
     ChanceTable,
-    JunkDetail,
+    JunkPiece,
     LootConfig,
     Quality,
     Rarity,
@@ -149,15 +149,15 @@ export function getJunkPortion(
     firstPortionSize: number,
     qualityChanceLevel: number,
     rarityChanceLevel: number
-): JunkDetail[] {
+): JunkPiece[] {
     // Calculate the size of the current portion
     const portionSize = calculatePortionSize(portionNumber, firstPortionSize);
     if (portionSize <= 0) return [];
 
     // Get all junk details from the config
-    const allJunkDetails: JunkDetail[] = [];
-    Object.values(lootConfig.junkDetails).forEach((detailsArray) => {
-        allJunkDetails.push(...detailsArray);
+    const alljunkPieces: JunkPiece[] = [];
+    Object.values(lootConfig.junkPieces).forEach((detailsArray) => {
+        alljunkPieces.push(...detailsArray);
     });
 
     // First, find the favorite recipe objects by their IDs
@@ -180,7 +180,7 @@ export function getJunkPortion(
 
     // Filter junk details suitable for the player's favorite recipes
     // A junk detail is suitable if it can be used in any of the favorite recipes
-    const suitableJunkDetails = allJunkDetails.filter((detail) => {
+    const suitablejunkPieces = alljunkPieces.filter((detail) => {
         // If no favorite recipes specified, all details are suitable
         if (!favoriteRecipes || favoriteRecipes.length === 0) return true;
 
@@ -205,7 +205,7 @@ export function getJunkPortion(
         });
     });
 
-    if (suitableJunkDetails.length === 0) {
+    if (suitablejunkPieces.length === 0) {
         console.warn(
             "No suitable junk details found for the given favorite recipes"
         );
@@ -224,9 +224,9 @@ export function getJunkPortion(
         chanceTables.rarityChanceTables[1];
 
     // Group the filtered junk details by quality and rarity
-    const qualityRarityGroups = new Map<string, JunkDetail[]>();
+    const qualityRarityGroups = new Map<string, JunkPiece[]>();
 
-    suitableJunkDetails.forEach((detail) => {
+    suitablejunkPieces.forEach((detail) => {
         const quality = determineQuality(detail.sellPriceCoefficient);
         const rarity = detail.rarity;
         const groupKey = `${quality}_${rarity}`;
@@ -249,7 +249,7 @@ export function getJunkPortion(
     );
 
     // Build the final junk portion
-    const finalPortion: JunkDetail[] = [];
+    const finalPortion: JunkPiece[] = [];
 
     // First, try to distribute by quality-rarity pairs
     for (const quality of Object.values(Quality)) {
@@ -290,7 +290,7 @@ export function getJunkPortion(
 
     // If we didn't fill the portion size, add random items from any quality-rarity group
     if (finalPortion.length < portionSize) {
-        const allItems: JunkDetail[] = [];
+        const allItems: JunkPiece[] = [];
         qualityRarityGroups.forEach((group) => allItems.push(...group));
 
         const additionalCount = portionSize - finalPortion.length;

@@ -1,7 +1,7 @@
 import { Scene } from "phaser";
 import { lootConfig } from "../../../lib/craft/config";
 import {
-    JunkDetail,
+    JunkPiece,
     RecipeItemId,
     RecipeItemType,
 } from "../../../lib/craft/craftModel";
@@ -10,7 +10,7 @@ import { DepthLayers } from "../Game";
 
 // Interface to store both junk detail and its physics body
 export interface JunkPileItem {
-    junkDetail: JunkDetail;
+    junkDetail: JunkPiece;
     body: Phaser.Physics.Matter.Image | Phaser.Physics.Matter.Sprite;
 }
 
@@ -48,7 +48,7 @@ export class JunkPileManager {
      * @param junkDetail The junk detail to visualize
      * @returns The created junk pile item with physics body
      */
-    private spawnJunkItem(junkDetail: JunkDetail): JunkPileItem {
+    private spawnJunkItem(junkDetail: JunkPiece): JunkPileItem {
         // Use the configurable spawn point
         const spawnX = this.spawnX;
         const spawnY = this.spawnY;

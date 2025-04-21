@@ -153,51 +153,16 @@ export enum Durability {
     Highest = 5,
 }
 
-export type JunkPartId = string;
-export type JunkDetailId = string;
+export type JunkPieceId = string;
 
-export enum JunkPartType {
-    LongBone = "long_bone",
-}
-
-export type JunkPart = {
-    id: JunkPartId;
-    type: JunkPartType;
-    name: string;
-    sockets: JunkDetailSocket[];
-};
-
-export type JunkDetailSocket = {
-    acceptType: JunkDetailType;
-    pinpoint: Pinpoint;
-};
-
-export enum JunkDetailType {
-    Pommel = "pommel",
-    Grip = "grip",
-    Guard = "guard",
-    ShortSwordBlade = "short_sword_blade",
-    Bone = "bone",
-    Gristle = "gristle",
-}
-
-export type JunkDetail = {
-    id: JunkDetailId;
-    type: JunkDetailType;
+export type JunkPiece = {
+    id: JunkPieceId;
     suitableForRecipeDetails: RecipeDetailType[];
     name: string;
-    assetPath: string;
     rarity: Rarity;
     durability: Durability; // Deterimines how long junk particular instance will last after spawning (in crafting times)
     sellPriceCoefficient: number;
     temperatureCoefficient: number;
-};
-
-// Particular instance of junk in game runtime
-export type JunkPiece = {
-    id: JunkPartId | JunkDetailId;
-    pieceType: "part" | "detail";
-    degradation: number; // Degradation level of any junk piece in runtime (from 0% to 100%)
 };
 
 // ======= LOOT OBJECTS TYPES =======
@@ -211,7 +176,7 @@ export type LootItem = {
     id: LootItemId;
     recipeId: RecipeItemId;
     name: string;
-    details: JunkDetailId[];
+    details: JunkPieceId[];
     rarity: Rarity;
     sellPrice: number;
     temperatureRange: TemperatureRange; // In Celsius
@@ -225,7 +190,7 @@ export type LootPart = {
 
 export type LootDetail = {
     id: LootDetailId;
-    junkDetailId: JunkDetailId;
+    junkDetailId: JunkPieceId;
 };
 
 // ======= GAME LOOT CONFIGURATION =======
@@ -234,6 +199,5 @@ export type LootDetail = {
 export interface LootConfig {
     recipeItems: Record<RecipeItemType, RecipeItem[]>;
     recipeParts: Record<RecipePartType, RecipePart[]>;
-    junkParts: Record<JunkPartType, JunkPart[]>;
-    junkDetails: Record<JunkDetailType, JunkDetail[]>;
+    junkPieces: Record<JunkPieceId, JunkPiece[]>;
 }
