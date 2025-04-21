@@ -93,6 +93,22 @@ export class ClawManager {
 
       y += linkHeight; // Use linkHeight for positioning
     }
+
+    // Claw Center
+    const clawCenter = this.scene.matter.add.sprite(anchorX, y, "clawParts", "claw_center.png", {
+      shape: clawPhysics.claw_center,
+      mass: 0.3,
+      frictionAir: 0.01,
+      friction: 0.2,
+      restitution: 0.1,
+      collisionFilter: { group },
+    });
+    clawCenter.setDepth(DepthLayers.Claw + 2);
+    this.scene.matter.add.joint(prev.body as MatterJS.BodyType, clawCenter.body as MatterJS.BodyType, 0, 1, {
+      pointA: { x: 0, y: linkHeight / 4 },
+      pointB: { x: 0, y: -linkHeight / 4 },
+      damping: 0.5,
+    });
   }
 
   public move(moveFactor: number): void {
