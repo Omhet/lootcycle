@@ -6,6 +6,10 @@ export class ClawManager {
   private scene: Scene;
 
   private anchor: Phaser.Physics.Matter.Image | null = null;
+  private lastChainLink: Phaser.Physics.Matter.Sprite | null = null;
+  private clawCompositeParts: Phaser.GameObjects.Sprite[] = [];
+  private clawComposite: MatterJS.BodyType | null = null;
+  private linkHeight = 50; // Approximate height of the chain link sprite
 
   // Constants for configuration
   private readonly ANCHOR_X_OFFSET = 350; // Relative to screen center
@@ -46,8 +50,8 @@ export class ClawManager {
 
     let prev = this.anchor;
     let y = anchorY;
-    const linkHeight = 50; // Approximate height of the chain link sprite
 
+    // Create chain links
     for (let i = 0; i < 4; i++) {
       const isEven = i % 2 === 0;
 
@@ -68,8 +72,8 @@ export class ClawManager {
 
       // Create main joint
       this.scene.matter.add.joint(prev.body as MatterJS.BodyType, link.body as MatterJS.BodyType, jointLength, stiffness, {
-        pointA: { x: 0, y: isFirst ? 100 : linkHeight / 4 },
-        pointB: { x: 0, y: -linkHeight / 4 },
+        pointA: { x: 0, y: isFirst ? 100 : this.linkHeight / 4 },
+        pointB: { x: 0, y: -this.linkHeight / 4 },
         damping,
       });
 
@@ -83,32 +87,156 @@ export class ClawManager {
           {
             angleA: 0,
             angleB: 0,
-            pointA: { x: 0, y: linkHeight / 4 },
-            pointB: { x: 0, y: -linkHeight / 4 },
+            pointA: { x: 0, y: this.linkHeight / 4 },
+            pointB: { x: 0, y: -this.linkHeight / 4 },
           }
         );
       }
 
       prev = link;
+      // Save reference to the last chain link
+      if (i === 3) {
+        this.lastChainLink = link;
+      }
 
-      y += linkHeight; // Use linkHeight for positioning
+      y += this.linkHeight; // Use linkHeight for positioning
     }
 
-    // Claw Center
-    const clawCenter = this.scene.matter.add.sprite(anchorX, y, "clawParts", "claw_center.png", {
+    // Create a composite claw (center + shoulders + hands)
+    this.createClawComposite(anchorX, y, group);
+  }
+
+  /**
+   * Creates a composite body for the claw parts (center, shoulders, hands)
+   */
+  private createClawComposite(x: number, y: number, group: number): void {
+    // Get Matter namespace reference
+    // @ts-ignore
+    const Matter = Phaser.Physics.Matter.Matter;
+    const clawPhysics = this.scene.cache.json.get("clawPhysics");
+
+    if (!clawPhysics) {
+      console.error("Claw physics shapes not loaded for composite creation!");
+      return;
+    }
+
+    // --- Create individual sprites with their physics shapes ---
+    // These sprites are temporarily added to the world to get their bodies,
+    // then the bodies are removed and re-added as part of the composite.
+
+    // Center part - Positioned at the target composite location (x, y) initially
+    const centerSprite = this.scene.matter.add.sprite(x, y, "clawParts", "claw_center.png", {
       shape: clawPhysics.claw_center,
-      mass: 0.3,
-      frictionAir: 0.01,
-      friction: 0.2,
-      restitution: 0.1,
+      label: "clawCenterSprite",
+      collisionFilter: { group }, // Apply group initially
+    });
+    centerSprite.setDepth(DepthLayers.Claw + 2);
+    this.clawCompositeParts.push(centerSprite);
+
+    // Left shoulder part - Position relative to (x, y)
+    const shoulderLeftSprite = this.scene.matter.add.sprite(x - 30, y - 15, "clawParts", "claw_shoulder.png", {
+      shape: clawPhysics.claw_shoulder,
+      label: "clawShoulderLeftSprite",
       collisionFilter: { group },
     });
-    clawCenter.setDepth(DepthLayers.Claw + 2);
-    this.scene.matter.add.joint(prev.body as MatterJS.BodyType, clawCenter.body as MatterJS.BodyType, 0, 1, {
-      pointA: { x: 0, y: linkHeight / 4 },
-      pointB: { x: 0, y: -linkHeight / 4 },
-      damping: 0.5,
+    shoulderLeftSprite.setDepth(DepthLayers.Claw + 3);
+    shoulderLeftSprite.setAngle(-30); // Set visual angle
+    this.clawCompositeParts.push(shoulderLeftSprite);
+
+    // Right shoulder part - Position relative to (x, y)
+    const shoulderRightSprite = this.scene.matter.add.sprite(x + 30, y - 15, "clawParts", "claw_shoulder.png", {
+      shape: clawPhysics.claw_shoulder, // Use the same shape
+      label: "clawShoulderRightSprite",
+      collisionFilter: { group },
     });
+    shoulderRightSprite.setDepth(DepthLayers.Claw + 3);
+    shoulderRightSprite.setAngle(30); // Set visual angle
+    shoulderRightSprite.setFlipX(true); // Flip visual sprite
+    // Note: Flipping the sprite doesn't flip the physics body shape automatically.
+    // If precise mirrored physics are needed, a separate flipped shape definition or manual body creation/rotation is required.
+    // For now, we assume the shoulder shape is symmetrical enough or the visual flip is sufficient.
+    this.clawCompositeParts.push(shoulderRightSprite);
+
+    // Left hand part - Position relative to (x, y)
+    const handLeftSprite = this.scene.matter.add.sprite(x - 60, y, "clawParts", "claw_hand.png", {
+      shape: clawPhysics.claw_hand,
+      label: "clawHandLeftSprite",
+      collisionFilter: { group },
+    });
+    handLeftSprite.setDepth(DepthLayers.Claw + 4);
+    handLeftSprite.setAngle(-45); // Set visual angle
+    this.clawCompositeParts.push(handLeftSprite);
+
+    // Right hand part - Position relative to (x, y)
+    const handRightSprite = this.scene.matter.add.sprite(x + 60, y, "clawParts", "claw_hand.png", {
+      shape: clawPhysics.claw_hand, // Use the same shape
+      label: "clawHandRightSprite",
+      collisionFilter: { group },
+    });
+    handRightSprite.setDepth(DepthLayers.Claw + 4);
+    handRightSprite.setAngle(45); // Set visual angle
+    handRightSprite.setFlipX(true); // Flip visual sprite
+    this.clawCompositeParts.push(handRightSprite);
+
+    // --- Extract bodies and create the composite ---
+    const centerBody = centerSprite.body as MatterJS.BodyType;
+    const shoulderLeftBody = shoulderLeftSprite.body as MatterJS.BodyType;
+    const shoulderRightBody = shoulderRightSprite.body as MatterJS.BodyType;
+    const handLeftBody = handLeftSprite.body as MatterJS.BodyType;
+    const handRightBody = handRightSprite.body as MatterJS.BodyType;
+
+    // Define the parts array for the composite
+    const parts = [centerBody, shoulderLeftBody, shoulderRightBody, handLeftBody, handRightBody];
+
+    // Remove the individual bodies from the world before creating the composite
+    // Pass the array of bodies directly
+    this.scene.matter.world.remove(parts);
+
+    // Create the composite body
+    this.clawComposite = Matter.Body.create({
+      parts: parts,
+      friction: 0.2,
+      frictionAir: 0.01,
+      restitution: 0.1,
+      collisionFilter: { group }, // Group is applied to the composite
+      label: "clawComposite",
+      isStatic: false, // Ensure the composite itself is dynamic
+    });
+
+    // Add the composite body to the world
+    this.scene.matter.world.add(this.clawComposite);
+
+    // Position the composite body correctly.
+    // Since the parts were created relative to (x, y), the composite's center
+    // might need adjustment depending on how Matter calculates it.
+    // Often, setting the position *after* creation is more reliable.
+    // We might need to calculate the center of mass of the parts if Matter doesn't center it automatically.
+    // For now, let's assume Matter centers it reasonably well based on part positions.
+    Matter.Body.setPosition(this.clawComposite, { x, y });
+
+    // --- Connect the last chain link to the composite claw ---
+    if (this.lastChainLink && this.lastChainLink.body && this.clawComposite) {
+      // Adjust pointB Y offset if needed based on the composite's center/shape
+      const compositeCenterOfMass = this.clawComposite.position; // Or calculate if needed
+      const connectionPointYOffset = -20; // Adjust this based on visual/physical center
+
+      this.scene.matter.add.joint(
+        this.lastChainLink.body as MatterJS.BodyType,
+        this.clawComposite as MatterJS.BodyType,
+        0, // length
+        1, // stiffness
+        {
+          pointA: { x: 0, y: this.linkHeight / 4 },
+          // Connect pointB relative to the composite body's center
+          pointB: { x: 0, y: connectionPointYOffset },
+          damping: 0.5,
+        }
+      );
+    }
+
+    // Sprites are already created and associated with their bodies (which are now parts of the composite).
+    // Phaser/Matter should handle updating their visual positions based on the composite body's movement.
+    // No need for `this.scene.matter.add.gameObject` here.
   }
 
   public move(moveFactor: number): void {
@@ -125,5 +253,8 @@ export class ClawManager {
 
   public destroy(): void {
     console.log("ClawManager destroyed");
+    // Clean up sprites
+    this.clawCompositeParts.forEach((sprite) => sprite.destroy());
+    this.clawCompositeParts = [];
   }
 }
