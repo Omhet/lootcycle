@@ -46,15 +46,6 @@ registerJunkDetail("tree", {
     temperatureCoefficient: 0.5,
 });
 
-registerJunkDetail("basic_short_sword_pommel", {
-    suitableForRecipeDetails: [RecipeDetailType.Pommel],
-    name: "Basic Short Sword Pommel",
-    rarity: Rarity.Common,
-    durability: Durability.Medium,
-    sellPriceCoefficient: 1,
-    temperatureCoefficient: 1,
-});
-
 registerJunkDetail("golden_with_emerald_pommel", {
     suitableForRecipeDetails: [RecipeDetailType.Pommel],
     name: "Golden With Emerald Short Sword Pommel",
