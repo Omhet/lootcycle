@@ -18,14 +18,32 @@ function App() {
 
     // Function to handle the Play button click
     const handlePlayClick = () => {
-        if (phaserRef.current) {
-            const scene = phaserRef.current.scene as MainMenu; // Cast to MainMenu
+        if (phaserRef.current && phaserRef.current.scene) {
+            const scene = phaserRef.current.scene;
             if (
-                scene &&
                 scene.scene.key === "MainMenu" &&
-                typeof scene.startGame === "function"
+                typeof (scene as any).startGame === "function" // Check if method exists before casting
             ) {
-                scene.startGame(); // Call startGame method on the MainMenu scene instance
+                // Cast safely after check
+                (scene as unknown as MainMenu).startGame();
+            }
+        }
+    };
+
+    // Function to handle the Download Loot Images button click
+    const handleDownloadLootImagesClick = () => {
+        if (phaserRef.current && phaserRef.current.scene) {
+            const scene = phaserRef.current.scene;
+            if (
+                scene.scene.key === "MainMenu" &&
+                typeof (scene as any).downloadRecipeImages === "function" // Check if method exists before casting
+            ) {
+                // Cast safely after check
+                (scene as unknown as MainMenu).downloadRecipeImages();
+            } else {
+                console.warn(
+                    "Download function not available on the current scene or scene is not MainMenu."
+                );
             }
         }
     };
@@ -45,6 +63,13 @@ function App() {
                                 onClick={handlePlayClick}
                             >
                                 Play
+                            </button>
+                            {/* Add the new download button */}
+                            <button
+                                className="button"
+                                onClick={handleDownloadLootImagesClick} // Attach the new handler
+                            >
+                                Download Loot Images
                             </button>
                         </div>
                     </div>
