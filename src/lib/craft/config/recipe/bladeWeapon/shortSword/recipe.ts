@@ -20,7 +20,7 @@ registerRecipeItem(RecipeItemType.BladeWeapon, {
                 coords: { x: 0, y: 0 },
                 localOffset: { x: 0, y: -0.5 },
                 localRotationAngle: 0,
-                zIndex: 1,
+                zIndex: 0,
             },
         },
         {
@@ -30,7 +30,7 @@ registerRecipeItem(RecipeItemType.BladeWeapon, {
                 coords: { x: 0, y: 0 },
                 localOffset: { x: 0, y: 0.5 },
                 localRotationAngle: 0,
-                zIndex: 0,
+                zIndex: 1,
             },
         },
     ],

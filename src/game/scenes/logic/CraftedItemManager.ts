@@ -75,6 +75,7 @@ export class CraftedItemManager {
             y: this.craftedItemRT.height / 2,
         };
 
+        // --- Data Preparation ---
         const junkDetailDataMap = new Map<JunkDetailId, JunkDetail>();
         Object.values(lootConfig.junkDetails)
             .flat()
@@ -86,31 +87,49 @@ export class CraftedItemManager {
             this.craftedItem.details
         );
 
+        // --- Rendering Loop ---
+        // Iterate through RecipeItem sockets (defining Part anchors and offsets)
         recipeItem.sockets
-            .sort((a, b) => a.pinpoint.zIndex - b.pinpoint.zIndex)
+            .sort((a, b) => a.pinpoint.zIndex - b.pinpoint.zIndex) // Draw parts based on their zIndex
             .forEach((partSocket) => {
-                const part = Object.values(lootConfig.recipeParts)
+                const partDefinition = Object.values(lootConfig.recipeParts)
                     .flat()
                     .find((p) => p.type === partSocket.acceptType);
 
-                if (!part) {
+                if (!partDefinition) {
                     console.error(
-                        `PecipePart not found for type: ${partSocket.acceptType}`
+                        `RecipePart definition not found for type: ${partSocket.acceptType}`
                     );
                     return;
                 }
 
-                const partPos = this.calculatePosition(
-                    rtCenter,
-                    partSocket.pinpoint
-                );
+                // 1. Calculate the BASE anchor position for this part (ignoring part's localOffset for now)
+                const partBaseAnchorPos = {
+                    x: rtCenter.x + partSocket.pinpoint.coords.x,
+                    y: rtCenter.y + partSocket.pinpoint.coords.y,
+                };
 
-                part.sockets
-                    .sort((a, b) => a.pinpoint.zIndex - b.pinpoint.zIndex)
+                // Temporary storage for details belonging to this part
+                const partDetailsToDraw: {
+                    sprite: Phaser.GameObjects.Sprite;
+                    position: { x: number; y: number }; // Position relative to partBaseAnchorPos
+                    rotation: number;
+                }[] = [];
+
+                // Bounding box for the part based on its details
+                let minX = Infinity,
+                    minY = Infinity,
+                    maxX = -Infinity,
+                    maxY = -Infinity;
+
+                // 2. Iterate through the Part's sockets (defining Detail positions relative to the part)
+                partDefinition.sockets
+                    .sort((a, b) => a.pinpoint.zIndex - b.pinpoint.zIndex) // Draw details within part based on their zIndex
                     .forEach((detailSocket) => {
                         const requiredDetailType = detailSocket.acceptType;
                         let foundDetailId: JunkDetailId | null = null;
 
+                        // Find a suitable available JunkDetail
                         for (const detailId of availableDetailIds) {
                             const detailData = junkDetailDataMap.get(detailId);
                             if (
@@ -120,54 +139,146 @@ export class CraftedItemManager {
                                 )
                             ) {
                                 foundDetailId = detailId;
-                                break;
+                                break; // Found one, stop searching
                             }
                         }
 
                         if (foundDetailId) {
-                            availableDetailIds.delete(foundDetailId);
+                            availableDetailIds.delete(foundDetailId); // Mark as used for this item
 
-                            const detailPos = this.calculatePosition(
-                                partPos,
-                                detailSocket.pinpoint
-                            );
                             const frameName = `${foundDetailId}.png`;
-
-                            // Use scene's add factory to create temporary sprite
                             const tempSprite = this.scene.add.sprite(
                                 0,
                                 0,
                                 "details-sprites",
                                 frameName
                             );
-                            tempSprite.setRotation(
+
+                            const detailDimensions = {
+                                width: tempSprite.displayWidth,
+                                height: tempSprite.displayHeight,
+                            };
+
+                            // Calculate detail's position relative to the part's BASE anchor
+                            const detailRelativePos =
+                                this.calculatePinpointPosition(
+                                    { x: 0, y: 0 }, // Relative to the part's base anchor (0,0)
+                                    detailSocket.pinpoint,
+                                    detailDimensions
+                                );
+
+                            const detailRotation = Phaser.Math.DegToRad(
                                 detailSocket.pinpoint.localRotationAngle
                             );
 
-                            this.craftedItemRT.draw(
-                                tempSprite,
-                                detailPos.x,
-                                detailPos.y
+                            // Store for later drawing and bounding box calculation
+                            partDetailsToDraw.push({
+                                sprite: tempSprite,
+                                position: detailRelativePos,
+                                rotation: detailRotation,
+                            });
+
+                            // Update bounding box (consider sprite origin is 0.5, 0.5)
+                            const halfWidth = detailDimensions.width / 2;
+                            const halfHeight = detailDimensions.height / 2;
+                            minX = Math.min(
+                                minX,
+                                detailRelativePos.x - halfWidth
                             );
-                            tempSprite.destroy(); // Destroy temporary sprite
+                            minY = Math.min(
+                                minY,
+                                detailRelativePos.y - halfHeight
+                            );
+                            maxX = Math.max(
+                                maxX,
+                                detailRelativePos.x + halfWidth
+                            );
+                            maxY = Math.max(
+                                maxY,
+                                detailRelativePos.y + halfHeight
+                            );
+                        } else {
+                            console.warn(
+                                `No suitable JunkDetail found for RecipeDetailType: ${requiredDetailType} in part ${partDefinition.type}`
+                            );
                         }
                     });
+
+                // 3. Calculate Part Dimensions and Local Offset
+                let partWidth = 0;
+                let partHeight = 0;
+                let partLocalOffsetX = 0;
+                let partLocalOffsetY = 0;
+
+                if (partDetailsToDraw.length > 0 && isFinite(minX)) {
+                    partWidth = maxX - minX;
+                    partHeight = maxY - minY;
+
+                    // Calculate the part's local offset in pixels based on its calculated dimensions
+                    partLocalOffsetX =
+                        partSocket.pinpoint.localOffset.x * partWidth;
+                    partLocalOffsetY =
+                        partSocket.pinpoint.localOffset.y * partHeight;
+                } else {
+                    console.warn(
+                        `Part ${partDefinition.type} has no details to render or invalid bounds.`
+                    );
+                }
+
+                // 4. Draw the collected details for this part, applying the final offsets
+                partDetailsToDraw.forEach((detailInfo) => {
+                    // Final position = Base Part Anchor + Relative Detail Pos + Part Local Offset
+                    const finalDrawX =
+                        partBaseAnchorPos.x +
+                        detailInfo.position.x +
+                        partLocalOffsetX;
+                    const finalDrawY =
+                        partBaseAnchorPos.y +
+                        detailInfo.position.y +
+                        partLocalOffsetY;
+
+                    detailInfo.sprite.setRotation(detailInfo.rotation);
+
+                    this.craftedItemRT.draw(
+                        detailInfo.sprite,
+                        finalDrawX,
+                        finalDrawY
+                    );
+
+                    detailInfo.sprite.destroy(); // Clean up temporary sprite
+                });
             });
     }
 
     /**
-     * Calculates a position based on a parent position and a pinpoint.
-     * @param parentPos The parent position {x, y}.
-     * @param pinpoint The pinpoint data for positioning.
-     * @returns The calculated position {x, y}.
+     * Calculates the final drawing position for an element based on its parent anchor,
+     * its pinpoint configuration, and its own dimensions.
+     *
+     * - `coords` are treated as direct offsets from the parent anchor.
+     * - `localOffset` is calculated relative to the element's own dimensions.
+     *
+     * @param parentAnchor The anchor point {x, y} of the parent.
+     * @param pinpoint The pinpoint data containing coords and localOffset.
+     * @param selfDimensions The dimensions {width, y} of the element being positioned.
+     * @returns The calculated final position {x, y}.
      */
-    private calculatePosition(
-        parentPos: { x: number; y: number },
-        pinpoint: Pinpoint
+    private calculatePinpointPosition(
+        parentAnchor: { x: number; y: number },
+        pinpoint: Pinpoint,
+        selfDimensions: { width: number; height: number }
     ): { x: number; y: number } {
+        // 1. Position based on parent anchor and coords (direct offset)
+        const basePosX = parentAnchor.x + pinpoint.coords.x;
+        const basePosY = parentAnchor.y + pinpoint.coords.y;
+
+        // 2. Calculate offset based on localOffset and self dimensions
+        const localOffsetX = pinpoint.localOffset.x * selfDimensions.width;
+        const localOffsetY = pinpoint.localOffset.y * selfDimensions.height;
+
+        // 3. Final position
         return {
-            x: parentPos.x + (pinpoint.coords.x + pinpoint.localOffset.x),
-            y: parentPos.y + (pinpoint.coords.y + pinpoint.localOffset.y),
+            x: basePosX + localOffsetX,
+            y: basePosY + localOffsetY,
         };
     }
 
