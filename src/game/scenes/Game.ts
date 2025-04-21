@@ -5,6 +5,7 @@ import { EventBus } from "../EventBus";
 // Import all managers
 import { BackgroundManager } from "./logic/BackgroundManager";
 import { CauldronManager } from "./logic/CauldronManager";
+import { ClawManager } from "./logic/ClawManager";
 import { ContainerManager } from "./logic/ContainerManager";
 import { CraftedItemManager } from "./logic/CraftedItemManager";
 import { FurnaceManager } from "./logic/FurnaceManager";
@@ -42,6 +43,7 @@ export class Game extends Scene {
     private cauldronManager: CauldronManager;
     private intakeManager: IntakeManager;
     private furnaceManager: FurnaceManager;
+    private clawManager: ClawManager; // Add ClawManager property
 
     // Physics bodies (Scene specific)
     private groundHeight = 38;
@@ -64,6 +66,7 @@ export class Game extends Scene {
         this.intakeManager = new IntakeManager(this);
         this.junkPileManager = new JunkPileManager(this);
         this.craftedItemManager = new CraftedItemManager(this);
+        this.clawManager = new ClawManager(this); // Instantiate ClawManager
 
         // Set up physics world (Remains in Scene)
         this.matter.world.setBounds(
@@ -145,6 +148,7 @@ export class Game extends Scene {
         this.cauldronManager?.destroy();
         this.intakeManager?.destroy();
         this.furnaceManager?.destroy();
+        this.clawManager?.destroy(); // Destroy ClawManager
 
         // Remove specific listeners
         this.input.keyboard?.off("keydown-ENTER");
