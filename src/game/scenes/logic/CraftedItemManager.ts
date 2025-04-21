@@ -47,7 +47,7 @@ export class CraftedItemManager {
         this.craftedItemRT.setOrigin(0.5, 0.5); // Set origin to center for easier positioning
         this.craftedItemRT.setDepth(DepthLayers.UI);
         this.craftedItemRT.setVisible(false);
-        this.craftedItemRT.fill(0x000000, 0.7); // Initial background
+        this.craftedItemRT.fill(0xffffff, 0); // Initial background
     }
 
     /**
@@ -208,7 +208,7 @@ export class CraftedItemManager {
         // --- Pass 2: Final Rendering ---
         this.craftedItemRT.setVisible(true);
         this.craftedItemRT.clear();
-        this.craftedItemRT.fill(0x000000, 0.7);
+        this.craftedItemRT.fill(0xffffff, 0);
 
         const rtDimensions = {
             width: this.craftedItemRT.width,
@@ -432,7 +432,7 @@ export class CraftedItemManager {
     public clearDisplay(): void {
         this.craftedItemRT.setVisible(false);
         this.craftedItemRT.clear(); // Clear drawings
-        this.craftedItemRT.fill(0x000000, 0.7); // Re-apply background
+        this.craftedItemRT.fill(0xffffff, 0); // Re-apply background
         this.craftedItem = null;
         this.estimatedPartDimensionsCache.clear(); // Clear cache when display is cleared
     }
