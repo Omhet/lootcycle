@@ -50,6 +50,7 @@ export class Game extends Scene {
     private groundHeight = 38;
     // @ts-ignore
     private groundCollider: MatterJS.BodyType;
+    cursors: Phaser.Types.Input.Keyboard.CursorKeys | undefined;
 
     constructor() {
         super("Game");
@@ -57,6 +58,7 @@ export class Game extends Scene {
 
     create() {
         this.camera = this.cameras.main;
+        this.cursors = this.input.keyboard?.createCursorKeys();
 
         // Instantiate Managers (Order might matter for dependencies or visual layering setup)
         this.backgroundManager = new BackgroundManager(this);
@@ -132,6 +134,17 @@ export class Game extends Scene {
 
         if (craftResult.success && craftResult.item) {
             this.craftedItemManager.displayItem(craftResult.item);
+        }
+    }
+
+    update() {
+        // Claw anchor control
+        if (this.cursors?.left.isDown) {
+            this.clawManager.setAnchorVelocityX(-10);
+        } else if (this.cursors?.right.isDown) {
+            this.clawManager.setAnchorVelocityX(10);
+        } else {
+            this.clawManager.setAnchorVelocityX(0);
         }
     }
 

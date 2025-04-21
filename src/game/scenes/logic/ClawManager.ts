@@ -43,7 +43,6 @@ export class ClawManager {
             undefined,
             {
                 ignoreGravity: true,
-                isStatic: true,
                 collisionFilter: { group },
             }
         );
@@ -92,6 +91,10 @@ export class ClawManager {
 
             y += linkHeight; // Use linkHeight for positioning
         }
+    }
+
+    public setAnchorVelocityX(velocityX: number): void {
+        this.anchor?.setVelocityX(velocityX);
     }
 
     public destroy(): void {
