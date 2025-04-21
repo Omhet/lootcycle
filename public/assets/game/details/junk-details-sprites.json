@@ -4,282 +4,261 @@
 			"image": "junk-details-sprites.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 233,
-				"h": 81
+				"w": 254,
+				"h": 294
 			},
 			"scale": 1,
 			"frames": [
 				{
-					"filename": "golden_basic_short_sword_blade.png",
+					"filename": "tree.png",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
-						"w": 37,
-						"h": 111
+						"w": 190,
+						"h": 190
 					},
 					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 37,
-						"h": 79
+						"x": 12,
+						"y": 30,
+						"w": 87,
+						"h": 159
 					},
 					"frame": {
 						"x": 1,
 						"y": 1,
-						"w": 37,
-						"h": 79
+						"w": 87,
+						"h": 159
 					}
 				},
 				{
-					"filename": "iron_basic_short_sword_blade.png",
+					"filename": "gold_ore.png",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
-						"w": 37,
-						"h": 111
+						"w": 190,
+						"h": 190
 					},
 					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 37,
-						"h": 79
+						"x": 20,
+						"y": 83,
+						"w": 88,
+						"h": 75
 					},
 					"frame": {
-						"x": 40,
+						"x": 90,
 						"y": 1,
-						"w": 37,
-						"h": 79
-					}
-				},
-				{
-					"filename": "wooden_basic_short_sword_blade.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 37,
-						"h": 111
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 37,
-						"h": 79
-					},
-					"frame": {
-						"x": 79,
-						"y": 1,
-						"w": 37,
-						"h": 79
+						"w": 88,
+						"h": 75
 					}
 				},
 				{
 					"filename": "bone.png",
 					"rotated": false,
-					"trimmed": false,
+					"trimmed": true,
 					"sourceSize": {
-						"w": 14,
-						"h": 43
+						"w": 190,
+						"h": 190
 					},
 					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 14,
-						"h": 43
+						"x": 8,
+						"y": 85,
+						"w": 47,
+						"h": 100
 					},
 					"frame": {
-						"x": 118,
+						"x": 180,
 						"y": 1,
-						"w": 14,
-						"h": 43
+						"w": 47,
+						"h": 100
 					}
 				},
 				{
-					"filename": "golden_basic_short_sword_grip.png",
+					"filename": "basic_short_sword_grip.png",
 					"rotated": false,
-					"trimmed": false,
+					"trimmed": true,
 					"sourceSize": {
-						"w": 26,
-						"h": 34
+						"w": 190,
+						"h": 190
 					},
 					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 26,
-						"h": 34
+						"x": 20,
+						"y": 123,
+						"w": 24,
+						"h": 67
 					},
 					"frame": {
-						"x": 118,
-						"y": 46,
-						"w": 26,
-						"h": 34
-					}
-				},
-				{
-					"filename": "wooden_basic_short_sword_grip.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 26,
-						"h": 34
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 26,
-						"h": 34
-					},
-					"frame": {
-						"x": 134,
+						"x": 229,
 						"y": 1,
-						"w": 26,
-						"h": 34
+						"w": 24,
+						"h": 67
 					}
 				},
 				{
-					"filename": "golden_basic_short_sword_pommel.png",
+					"filename": "iron_ore.png",
 					"rotated": false,
-					"trimmed": false,
+					"trimmed": true,
 					"sourceSize": {
-						"w": 28,
-						"h": 27
+						"w": 190,
+						"h": 190
 					},
 					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 28,
-						"h": 27
+						"x": 20,
+						"y": 83,
+						"w": 88,
+						"h": 75
 					},
 					"frame": {
-						"x": 146,
-						"y": 37,
-						"w": 28,
-						"h": 27
+						"x": 90,
+						"y": 78,
+						"w": 88,
+						"h": 75
 					}
 				},
 				{
-					"filename": "golden_basic_short_sword_guard.png",
+					"filename": "curved_silver_short_sword_blade.png",
 					"rotated": false,
-					"trimmed": false,
+					"trimmed": true,
 					"sourceSize": {
-						"w": 42,
-						"h": 12
+						"w": 190,
+						"h": 190
 					},
 					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 42,
-						"h": 12
-					},
-					"frame": {
-						"x": 146,
+						"x": 9,
 						"y": 66,
-						"w": 42,
-						"h": 12
+						"w": 37,
+						"h": 123
+					},
+					"frame": {
+						"x": 180,
+						"y": 103,
+						"w": 37,
+						"h": 123
 					}
 				},
 				{
-					"filename": "iron_basic_short_sword_guard.png",
+					"filename": "basic_short_sword_blade.png",
 					"rotated": false,
-					"trimmed": false,
+					"trimmed": true,
 					"sourceSize": {
-						"w": 42,
-						"h": 12
+						"w": 190,
+						"h": 190
 					},
 					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 42,
-						"h": 12
+						"x": 10,
+						"y": 65,
+						"w": 27,
+						"h": 123
 					},
 					"frame": {
-						"x": 190,
-						"y": 1,
-						"w": 42,
-						"h": 12
+						"x": 219,
+						"y": 103,
+						"w": 27,
+						"h": 123
 					}
 				},
 				{
-					"filename": "wooden_basic_short_sword_guard.png",
+					"filename": "silver_ore.png",
 					"rotated": false,
-					"trimmed": false,
+					"trimmed": true,
 					"sourceSize": {
-						"w": 41,
-						"h": 12
+						"w": 190,
+						"h": 190
 					},
 					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 41,
-						"h": 12
+						"x": 20,
+						"y": 83,
+						"w": 88,
+						"h": 75
 					},
 					"frame": {
-						"x": 190,
-						"y": 15,
-						"w": 41,
-						"h": 12
+						"x": 90,
+						"y": 155,
+						"w": 88,
+						"h": 75
 					}
 				},
 				{
-					"filename": "iron_basic_short_sword_pommel.png",
+					"filename": "fluff-yellow.png",
 					"rotated": false,
-					"trimmed": false,
+					"trimmed": true,
 					"sourceSize": {
-						"w": 27,
-						"h": 27
+						"w": 190,
+						"h": 190
 					},
 					"spriteSourceSize": {
 						"x": 0,
-						"y": 0,
-						"w": 27,
-						"h": 27
+						"y": 128,
+						"w": 65,
+						"h": 59
 					},
 					"frame": {
-						"x": 176,
-						"y": 29,
-						"w": 27,
-						"h": 27
+						"x": 180,
+						"y": 228,
+						"w": 65,
+						"h": 59
 					}
 				},
 				{
-					"filename": "gristle.png",
+					"filename": "golden_with_emerald_pommel.png",
 					"rotated": false,
-					"trimmed": false,
+					"trimmed": true,
 					"sourceSize": {
-						"w": 34,
-						"h": 21
+						"w": 190,
+						"h": 190
 					},
 					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 34,
-						"h": 21
+						"x": 1,
+						"y": 120,
+						"w": 76,
+						"h": 69
 					},
 					"frame": {
-						"x": 190,
-						"y": 58,
-						"w": 34,
-						"h": 21
+						"x": 1,
+						"y": 162,
+						"w": 76,
+						"h": 69
 					}
 				},
 				{
-					"filename": "wooden_basic_short_sword_pommel.png",
+					"filename": "fluff-blue.png",
 					"rotated": false,
-					"trimmed": false,
+					"trimmed": true,
 					"sourceSize": {
-						"w": 27,
-						"h": 27
+						"w": 190,
+						"h": 190
+					},
+					"spriteSourceSize": {
+						"x": 2,
+						"y": 128,
+						"w": 62,
+						"h": 61
+					},
+					"frame": {
+						"x": 79,
+						"y": 232,
+						"w": 62,
+						"h": 61
+					}
+				},
+				{
+					"filename": "fluff-green.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 190,
+						"h": 190
 					},
 					"spriteSourceSize": {
 						"x": 0,
-						"y": 0,
-						"w": 27,
-						"h": 27
+						"y": 128,
+						"w": 66,
+						"h": 56
 					},
 					"frame": {
-						"x": 205,
-						"y": 29,
-						"w": 27,
-						"h": 27
+						"x": 1,
+						"y": 233,
+						"w": 66,
+						"h": 56
 					}
 				}
 			]
@@ -288,6 +267,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:1ef44e0335349489ee56777e570340ea:66fd77d8ecfb97540dfedaad9e41ccd7:25f397f2321f072f6da8c82765eea154$"
+		"smartupdate": "$TexturePacker:SmartUpdate:54bd66a7f2717a29d865785817147e26:2641d02b0f52b6412d7099c732b0e86a:25f397f2321f072f6da8c82765eea154$"
 	}
 }
