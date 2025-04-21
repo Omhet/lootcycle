@@ -57,7 +57,7 @@ export class JunkPileManager {
         const frameName = `${junkDetail.id}.png`;
 
         // Get physics shapes data
-        const shapesData = this.scene.cache.json.get("details-shapes");
+        const shapesData = this.scene.cache.json.get("junk-details-shapes");
 
         // Check if we have a matching physics shape for this junk detail
         const physicsKey = junkDetail.id;
@@ -77,7 +77,7 @@ export class JunkPileManager {
             physicsBody = this.scene.matter.add.sprite(
                 spawnX,
                 spawnY,
-                "details-sprites",
+                "junk-details-sprites",
                 frameName,
                 {
                     shape: shapesData[physicsKey],

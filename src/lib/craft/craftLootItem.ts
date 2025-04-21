@@ -46,10 +46,10 @@ export function craftLootItem(params: craftLootItemParams): CraftingResult {
         },
         // This will be filled with actual parts after crafting logic is implemented
         details: [
-            "junk_iron_basic_short_sword_pommel",
-            "junk_wooden_basic_short_sword_grip",
-            "junk_iron_basic_short_sword_guard",
-            "junk_iron_basic_short_sword_blade",
+            "iron_basic_short_sword_pommel",
+            "wooden_basic_short_sword_grip",
+            "iron_basic_short_sword_guard",
+            "iron_basic_short_sword_blade",
         ],
     };
 

@@ -69,13 +69,23 @@ export class Preloader extends Scene {
         this.load.image("pipe_back", "game/elements/pipe_back.png");
         this.load.image("pipe_front", "game/elements/pipe_front.png");
 
+        // Load loot details assets
+        this.load.atlas(
+            "loot-details-sprites",
+            "game/details/loot-details-sprites.png",
+            "game/details/loot-details-sprites.json"
+        );
+
         // Load junk details assets
         this.load.atlas(
-            "details-sprites",
-            "game/details/details-sprites.png",
-            "game/details/details-sprites.json"
+            "junk-details-sprites",
+            "game/details/junk-details-sprites.png",
+            "game/details/junk-details-sprites.json"
         );
-        this.load.json("details-shapes", "game/details/details-shapes.json");
+        this.load.json(
+            "junk-details-shapes",
+            "game/details/junk-details-shapes.json"
+        );
     }
 
     create() {

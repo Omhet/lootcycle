@@ -175,7 +175,9 @@ export class CraftedItemRenderer {
                     if (!detailData) return;
 
                     const frameName = `${detailData.id}.png`;
-                    const texture = this.scene.textures.get("details-sprites");
+                    const texture = this.scene.textures.get(
+                        "loot-details-sprites"
+                    );
                     const frame = texture.get(frameName);
 
                     if (!frame || frame.name === "__MISSING") {
@@ -333,7 +335,7 @@ export class CraftedItemRenderer {
                     const frameName = `${foundDetailId}.png`;
                     // Create a temporary sprite - DO NOT add it to the scene's display list
                     const tempSprite = this.scene.make.sprite(
-                        { key: "details-sprites", frame: frameName },
+                        { key: "loot-details-sprites", frame: frameName },
                         false
                     );
                     tempSprite.setOrigin(0.5, 0.5);

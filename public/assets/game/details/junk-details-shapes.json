@@ -1,8 +1,307 @@
 {
 	"generator_info": "Shape definitions generated with PhysicsEditor. Visit https://www.codeandweb.com/physicseditor",
-	"junk_golden_basic_short_sword_pommel": {
+	"bone": {
 		"type": "fromPhysicsEditor",
-		"label": "junk_golden_basic_short_sword_pommel",
+		"label": "bone",
+		"isStatic": false,
+		"density": 0.10000000149011612,
+		"restitution": 0,
+		"friction": 0.10000000149011612,
+		"frictionAir": 0.009999999776482582,
+		"frictionStatic": 0.5,
+		"collisionFilter": {
+			"group": 0,
+			"category": 1,
+			"mask": 255
+		},
+		"fixtures": [
+			{
+				"label": "",
+				"isSensor": false,
+				"vertices": [
+					[ { "x":13, "y":-0.5 }, { "x":1, "y":-0.5 }, { "x":-0.5, "y":41 }, { "x":0, "y":42.5 }, { "x":12, "y":42.5 }, { "x":13.5, "y":42 }, { "x":13.5, "y":1 } ],
+					[ { "x":1, "y":-0.5 }, { "x":-0.5, "y":0 }, { "x":-0.5, "y":41 } ]
+				]
+			}
+		]
+	},
+	"golden_basic_short_sword_blade": {
+		"type": "fromPhysicsEditor",
+		"label": "golden_basic_short_sword_blade",
+		"isStatic": false,
+		"density": 0.10000000149011612,
+		"restitution": 0,
+		"friction": 0.10000000149011612,
+		"frictionAir": 0.009999999776482582,
+		"frictionStatic": 0.5,
+		"collisionFilter": {
+			"group": 0,
+			"category": 1,
+			"mask": 255
+		},
+		"fixtures": [
+			{
+				"label": "",
+				"isSensor": false,
+				"vertices": [
+					[ { "x":0, "y":77.5 }, { "x":36.5, "y":77 }, { "x":36.5, "y":29 }, { "x":18.5, "y":4 }, { "x":14.5, "y":1 }, { "x":-0.5, "y":29 } ],
+					[ { "x":18.5, "y":4 }, { "x":18.5, "y":3 }, { "x":16, "y":0.5 }, { "x":14.5, "y":1 } ]
+				]
+			}
+		]
+	},
+	"golden_basic_short_sword_grip": {
+		"type": "fromPhysicsEditor",
+		"label": "golden_basic_short_sword_grip",
+		"isStatic": false,
+		"density": 0.10000000149011612,
+		"restitution": 0,
+		"friction": 0.10000000149011612,
+		"frictionAir": 0.009999999776482582,
+		"frictionStatic": 0.5,
+		"collisionFilter": {
+			"group": 0,
+			"category": 1,
+			"mask": 255
+		},
+		"fixtures": [
+			{
+				"label": "",
+				"isSensor": false,
+				"vertices": [
+					[ { "x":0, "y":33.5 }, { "x":25.5, "y":33 }, { "x":25, "y":-0.5 }, { "x":1, "y":-0.5 }, { "x":-0.5, "y":0 } ]
+				]
+			}
+		]
+	},
+	"golden_basic_short_sword_guard": {
+		"type": "fromPhysicsEditor",
+		"label": "golden_basic_short_sword_guard",
+		"isStatic": false,
+		"density": 0.10000000149011612,
+		"restitution": 0,
+		"friction": 0.10000000149011612,
+		"frictionAir": 0.009999999776482582,
+		"frictionStatic": 0.5,
+		"collisionFilter": {
+			"group": 0,
+			"category": 1,
+			"mask": 255
+		},
+		"fixtures": [
+			{
+				"label": "",
+				"isSensor": false,
+				"vertices": [
+					[ { "x":41, "y":-0.5 }, { "x":1, "y":-0.5 }, { "x":-0.5, "y":0 }, { "x":0, "y":11.5 }, { "x":41.5, "y":11 } ]
+				]
+			}
+		]
+	},
+	"golden_basic_short_sword_pommel": {
+		"type": "fromPhysicsEditor",
+		"label": "golden_basic_short_sword_pommel",
+		"isStatic": false,
+		"density": 0.10000000149011612,
+		"restitution": 0,
+		"friction": 0.10000000149011612,
+		"frictionAir": 0.009999999776482582,
+		"frictionStatic": 0.5,
+		"collisionFilter": {
+			"group": 0,
+			"category": 1,
+			"mask": 255
+		},
+		"fixtures": [
+			{
+				"label": "",
+				"isSensor": false,
+				"vertices": [
+					[ { "x":11, "y":-0.5 }, { "x":-0.5, "y":14 }, { "x":2, "y":20.5 }, { "x":21.5, "y":24 }, { "x":25.5, "y":20 }, { "x":27.5, "y":11 }, { "x":22, "y":1.5 }, { "x":18, "y":-0.5 } ],
+					[ { "x":2.5, "y":4 }, { "x":-0.5, "y":14 }, { "x":11, "y":-0.5 }, { "x":10, "y":-0.5 } ],
+					[ { "x":16, "y":26.5 }, { "x":21.5, "y":24 }, { "x":2, "y":20.5 }, { "x":6, "y":24.5 } ]
+				]
+			}
+		]
+	},
+	"gristle": {
+		"type": "fromPhysicsEditor",
+		"label": "gristle",
+		"isStatic": false,
+		"density": 0.10000000149011612,
+		"restitution": 0,
+		"friction": 0.10000000149011612,
+		"frictionAir": 0.009999999776482582,
+		"frictionStatic": 0.5,
+		"collisionFilter": {
+			"group": 0,
+			"category": 1,
+			"mask": 255
+		},
+		"fixtures": [
+			{
+				"label": "",
+				"isSensor": false,
+				"vertices": [
+					[ { "x":18, "y":18.5 }, { "x":21, "y":20.5 }, { "x":26, "y":20.5 }, { "x":30.5, "y":18 }, { "x":33.5, "y":14 }, { "x":33.5, "y":6 }, { "x":29, "y":0.5 }, { "x":16, "y":1.5 } ],
+					[ { "x":7, "y":-0.5 }, { "x":3.5, "y":1 }, { "x":-0.5, "y":6 }, { "x":-0.5, "y":14 }, { "x":8, "y":-0.5 } ],
+					[ { "x":-0.5, "y":14 }, { "x":3, "y":18.5 }, { "x":7, "y":20.5 }, { "x":18, "y":18.5 }, { "x":16, "y":1.5 }, { "x":14, "y":-0.5 }, { "x":8, "y":-0.5 } ],
+					[ { "x":16, "y":1.5 }, { "x":29, "y":0.5 }, { "x":19, "y":-0.5 } ]
+				]
+			}
+		]
+	},
+	"iron_basic_short_sword_blade": {
+		"type": "fromPhysicsEditor",
+		"label": "iron_basic_short_sword_blade",
+		"isStatic": false,
+		"density": 0.10000000149011612,
+		"restitution": 0,
+		"friction": 0.10000000149011612,
+		"frictionAir": 0.009999999776482582,
+		"frictionStatic": 0.5,
+		"collisionFilter": {
+			"group": 0,
+			"category": 1,
+			"mask": 255
+		},
+		"fixtures": [
+			{
+				"label": "",
+				"isSensor": false,
+				"vertices": [
+					[ { "x":17.5, "y":1 }, { "x":14.5, "y":2 }, { "x":-0.5, "y":30 }, { "x":17.5, "y":2 } ],
+					[ { "x":-0.5, "y":30 }, { "x":-0.5, "y":76 }, { "x":0, "y":77.5 }, { "x":35, "y":77.5 }, { "x":36.5, "y":77 }, { "x":36.5, "y":29 }, { "x":17.5, "y":2 } ]
+				]
+			}
+		]
+	},
+	"iron_basic_short_sword_guard": {
+		"type": "fromPhysicsEditor",
+		"label": "iron_basic_short_sword_guard",
+		"isStatic": false,
+		"density": 0.10000000149011612,
+		"restitution": 0,
+		"friction": 0.10000000149011612,
+		"frictionAir": 0.009999999776482582,
+		"frictionStatic": 0.5,
+		"collisionFilter": {
+			"group": 0,
+			"category": 1,
+			"mask": 255
+		},
+		"fixtures": [
+			{
+				"label": "",
+				"isSensor": false,
+				"vertices": [
+					[ { "x":41, "y":-0.5 }, { "x":1, "y":-0.5 }, { "x":-0.5, "y":0 }, { "x":0, "y":11.5 }, { "x":41.5, "y":11 } ]
+				]
+			}
+		]
+	},
+	"iron_basic_short_sword_pommel": {
+		"type": "fromPhysicsEditor",
+		"label": "iron_basic_short_sword_pommel",
+		"isStatic": false,
+		"density": 0.10000000149011612,
+		"restitution": 0,
+		"friction": 0.10000000149011612,
+		"frictionAir": 0.009999999776482582,
+		"frictionStatic": 0.5,
+		"collisionFilter": {
+			"group": 0,
+			"category": 1,
+			"mask": 255
+		},
+		"fixtures": [
+			{
+				"label": "",
+				"isSensor": false,
+				"vertices": [
+					[ { "x":10, "y":-0.5 }, { "x":9, "y":-0.5 }, { "x":0.5, "y":6 }, { "x":-0.5, "y":17 }, { "x":2, "y":21.5 }, { "x":7, "y":25.5 }, { "x":25.5, "y":19 } ],
+					[ { "x":20, "y":0.5 }, { "x":10, "y":-0.5 }, { "x":25.5, "y":19 }, { "x":26.5, "y":9 } ],
+					[ { "x":7, "y":25.5 }, { "x":16, "y":26.5 }, { "x":25.5, "y":19 } ]
+				]
+			}
+		]
+	},
+	"wooden_basic_short_sword_blade": {
+		"type": "fromPhysicsEditor",
+		"label": "wooden_basic_short_sword_blade",
+		"isStatic": false,
+		"density": 0.10000000149011612,
+		"restitution": 0,
+		"friction": 0.10000000149011612,
+		"frictionAir": 0.009999999776482582,
+		"frictionStatic": 0.5,
+		"collisionFilter": {
+			"group": 0,
+			"category": 1,
+			"mask": 255
+		},
+		"fixtures": [
+			{
+				"label": "",
+				"isSensor": false,
+				"vertices": [
+					[ { "x":17.5, "y":3 }, { "x":17.5, "y":2 }, { "x":14.5, "y":1 }, { "x":12.5, "y":4 } ],
+					[ { "x":-0.5, "y":76 }, { "x":0, "y":77.5 }, { "x":35, "y":77.5 }, { "x":36.5, "y":77 }, { "x":36.5, "y":30 }, { "x":17.5, "y":3 }, { "x":12.5, "y":4 }, { "x":-0.5, "y":29 } ]
+				]
+			}
+		]
+	},
+	"wooden_basic_short_sword_grip": {
+		"type": "fromPhysicsEditor",
+		"label": "wooden_basic_short_sword_grip",
+		"isStatic": false,
+		"density": 0.10000000149011612,
+		"restitution": 0,
+		"friction": 0.10000000149011612,
+		"frictionAir": 0.009999999776482582,
+		"frictionStatic": 0.5,
+		"collisionFilter": {
+			"group": 0,
+			"category": 1,
+			"mask": 255
+		},
+		"fixtures": [
+			{
+				"label": "",
+				"isSensor": false,
+				"vertices": [
+					[ { "x":0, "y":33.5 }, { "x":25.5, "y":33 }, { "x":25, "y":-0.5 }, { "x":1, "y":-0.5 }, { "x":-0.5, "y":0 } ]
+				]
+			}
+		]
+	},
+	"wooden_basic_short_sword_guard": {
+		"type": "fromPhysicsEditor",
+		"label": "wooden_basic_short_sword_guard",
+		"isStatic": false,
+		"density": 0.10000000149011612,
+		"restitution": 0,
+		"friction": 0.10000000149011612,
+		"frictionAir": 0.009999999776482582,
+		"frictionStatic": 0.5,
+		"collisionFilter": {
+			"group": 0,
+			"category": 1,
+			"mask": 255
+		},
+		"fixtures": [
+			{
+				"label": "",
+				"isSensor": false,
+				"vertices": [
+					[ { "x":40, "y":-0.5 }, { "x":1, "y":-0.5 }, { "x":-0.5, "y":0 }, { "x":0, "y":11.5 }, { "x":40.5, "y":11 } ]
+				]
+			}
+		]
+	},
+	"wooden_basic_short_sword_pommel": {
+		"type": "fromPhysicsEditor",
+		"label": "wooden_basic_short_sword_pommel",
 		"isStatic": false,
 		"density": 0.1,
 		"restitution": 0,
@@ -19,332 +318,9 @@
 				"label": "",
 				"isSensor": false,
 				"vertices": [
-					[ { "x":7, "y":-0.5 }, { "x":3.5, "y":1 }, { "x":-0.5, "y":6 }, { "x":-0.5, "y":15 }, { "x":21.5, "y":15 }, { "x":21.5, "y":6 }, { "x":15, "y":-0.5 } ],
-					[ { "x":-0.5, "y":15 }, { "x":6, "y":21.5 }, { "x":15, "y":21.5 }, { "x":21.5, "y":15 } ]
-				]
-			},
-			{
-				"label": "",
-				"isSensor": false,
-				"vertices": [
-					[ { "x":7, "y":-0.5 }, { "x":3.5, "y":1 }, { "x":-0.5, "y":6 }, { "x":-0.5, "y":15 }, { "x":21.5, "y":15 }, { "x":21.5, "y":6 }, { "x":15, "y":-0.5 } ],
-					[ { "x":-0.5, "y":15 }, { "x":6, "y":21.5 }, { "x":15, "y":21.5 }, { "x":21.5, "y":15 } ]
-				]
-			}
-		]
-	},
-	"junk_iron_basic_short_sword_blade": {
-		"type": "fromPhysicsEditor",
-		"label": "junk_iron_basic_short_sword_blade",
-		"isStatic": false,
-		"density": 0.10000000149011612,
-		"restitution": 0,
-		"friction": 0.10000000149011612,
-		"frictionAir": 0.009999999776482582,
-		"frictionStatic": 0.5,
-		"collisionFilter": {
-			"group": 0,
-			"category": 1,
-			"mask": 255
-		},
-		"fixtures": [
-			{
-				"label": "",
-				"isSensor": false,
-				"vertices": [
-					[ { "x":12.5, "y":0 }, { "x":10.5, "y":0 }, { "x":-0.5, "y":34 }, { "x":12.5, "y":1 } ],
-					[ { "x":27.5, "y":35 }, { "x":12.5, "y":1 }, { "x":-0.5, "y":34 }, { "x":-0.5, "y":90 }, { "x":0, "y":91.5 }, { "x":26, "y":91.5 }, { "x":27.5, "y":91 } ]
-				]
-			},
-			{
-				"label": "",
-				"isSensor": false,
-				"vertices": [
-					[ { "x":12.5, "y":0 }, { "x":10.5, "y":0 }, { "x":-0.5, "y":34 }, { "x":12.5, "y":1 } ],
-					[ { "x":27.5, "y":35 }, { "x":12.5, "y":1 }, { "x":-0.5, "y":34 }, { "x":-0.5, "y":90 }, { "x":0, "y":91.5 }, { "x":26, "y":91.5 }, { "x":27.5, "y":91 } ]
-				]
-			}
-		]
-	},
-	"junk_iron_basic_short_sword_guard": {
-		"type": "fromPhysicsEditor",
-		"label": "junk_iron_basic_short_sword_guard",
-		"isStatic": false,
-		"density": 0.10000000149011612,
-		"restitution": 0,
-		"friction": 0.10000000149011612,
-		"frictionAir": 0.009999999776482582,
-		"frictionStatic": 0.5,
-		"collisionFilter": {
-			"group": 0,
-			"category": 1,
-			"mask": 255
-		},
-		"fixtures": [
-			{
-				"label": "",
-				"isSensor": false,
-				"vertices": [
-					[ { "x":47, "y":-0.5 }, { "x":1, "y":-0.5 }, { "x":-0.5, "y":0 }, { "x":0, "y":9.5 }, { "x":47.5, "y":9 } ]
-				]
-			},
-			{
-				"label": "",
-				"isSensor": false,
-				"vertices": [
-					[ { "x":47, "y":-0.5 }, { "x":1, "y":-0.5 }, { "x":-0.5, "y":0 }, { "x":0, "y":9.5 }, { "x":47.5, "y":9 } ]
-				]
-			}
-		]
-	},
-	"junk_wooden_basic_short_sword_grip": {
-		"type": "fromPhysicsEditor",
-		"label": "junk_wooden_basic_short_sword_grip",
-		"isStatic": false,
-		"density": 0.10000000149011612,
-		"restitution": 0,
-		"friction": 0.10000000149011612,
-		"frictionAir": 0.009999999776482582,
-		"frictionStatic": 0.5,
-		"collisionFilter": {
-			"group": 0,
-			"category": 1,
-			"mask": 255
-		},
-		"fixtures": [
-			{
-				"label": "",
-				"isSensor": false,
-				"vertices": [
-					[ { "x":0, "y":27.5 }, { "x":15.5, "y":27 }, { "x":15, "y":-0.5 }, { "x":1, "y":-0.5 }, { "x":-0.5, "y":0 } ]
-				]
-			},
-			{
-				"label": "",
-				"isSensor": false,
-				"vertices": [
-					[ { "x":0, "y":27.5 }, { "x":15.5, "y":27 }, { "x":15, "y":-0.5 }, { "x":1, "y":-0.5 }, { "x":-0.5, "y":0 } ]
-				]
-			}
-		]
-	},
-	"junk_bone": {
-		"type": "fromPhysicsEditor",
-		"label": "junk_bone",
-		"isStatic": false,
-		"density": 0.10000000149011612,
-		"restitution": 0,
-		"friction": 0.10000000149011612,
-		"frictionAir": 0.009999999776482582,
-		"frictionStatic": 0.5,
-		"collisionFilter": {
-			"group": 0,
-			"category": 1,
-			"mask": 255
-		},
-		"fixtures": [
-			{
-				"label": "",
-				"isSensor": false,
-				"vertices": [
-					[ { "x":7, "y":-0.5 }, { "x":1, "y":-0.5 }, { "x":-0.5, "y":0 }, { "x":-0.5, "y":26 }, { "x":7.5, "y":27 }, { "x":7.5, "y":1 } ],
-					[ { "x":0, "y":27.5 }, { "x":6, "y":27.5 }, { "x":7.5, "y":27 }, { "x":-0.5, "y":26 } ]
-				]
-			}
-		]
-	},
-	"junk_golden_basic_short_sword_blade": {
-		"type": "fromPhysicsEditor",
-		"label": "junk_golden_basic_short_sword_blade",
-		"isStatic": false,
-		"density": 0.10000000149011612,
-		"restitution": 0,
-		"friction": 0.10000000149011612,
-		"frictionAir": 0.009999999776482582,
-		"frictionStatic": 0.5,
-		"collisionFilter": {
-			"group": 0,
-			"category": 1,
-			"mask": 255
-		},
-		"fixtures": [
-			{
-				"label": "",
-				"isSensor": false,
-				"vertices": [
-					[ { "x":12.5, "y":0 }, { "x":10.5, "y":0 }, { "x":-0.5, "y":34 }, { "x":12.5, "y":1 } ],
-					[ { "x":27.5, "y":35 }, { "x":12.5, "y":1 }, { "x":-0.5, "y":34 }, { "x":-0.5, "y":90 }, { "x":0, "y":91.5 }, { "x":26, "y":91.5 }, { "x":27.5, "y":91 } ]
-				]
-			}
-		]
-	},
-	"junk_golden_basic_short_sword_grip": {
-		"type": "fromPhysicsEditor",
-		"label": "junk_golden_basic_short_sword_grip",
-		"isStatic": false,
-		"density": 0.10000000149011612,
-		"restitution": 0,
-		"friction": 0.10000000149011612,
-		"frictionAir": 0.009999999776482582,
-		"frictionStatic": 0.5,
-		"collisionFilter": {
-			"group": 0,
-			"category": 1,
-			"mask": 255
-		},
-		"fixtures": [
-			{
-				"label": "",
-				"isSensor": false,
-				"vertices": [
-					[ { "x":0, "y":27.5 }, { "x":15.5, "y":27 }, { "x":15, "y":-0.5 }, { "x":1, "y":-0.5 }, { "x":-0.5, "y":0 } ]
-				]
-			}
-		]
-	},
-	"junk_golden_basic_short_sword_guard": {
-		"type": "fromPhysicsEditor",
-		"label": "junk_golden_basic_short_sword_guard",
-		"isStatic": false,
-		"density": 0.10000000149011612,
-		"restitution": 0,
-		"friction": 0.10000000149011612,
-		"frictionAir": 0.009999999776482582,
-		"frictionStatic": 0.5,
-		"collisionFilter": {
-			"group": 0,
-			"category": 1,
-			"mask": 255
-		},
-		"fixtures": [
-			{
-				"label": "",
-				"isSensor": false,
-				"vertices": [
-					[ { "x":47, "y":-0.5 }, { "x":1, "y":-0.5 }, { "x":-0.5, "y":0 }, { "x":0, "y":9.5 }, { "x":47.5, "y":9 } ]
-				]
-			}
-		]
-	},
-	"junk_gristle": {
-		"type": "fromPhysicsEditor",
-		"label": "junk_gristle",
-		"isStatic": false,
-		"density": 0.10000000149011612,
-		"restitution": 0,
-		"friction": 0.10000000149011612,
-		"frictionAir": 0.009999999776482582,
-		"frictionStatic": 0.5,
-		"collisionFilter": {
-			"group": 0,
-			"category": 1,
-			"mask": 255
-		},
-		"fixtures": [
-			{
-				"label": "",
-				"isSensor": false,
-				"vertices": [
-					[ { "x":4, "y":-0.5 }, { "x":3, "y":-0.5 }, { "x":-0.5, "y":3 }, { "x":1, "y":10.5 }, { "x":16, "y":11.5 }, { "x":18.5, "y":10 }, { "x":19.5, "y":3 }, { "x":18, "y":0.5 } ]
-				]
-			}
-		]
-	},
-	"junk_iron_basic_short_sword_pommel": {
-		"type": "fromPhysicsEditor",
-		"label": "junk_iron_basic_short_sword_pommel",
-		"isStatic": false,
-		"density": 0.10000000149011612,
-		"restitution": 0,
-		"friction": 0.10000000149011612,
-		"frictionAir": 0.009999999776482582,
-		"frictionStatic": 0.5,
-		"collisionFilter": {
-			"group": 0,
-			"category": 1,
-			"mask": 255
-		},
-		"fixtures": [
-			{
-				"label": "",
-				"isSensor": false,
-				"vertices": [
-					[ { "x":7, "y":-0.5 }, { "x":3.5, "y":1 }, { "x":-0.5, "y":6 }, { "x":-0.5, "y":15 }, { "x":21.5, "y":15 }, { "x":21.5, "y":6 }, { "x":15, "y":-0.5 } ],
-					[ { "x":-0.5, "y":15 }, { "x":6, "y":21.5 }, { "x":15, "y":21.5 }, { "x":21.5, "y":15 } ]
-				]
-			}
-		]
-	},
-	"junk_wooden_basic_short_sword_blade": {
-		"type": "fromPhysicsEditor",
-		"label": "junk_wooden_basic_short_sword_blade",
-		"isStatic": false,
-		"density": 0.10000000149011612,
-		"restitution": 0,
-		"friction": 0.10000000149011612,
-		"frictionAir": 0.009999999776482582,
-		"frictionStatic": 0.5,
-		"collisionFilter": {
-			"group": 0,
-			"category": 1,
-			"mask": 255
-		},
-		"fixtures": [
-			{
-				"label": "",
-				"isSensor": false,
-				"vertices": [
-					[ { "x":12.5, "y":0 }, { "x":10.5, "y":0 }, { "x":-0.5, "y":34 }, { "x":12.5, "y":1 } ],
-					[ { "x":27.5, "y":35 }, { "x":12.5, "y":1 }, { "x":-0.5, "y":34 }, { "x":-0.5, "y":90 }, { "x":0, "y":91.5 }, { "x":26, "y":91.5 }, { "x":27.5, "y":91 } ]
-				]
-			}
-		]
-	},
-	"junk_wooden_basic_short_sword_guard": {
-		"type": "fromPhysicsEditor",
-		"label": "junk_wooden_basic_short_sword_guard",
-		"isStatic": false,
-		"density": 0.10000000149011612,
-		"restitution": 0,
-		"friction": 0.10000000149011612,
-		"frictionAir": 0.009999999776482582,
-		"frictionStatic": 0.5,
-		"collisionFilter": {
-			"group": 0,
-			"category": 1,
-			"mask": 255
-		},
-		"fixtures": [
-			{
-				"label": "",
-				"isSensor": false,
-				"vertices": [
-					[ { "x":47, "y":-0.5 }, { "x":1, "y":-0.5 }, { "x":-0.5, "y":0 }, { "x":0, "y":9.5 }, { "x":47.5, "y":9 } ]
-				]
-			}
-		]
-	},
-	"junk_wooden_basic_short_sword_pommel": {
-		"type": "fromPhysicsEditor",
-		"label": "junk_wooden_basic_short_sword_pommel",
-		"isStatic": false,
-		"density": 0.10000000149011612,
-		"restitution": 0,
-		"friction": 0.10000000149011612,
-		"frictionAir": 0.009999999776482582,
-		"frictionStatic": 0.5,
-		"collisionFilter": {
-			"group": 0,
-			"category": 1,
-			"mask": 255
-		},
-		"fixtures": [
-			{
-				"label": "",
-				"isSensor": false,
-				"vertices": [
-					[ { "x":7, "y":-0.5 }, { "x":3.5, "y":1 }, { "x":-0.5, "y":6 }, { "x":-0.5, "y":15 }, { "x":21.5, "y":15 }, { "x":21.5, "y":6 }, { "x":15, "y":-0.5 } ],
-					[ { "x":-0.5, "y":15 }, { "x":6, "y":21.5 }, { "x":15, "y":21.5 }, { "x":21.5, "y":15 } ]
+					[ { "x":1.5, "y":5 }, { "x":-0.5, "y":15 }, { "x":2, "y":20.5 }, { "x":24.5, "y":21 }, { "x":26.5, "y":17 }, { "x":11, "y":-0.5 }, { "x":10, "y":-0.5 } ],
+					[ { "x":16, "y":26.5 }, { "x":24.5, "y":21 }, { "x":2, "y":20.5 }, { "x":6, "y":24.5 } ],
+					[ { "x":20, "y":0.5 }, { "x":11, "y":-0.5 }, { "x":26.5, "y":17 }, { "x":26.5, "y":8 } ]
 				]
 			}
 		]

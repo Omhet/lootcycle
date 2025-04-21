@@ -7,7 +7,7 @@ import {
 import { registerJunkDetail } from "../../registry";
 
 registerJunkDetail(JunkDetailType.Bone, {
-    id: "junk_bone",
+    id: "bone",
     type: JunkDetailType.Bone,
     suitableForRecipeDetails: [RecipeDetailType.Grip],
     name: "Bone",
@@ -19,7 +19,7 @@ registerJunkDetail(JunkDetailType.Bone, {
 });
 
 registerJunkDetail(JunkDetailType.Gristle, {
-    id: "junk_gristle",
+    id: "gristle",
     type: JunkDetailType.Gristle,
     suitableForRecipeDetails: [RecipeDetailType.Pommel],
     name: "Gristle",
