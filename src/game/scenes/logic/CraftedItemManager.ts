@@ -12,7 +12,6 @@ export class CraftedItemManager {
     private scene: Scene;
     private craftedItemRT: Phaser.GameObjects.RenderTexture;
     private craftedItem: LootItem | null = null;
-    private scale = 80; // Scale factor for rendering
 
     constructor(scene: Scene) {
         this.scene = scene;
@@ -24,8 +23,8 @@ export class CraftedItemManager {
      */
     private initializeDisplay(): void {
         const rtWidth = 400;
-        const rtHeight = 200;
-        const rtX = this.scene.cameras.main.width / 2 - rtWidth / 2;
+        const rtHeight = 400;
+        const rtX = this.scene.cameras.main.width / 2;
         const rtY = this.scene.cameras.main.height / 2 - rtHeight / 2;
 
         this.craftedItemRT = this.scene.add.renderTexture(
@@ -103,8 +102,7 @@ export class CraftedItemManager {
 
                 const partPos = this.calculatePosition(
                     rtCenter,
-                    partSocket.pinpoint,
-                    this.scale
+                    partSocket.pinpoint
                 );
 
                 part.sockets
@@ -131,8 +129,7 @@ export class CraftedItemManager {
 
                             const detailPos = this.calculatePosition(
                                 partPos,
-                                detailSocket.pinpoint,
-                                this.scale
+                                detailSocket.pinpoint
                             );
                             const frameName = `${foundDetailId}.png`;
 
@@ -162,21 +159,15 @@ export class CraftedItemManager {
      * Calculates a position based on a parent position and a pinpoint.
      * @param parentPos The parent position {x, y}.
      * @param pinpoint The pinpoint data for positioning.
-     * @param scale Scale factor to apply to model coordinates.
      * @returns The calculated position {x, y}.
      */
     private calculatePosition(
         parentPos: { x: number; y: number },
-        pinpoint: Pinpoint,
-        scale: number
+        pinpoint: Pinpoint
     ): { x: number; y: number } {
         return {
-            x:
-                parentPos.x +
-                (pinpoint.coords.x + pinpoint.localOffset.x) * scale,
-            y:
-                parentPos.y +
-                (pinpoint.coords.y + pinpoint.localOffset.y) * scale,
+            x: parentPos.x + (pinpoint.coords.x + pinpoint.localOffset.x),
+            y: parentPos.y + (pinpoint.coords.y + pinpoint.localOffset.y),
         };
     }
 
@@ -198,4 +189,3 @@ export class CraftedItemManager {
         this.craftedItem = null;
     }
 }
-
