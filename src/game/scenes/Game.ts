@@ -140,11 +140,11 @@ export class Game extends Scene {
     update() {
         // Claw anchor control
         if (this.cursors?.left.isDown) {
-            this.clawManager.setAnchorVelocityX(-10);
+            this.clawManager.move(-1);
         } else if (this.cursors?.right.isDown) {
-            this.clawManager.setAnchorVelocityX(10);
+            this.clawManager.move(1);
         } else {
-            this.clawManager.setAnchorVelocityX(0);
+            this.clawManager.move(0);
         }
     }
 

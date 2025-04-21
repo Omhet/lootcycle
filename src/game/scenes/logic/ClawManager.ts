@@ -11,6 +11,8 @@ export class ClawManager {
     private readonly ANCHOR_X_OFFSET = 350; // Relative to screen center
     private readonly ANCHOR_Y = 100; // Fixed Y position for the top anchor
 
+    private speed = 150;
+
     constructor(scene: Scene) {
         this.scene = scene;
         this.createClaw();
@@ -42,7 +44,7 @@ export class ClawManager {
             "claw_anchor",
             undefined,
             {
-                ignoreGravity: true,
+                isStatic: true, // Make the anchor completely static instead of just ignoring gravity
                 collisionFilter: { group },
             }
         );
@@ -93,8 +95,19 @@ export class ClawManager {
         }
     }
 
-    public setAnchorVelocityX(velocityX: number): void {
-        this.anchor?.setVelocityX(velocityX);
+    public move(moveFactor: number): void {
+        // Since the anchor is now static, we need to handle position changes directly
+        if (this.anchor && this.anchor.body) {
+            // For static bodies, we need to update position directly
+            const newX = this.anchor.x + moveFactor * this.speed * (1 / 60); // Assuming 60fps
+            this.scene.matter.body.setPosition(
+                this.anchor.body as MatterJS.BodyType,
+                {
+                    x: newX,
+                    y: this.anchor.y,
+                }
+            );
+        }
     }
 
     public destroy(): void {
