@@ -66,7 +66,10 @@ export class ClawManager {
                     shape: isEven
                         ? clawPhysics.claw_chain_front
                         : clawPhysics.claw_chain_side,
-                    mass: 0.1,
+                    mass: 0.3, // Increase mass slightly for more stability
+                    frictionAir: 0.01, // Increase air friction to reduce movement
+                    friction: 0.2, // Increase surface friction
+                    restitution: 0.1, // Low restitution (bounciness)
                     collisionFilter: { group },
                 }
             );
@@ -75,8 +78,9 @@ export class ClawManager {
             const isFirst = i === 0;
             const jointLength = 0;
             const stiffness = 1;
-            const damping = 0.1;
+            const damping = 0.5; // Increased from 0.1 to reduce oscillation
 
+            // Create main joint
             this.scene.matter.add.joint(
                 prev.body as MatterJS.BodyType,
                 link.body as MatterJS.BodyType,
@@ -88,6 +92,22 @@ export class ClawManager {
                     damping,
                 }
             );
+
+            // Add an angle constraint to prevent excessive rotation
+            if (!isFirst) {
+                this.scene.matter.add.constraint(
+                    prev.body as MatterJS.BodyType,
+                    link.body as MatterJS.BodyType,
+                    0, // Length
+                    0.9, // Stiffness
+                    {
+                        angleA: 0,
+                        angleB: 0,
+                        pointA: { x: 0, y: linkHeight / 4 },
+                        pointB: { x: 0, y: -linkHeight / 4 },
+                    }
+                );
+            }
 
             prev = link;
 
