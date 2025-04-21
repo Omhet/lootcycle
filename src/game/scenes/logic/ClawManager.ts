@@ -51,6 +51,7 @@ export class ClawManager {
 
         let prev = this.anchor;
         let y = anchorY;
+        const linkHeight = 50; // Approximate height of the chain link sprite
 
         for (let i = 0; i < 4; i++) {
             let link = this.scene.matter.add.sprite(
@@ -67,20 +68,25 @@ export class ClawManager {
             link.setDepth(DepthLayers.Claw);
 
             const isFirst = i === 0;
+            const jointLength = 0;
+            const stiffness = 1;
+            const damping = 0.1;
 
             this.scene.matter.add.joint(
                 prev.body as MatterJS.BodyType,
                 link.body as MatterJS.BodyType,
-                isFirst ? 45 : 45,
-                0.1,
+                jointLength,
+                stiffness,
                 {
-                    pointA: { x: 0, y: isFirst ? 100 : 0 },
+                    pointA: { x: 0, y: isFirst ? 100 : linkHeight / 3 },
+                    pointB: { x: 0, y: -linkHeight / 3 },
+                    damping,
                 }
             );
 
             prev = link;
 
-            y += 36;
+            y += linkHeight; // Use linkHeight for positioning
         }
     }
 
