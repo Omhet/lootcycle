@@ -68,9 +68,76 @@ export class MainMenu extends Scene {
             .find((p) => p.type === partType);
     }
 
+    /**
+     * Recursively generates all valid combinations of JunkDetailIds for a given set of sockets.
+     * Ensures that each detail is used at most once per combination.
+     *
+     * @param socketsToFill The remaining RecipeDetailSockets to find details for.
+     * @param availableDetailsMap A map of all JunkDetails available for consideration.
+     * @param currentCombination The combination being built in the current recursion path.
+     * @param usedDetailIds A set of JunkDetailIds already used in the current combination.
+     * @param allCombinations The array to accumulate valid combinations.
+     */
+    private _generateDetailCombinations(
+        socketsToFill: RecipeDetailSocket[],
+        availableDetailsMap: Map<JunkDetailId, JunkDetail>,
+        currentCombination: JunkDetailId[] = [],
+        usedDetailIds: Set<JunkDetailId> = new Set(),
+        allCombinations: JunkDetailId[][] = []
+    ): JunkDetailId[][] {
+        // Base case: All sockets have been filled
+        if (socketsToFill.length === 0) {
+            if (currentCombination.length > 0) {
+                // Ensure we don't add empty combinations if no sockets
+                allCombinations.push([...currentCombination]); // Add a copy
+            }
+            return allCombinations;
+        }
+
+        const currentSocket = socketsToFill[0];
+        const remainingSockets = socketsToFill.slice(1);
+        const requiredType = currentSocket.acceptType;
+
+        // Find all details suitable for the current socket that haven't been used yet
+        const suitableDetails: JunkDetail[] = [];
+        for (const detail of availableDetailsMap.values()) {
+            if (
+                !usedDetailIds.has(detail.id) &&
+                detail.suitableForRecipeDetails.includes(requiredType)
+            ) {
+                suitableDetails.push(detail);
+            }
+        }
+
+        // If no suitable details found for this socket, this path is invalid
+        if (suitableDetails.length === 0) {
+            return allCombinations; // Backtrack
+        }
+
+        // Try adding each suitable detail to the combination and recurse
+        for (const detail of suitableDetails) {
+            currentCombination.push(detail.id);
+            usedDetailIds.add(detail.id);
+
+            this._generateDetailCombinations(
+                remainingSockets,
+                availableDetailsMap,
+                currentCombination,
+                usedDetailIds,
+                allCombinations
+            );
+
+            // Backtrack: remove the detail for the next iteration
+            currentCombination.pop();
+            usedDetailIds.delete(detail.id);
+        }
+
+        return allCombinations;
+    }
+
     // --- Download Recipe Images ---
     public async downloadRecipeImages(): Promise<void> {
-        console.log("Starting recipe image generation...");
+        console.log("Starting recipe image generation for all combinations...");
         const zip = new JSZip();
         const allRecipes = Object.values(lootConfig.recipeItems).flat();
         const allJunkDetailsMap = this.getJunkDetailMap();
@@ -79,114 +146,105 @@ export class MainMenu extends Scene {
 
         for (const recipe of allRecipes) {
             console.log(`Processing recipe: ${recipe.id}`);
-            const detailsForRecipe: JunkDetailId[] = [];
-            const availableDetails = new Set(allJunkDetailsMap.keys()); // Use all available details for each recipe simulation
 
-            // --- Simplified Detail Selection: Use the *first* suitable detail found ---
-            // Get all detail sockets needed by this recipe's parts
+            // 1. Get all required detail sockets for the recipe
             const requiredDetailSockets: RecipeDetailSocket[] = [];
             recipe.sockets.forEach((partSocket: RecipePartSocket) => {
                 const partDef = this.findPartDefinition(partSocket.acceptType);
                 if (partDef) {
+                    // Add sockets from the part definition
                     requiredDetailSockets.push(...partDef.sockets);
                 }
             });
 
-            // Sort sockets by zIndex to maintain consistency (optional but good practice)
+            // Sort sockets by zIndex for consistent combination generation order (optional but good)
             requiredDetailSockets.sort(
                 (a, b) => a.pinpoint.zIndex - b.pinpoint.zIndex
             );
 
-            for (const detailSocket of requiredDetailSockets) {
-                const requiredType = detailSocket.acceptType;
-                let foundDetailId: JunkDetailId | null = null;
-
-                // Iterate through *all* details to find the first suitable one
-                for (const detailId of availableDetails) {
-                    const detailData = allJunkDetailsMap.get(detailId);
-                    if (
-                        detailData &&
-                        detailData.suitableForRecipeDetails.includes(
-                            requiredType
-                        )
-                    ) {
-                        foundDetailId = detailId;
-                        break; // Found the first suitable one
-                    }
-                }
-
-                if (foundDetailId) {
-                    detailsForRecipe.push(foundDetailId);
-                } else {
-                    console.warn(
-                        `No suitable JunkDetail found for RecipeDetailType: ${requiredType} in recipe ${recipe.id}`
-                    );
-                }
+            if (requiredDetailSockets.length === 0) {
+                console.log(
+                    `Recipe ${recipe.id} has no detail sockets, skipping combination generation.`
+                );
+                continue; // Skip recipes with no details needed
             }
-            // --- End Simplified Detail Selection ---
 
-            if (detailsForRecipe.length > 0) {
-                // Ensure we have details before trying to render
-                // Add placeholder values for missing LootItem properties
+            // 2. Generate all valid combinations of JunkDetailIds
+            console.log(
+                `Generating combinations for ${recipe.id} with ${requiredDetailSockets.length} sockets...`
+            );
+            const detailCombinations = this._generateDetailCombinations(
+                requiredDetailSockets,
+                allJunkDetailsMap,
+                [], // Start with empty combination
+                new Set(), // Start with empty used set
+                [] // Start with empty results array
+            );
+            console.log(
+                `Found ${detailCombinations.length} valid combinations for ${recipe.id}.`
+            );
+
+            // 3. Iterate through each combination and render
+            if (detailCombinations.length === 0) {
+                console.warn(
+                    `No valid detail combinations found for recipe ${recipe.id}.`
+                );
+                continue;
+            }
+
+            let combinationIndex = 0;
+            for (const combination of detailCombinations) {
                 const tempLootItem: LootItem = {
-                    id: `temp_${recipe.id}`, // Temporary unique ID
+                    id: `temp_${recipe.id}_${combinationIndex}`, // Unique ID per combination
                     recipeId: recipe.id,
-                    details: detailsForRecipe,
-                    name: recipe.name, // Use recipe name as placeholder
-                    rarity: Rarity.Common, // Default rarity
-                    sellPrice: 0, // Default price
-                    temperatureRange: { min: 0, max: 100 }, // Default range
+                    details: combination, // Use the current combination
+                    name: recipe.name,
+                    rarity: Rarity.Common,
+                    sellPrice: 0,
+                    temperatureRange: { min: 0, max: 100 },
                 };
 
-                // Create a temporary, off-screen RenderTexture for this item
                 const tempRT = this.make.renderTexture({
                     width: tempRTWidth,
                     height: tempRTHeight,
                 });
 
                 try {
-                    // Use the renamed itemRenderer
                     this.itemRenderer.renderItemToTexture(tempLootItem, tempRT);
-
-                    // Use the renamed itemRenderer
                     const imageDataUrl =
                         await this.itemRenderer.getImageDataUrl(tempRT);
 
                     if (imageDataUrl) {
-                        // Add image to zip, removing the 'data:image/png;base64,' prefix
-                        zip.file(
-                            `${recipe.id}_representative.png`,
-                            imageDataUrl.split(",")[1],
-                            { base64: true }
-                        );
-                        console.log(`Added image for ${recipe.id} to zip.`);
+                        const filename = `${recipe.id}_combination_${combinationIndex}.png`;
+                        zip.file(filename, imageDataUrl.split(",")[1], {
+                            base64: true,
+                        });
                     } else {
                         console.warn(
-                            `Failed to get image data for recipe: ${recipe.id}`
+                            `Failed to get image data for ${recipe.id} combination ${combinationIndex}`
                         );
                     }
                 } catch (error) {
                     console.error(
-                        `Error processing recipe ${recipe.id}:`,
+                        `Error processing ${recipe.id} combination ${combinationIndex}:`,
                         error
                     );
                 } finally {
-                    // IMPORTANT: Destroy the temporary RenderTexture to free GPU memory
                     if (tempRT) {
                         tempRT.destroy();
                     }
                 }
-            } else {
-                console.warn(
-                    `Skipping recipe ${recipe.id} as no suitable details could be assigned.`
-                );
+                combinationIndex++;
             }
+            console.log(
+                `Finished rendering ${combinationIndex} images for ${recipe.id}.`
+            );
         }
 
         console.log("Generating zip file...");
         try {
             const content = await zip.generateAsync({ type: "blob" });
-            saveAs(content, "loot_cycle_recipes.zip"); // Trigger download
+            saveAs(content, "loot_cycle_recipe_combinations.zip"); // Changed zip filename
             console.log("Zip file generated and download triggered.");
         } catch (error) {
             console.error("Error generating zip file:", error);
