@@ -32,6 +32,7 @@ export class ClawManager {
 
         const clawPhysics = this.scene.cache.json.get("clawPhysics");
 
+        // Chain
         this.anchor = this.scene.matter.add.sprite(
             anchorX,
             anchorY,
@@ -59,7 +60,7 @@ export class ClawManager {
             this.scene.matter.add.joint(
                 prev.body as MatterJS.BodyType,
                 link.body as MatterJS.BodyType,
-                isFirst ? 90 : 35,
+                isFirst ? 0 : 36,
                 0.1,
                 {
                     pointA: { x: 0, y: isFirst ? 100 : 0 },
