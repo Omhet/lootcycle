@@ -27,6 +27,7 @@ export enum DepthLayers {
     BackgroundFrame = 50,
     BackgroundDecor = 60,
     Ground = 70,
+    Claw = 80,
     UI = 100,
 }
 
