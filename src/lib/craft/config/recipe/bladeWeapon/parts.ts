@@ -30,7 +30,7 @@ registerRecipePart(RecipePartType.BladeWeaponHilt, {
             acceptType: RecipeDetailType.Pommel,
             pinpoint: {
                 coords: { x: 0, y: 0.5 },
-                localOffset: { x: 0, y: 0.5 },
+                localOffset: { x: 0, y: 0.3 },
                 localRotationAngle: 0,
                 zIndex: 1,
             },
