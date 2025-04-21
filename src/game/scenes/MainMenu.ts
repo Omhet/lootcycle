@@ -1,6 +1,6 @@
 import { GameObjects, Scene } from "phaser";
 
-import { lootConfig } from "../../lib/craft/config"; // Import lootConfig
+import { lootConfig } from "../../lib/craft/config";
 import {
     JunkDetail,
     JunkDetailId,
@@ -10,19 +10,30 @@ import {
     RecipePart,
     RecipePartSocket,
     RecipePartType,
-} from "../../lib/craft/craftModel"; // Import necessary types
+} from "../../lib/craft/craftModel";
 import { EventBus } from "../EventBus";
-import { CraftedItemRenderer } from "../rendering/CraftedItemRenderer"; // Import the new renderer
+import { CraftedItemRenderer } from "../rendering/CraftedItemRenderer";
+import { SceneKeys } from "../SceneKeys"; // Assuming you have a central place for scene keys
+
+interface MainMenuData {
+    // Define any data passed to this scene if needed
+}
 
 export class MainMenu extends Scene {
-    container: GameObjects.Container;
-    background: GameObjects.Image;
-    logo: GameObjects.Image;
-    title: GameObjects.Text;
-    private itemRenderer: CraftedItemRenderer; // Renamed property
+    private container!: GameObjects.Container; // Use definite assignment assertion for properties initialized in create
+    private background!: GameObjects.Image;
+    private logo!: GameObjects.Image;
+    private title!: GameObjects.Text;
+    private itemRenderer: CraftedItemRenderer;
 
     constructor() {
-        super("MainMenu");
+        super(SceneKeys.MainMenu); // Use the SceneKeys enum
+        this.itemRenderer = new CraftedItemRenderer(this); // Initialize here
+    }
+
+    init(data: MainMenuData) {
+        // Handle any data passed to the scene
+        console.log("MainMenu initialized with data:", data);
     }
 
     create() {
@@ -32,29 +43,97 @@ export class MainMenu extends Scene {
         // Create a container centered on the screen
         this.container = this.add.container(centerX, centerY);
 
-        // Instantiate the CraftedItemRenderer with the new name
-        this.itemRenderer = new CraftedItemRenderer(this);
+        // Add background (consider making it configurable or a parameter)
+        this.background = this.add.image(0, 0, "mainMenuBackground").setOrigin(0.5);
+        this.container.add(this.background);
+        this.scale.on("resize", this.resizeBackground, this); // Handle resizing
+
+        // Add logo and title
+        this.logo = this.add.image(0, -100, "gameLogo").setOrigin(0.5).setScale(0.8);
+        this.title = this.add.text(0, 50, "Main Menu", {
+            fontSize: "48px",
+            fontFamily: "Arial",
+            color: "#fff",
+            stroke: "#000",
+            strokeThickness: 4,
+            align: "center",
+        }).setOrigin(0.5);
+        this.container.addMultiple([this.logo, this.title]);
+
+        // Add interactive elements (buttons)
+        this.createButtons();
 
         EventBus.emit("current-scene-ready", this);
 
-        // Temporary start game right away to debug - REMOVE THIS LATER
+        // Remove temporary start game
         // this.startGame();
     }
 
+    private resizeBackground(gameSize: Phaser.Structs.Size) {
+        if (!this.background) return;
+        const width = gameSize.width;
+        const height = gameSize.height;
+        const bgWidth = this.textures.get("mainMenuBackground").getSourceImage().width;
+        const bgHeight = this.textures.get("mainMenuBackground").getSourceImage().height;
+
+        const scaleX = width / bgWidth;
+        const scaleY = height / bgHeight;
+        const scale = Math.max(scaleX, scaleY);
+        this.background.setScale(scale).setPosition(width / 2, height / 2);
+    }
+
+    private createButtons() {
+        const centerX = 0;
+        let yOffset = 150;
+        const buttonSpacing = 60;
+
+        const createButton = (text: string, callback: () => void) => {
+            const button = this.add.text(centerX, yOffset, text, {
+                fontSize: "32px",
+                fontFamily: "Arial",
+                color: "#eee",
+                backgroundColor: "#333",
+                padding: { x: 20, y: 10 },
+                borderRadius: 8,
+                align: "center",
+            })
+                .setOrigin(0.5)
+                .setInteractive()
+                .on("pointerdown", callback)
+                .on("pointerover", () => button.setStyle({ backgroundColor: "#555" }))
+                .on("pointerout", () => button.setStyle({ backgroundColor: "#333" }));
+            this.container.add(button);
+            yOffset += buttonSpacing;
+            return button;
+        };
+
+        createButton("Start Game", this.startGame.bind(this));
+        createButton("Options", this.openOptions.bind(this));
+        createButton("Credits", this.openCredits.bind(this));
+        createButton("Generate Images (Dev)", this.downloadRecipeImages.bind(this)); // Keep for development
+    }
+
+    private openOptions() {
+        this.scene.start(SceneKeys.Options); // Use SceneKeys
+    }
+
+    private openCredits() {
+        this.scene.start(SceneKeys.Credits); // Use SceneKeys
+    }
+
     // Method to change scene to Game
-    startGame() {
-        this.scene.start("Game");
+    private startGame() {
+        this.scene.start(SceneKeys.Game); // Use SceneKeys
     }
 
     // --- Helper: Get Junk Detail Map ---
     private getJunkDetailMap(): Map<JunkDetailId, JunkDetail> {
-        const map = new Map<JunkDetailId, JunkDetail>();
-        Object.values(lootConfig.junkDetails)
+        return Object.values(lootConfig.junkDetails)
             .flat()
-            .forEach((detail) => {
+            .reduce((map, detail) => {
                 map.set(detail.id, detail);
-            });
-        return map;
+                return map;
+            }, new Map<JunkDetailId, JunkDetail>());
     }
 
     // --- Helper: Find Part Definition ---
@@ -83,11 +162,9 @@ export class MainMenu extends Scene {
         usedDetailIds: Set<JunkDetailId> = new Set(),
         allCombinations: JunkDetailId[][] = []
     ): JunkDetailId[][] {
-        // Base case: All sockets have been filled
         if (socketsToFill.length === 0) {
             if (currentCombination.length > 0) {
-                // Ensure we don't add empty combinations if no sockets
-                allCombinations.push([...currentCombination]); // Add a copy
+                allCombinations.push([...currentCombination]);
             }
             return allCombinations;
         }
@@ -96,23 +173,16 @@ export class MainMenu extends Scene {
         const remainingSockets = socketsToFill.slice(1);
         const requiredType = currentSocket.acceptType;
 
-        // Find all details suitable for the current socket that haven't been used yet
-        const suitableDetails: JunkDetail[] = [];
-        for (const detail of availableDetailsMap.values()) {
-            if (
+        const suitableDetails: JunkDetail[] = Array.from(availableDetailsMap.values()).filter(
+            (detail) =>
                 !usedDetailIds.has(detail.id) &&
                 detail.suitableForRecipeDetails.includes(requiredType)
-            ) {
-                suitableDetails.push(detail);
-            }
-        }
+        );
 
-        // If no suitable details found for this socket, this path is invalid
         if (suitableDetails.length === 0) {
-            return allCombinations; // Backtrack
+            return allCombinations;
         }
 
-        // Try adding each suitable detail to the combination and recurse
         for (const detail of suitableDetails) {
             currentCombination.push(detail.id);
             usedDetailIds.add(detail.id);
@@ -125,7 +195,6 @@ export class MainMenu extends Scene {
                 allCombinations
             );
 
-            // Backtrack: remove the detail for the next iteration
             currentCombination.pop();
             usedDetailIds.delete(detail.id);
         }
@@ -138,50 +207,43 @@ export class MainMenu extends Scene {
         console.log("Starting recipe image generation for all combinations...");
         const allRecipes = Object.values(lootConfig.recipeItems).flat();
         const allJunkDetailsMap = this.getJunkDetailMap();
-        const tempRTWidth = 512; // Define size for temporary textures
+        const tempRTWidth = 512;
         const tempRTHeight = 512;
 
         for (const recipe of allRecipes) {
             console.log(`Processing recipe: ${recipe.id}`);
 
-            // 1. Get all required detail sockets for the recipe
-            const requiredDetailSockets: RecipeDetailSocket[] = [];
-            recipe.sockets.forEach((partSocket: RecipePartSocket) => {
-                const partDef = this.findPartDefinition(partSocket.acceptType);
-                if (partDef) {
-                    // Add sockets from the part definition
-                    requiredDetailSockets.push(...partDef.sockets);
-                }
-            });
-
-            // Sort sockets by zIndex for consistent combination generation order (optional but good)
-            requiredDetailSockets.sort(
-                (a, b) => a.pinpoint.zIndex - b.pinpoint.zIndex
+            const requiredDetailSockets: RecipeDetailSocket[] = recipe.sockets.reduce(
+                (acc: RecipeDetailSocket[], partSocket: RecipePartSocket) => {
+                    const partDef = this.findPartDefinition(partSocket.acceptType);
+                    if (partDef) {
+                        acc.push(...partDef.sockets);
+                    }
+                    return acc;
+                },
+                []
             );
+
+            requiredDetailSockets.sort((a, b) => a.pinpoint.zIndex - b.pinpoint.zIndex);
 
             if (requiredDetailSockets.length === 0) {
                 console.log(
                     `Recipe ${recipe.id} has no detail sockets, skipping combination generation.`
                 );
-                continue; // Skip recipes with no details needed
+                continue;
             }
 
-            // 2. Generate all valid combinations of JunkDetailIds
             console.log(
                 `Generating combinations for ${recipe.id} with ${requiredDetailSockets.length} sockets...`
             );
             const detailCombinations = this._generateDetailCombinations(
                 requiredDetailSockets,
-                allJunkDetailsMap,
-                [], // Start with empty combination
-                new Set(), // Start with empty used set
-                [] // Start with empty results array
+                allJunkDetailsMap
             );
             console.log(
                 `Found ${detailCombinations.length} valid combinations for ${recipe.id}.`
             );
 
-            // 3. Iterate through each combination and render
             if (detailCombinations.length === 0) {
                 console.warn(
                     `No valid detail combinations found for recipe ${recipe.id}.`
@@ -189,12 +251,12 @@ export class MainMenu extends Scene {
                 continue;
             }
 
-            let combinationIndex = 0;
-            for (const combination of detailCombinations) {
+            for (let i = 0; i < detailCombinations.length; i++) {
+                const combination = detailCombinations[i];
                 const tempLootItem: LootItem = {
-                    id: `temp_${recipe.id}_${combinationIndex}`, // Unique ID per combination
+                    id: `temp_${recipe.id}_${i}`,
                     recipeId: recipe.id,
-                    details: combination, // Use the current combination
+                    details: combination,
                     name: recipe.name,
                     rarity: Rarity.Common,
                     sellPrice: 0,
@@ -206,79 +268,43 @@ export class MainMenu extends Scene {
                     height: tempRTHeight,
                 });
 
+                const comboKey = `${recipe.id}_${i}`;
+                console.log(`Rendering recipe ${recipe.id} combination ${i}`);
+                this.itemRenderer.renderItemToTexture(tempLootItem, tempRT);
+                console.log(`Rendered to RenderTexture for ${comboKey}`);
+
                 try {
-                    // Define a key for this combination for logging and naming
-                    const comboKey = `${recipe.id}_${combinationIndex}`;
-                    console.log(
-                        `Rendering recipe ${recipe.id} combination ${combinationIndex}`
-                    );
-                    this.itemRenderer.renderItemToTexture(tempLootItem, tempRT);
-                    console.log(
-                        `Rendered to RenderTexture for ${recipe.id}_${combinationIndex}`
-                    );
-                    // Take a snapshot of the RenderTexture to a canvas
-                    console.log(
-                        `Snapshotting RenderTexture for key: ${comboKey}`
-                    );
-                    // Snapshot returns an HTMLImageElement. Draw it to a temp canvas to get dataURL.
-                    const imageDataUrl: string = await new Promise(
-                        (resolve) => {
-                            tempRT.snapshot(
-                                (
-                                    image:
-                                        | HTMLImageElement
-                                        | Phaser.Display.Color
-                                ) => {
-                                    if (!(image instanceof HTMLImageElement)) {
-                                        console.error(
-                                            "Received Color instead of Image"
-                                        );
-                                        resolve("");
-                                        return;
-                                    }
-                                    console.log(
-                                        `Snapshot captured for ${comboKey} (as Image)`
-                                    );
-                                    if (
-                                        image.width === 0 ||
-                                        image.height === 0
-                                    ) {
-                                        console.warn(
-                                            `Snapshot image for ${comboKey} has zero dimensions.`
-                                        );
-                                        resolve(""); // Resolve with empty string on error/empty image
-                                        return;
-                                    }
-                                    const tempCanvas =
-                                        document.createElement("canvas");
-                                    tempCanvas.width = image.width;
-                                    tempCanvas.height = image.height;
-                                    const ctx = tempCanvas.getContext("2d");
-                                    if (ctx) {
-                                        ctx.drawImage(image, 0, 0);
-                                        resolve(
-                                            tempCanvas.toDataURL("image/png")
-                                        );
-                                    } else {
-                                        console.error(
-                                            `Could not get 2D context for temp canvas (${comboKey})`
-                                        );
-                                        resolve(""); // Resolve with empty string on context error
-                                    }
-                                }
-                            );
-                        }
-                    );
-                    console.log(
-                        `snapshot dataURL length for ${comboKey}: ${imageDataUrl.length}`
-                    );
+                    const imageDataUrl: string = await new Promise((resolve) => {
+                        tempRT.snapshot((image) => {
+                            if (!(image instanceof HTMLImageElement)) {
+                                console.error("Received Color instead of Image");
+                                resolve("");
+                                return;
+                            }
+                            console.log(`Snapshot captured for ${comboKey} (as Image)`);
+                            if (image.width === 0 || image.height === 0) {
+                                console.warn(`Snapshot image for ${comboKey} has zero dimensions.`);
+                                resolve("");
+                                return;
+                            }
+                            const tempCanvas = document.createElement("canvas");
+                            tempCanvas.width = image.width;
+                            tempCanvas.height = image.height;
+                            const ctx = tempCanvas.getContext("2d");
+                            if (ctx) {
+                                ctx.drawImage(image, 0, 0);
+                                resolve(tempCanvas.toDataURL("image/png"));
+                            } else {
+                                console.error(`Could not get 2D context for temp canvas (${comboKey})`);
+                                resolve("");
+                            }
+                        });
+                    });
+                    console.log(`snapshot dataURL length for ${comboKey}: ${imageDataUrl.length}`);
 
                     if (imageDataUrl && imageDataUrl.length > 0) {
-                        // Download the generated image directly
-                        const filename = `${recipe.id}_combination_${combinationIndex}.png`;
-                        console.log(
-                            `Downloading image for ${comboKey} as ${filename}`
-                        );
+                        const filename = `${recipe.id}_combination_${i}.png`;
+                        console.log(`Downloading image for ${comboKey} as ${filename}`);
                         const link = document.createElement("a");
                         link.href = imageDataUrl;
                         link.download = filename;
@@ -288,32 +314,25 @@ export class MainMenu extends Scene {
                     } else {
                         console.warn(`No imageDataUrl for key: ${comboKey}`);
                         console.warn(
-                            `Failed to get image data for ${recipe.id} combination ${combinationIndex}`
+                            `Failed to get image data for ${recipe.id} combination ${i}`
                         );
                     }
                 } catch (error) {
                     console.error(
-                        `Error processing ${recipe.id} combination ${combinationIndex}:`,
+                        `Error processing ${recipe.id} combination ${i}:`,
                         error
                     );
                 } finally {
-                    if (tempRT) {
-                        tempRT.destroy();
-                    }
+                    tempRT.destroy();
                 }
-                combinationIndex++;
             }
-            console.log(
-                `Finished rendering ${combinationIndex} images for ${recipe.id}.`
-            );
+            console.log(`Finished rendering ${detailCombinations.length} images for ${recipe.id}.`);
         }
 
         console.log("All images downloaded.");
     }
 
-    // --- Scene Shutdown ---
     shutdown() {
-        // The renderer instance doesn't need explicit destruction here
-        // unless it starts managing persistent resources itself.
+        this.scale.off("resize", this.resizeBackground, this);
     }
 }
