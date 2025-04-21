@@ -62,12 +62,14 @@ export class ClawManager {
                 "clawParts",
                 isEven ? "claw_chain_front.png" : "claw_chain_side.png",
                 {
-                    shape: clawPhysics.claw_chain_front,
+                    shape: isEven
+                        ? clawPhysics.claw_chain_front
+                        : clawPhysics.claw_chain_side,
                     mass: 0.1,
                     collisionFilter: { group },
                 }
             );
-            link.setDepth(DepthLayers.Claw);
+            link.setDepth(isEven ? DepthLayers.Claw : DepthLayers.Claw + 1);
 
             const isFirst = i === 0;
             const jointLength = 0;

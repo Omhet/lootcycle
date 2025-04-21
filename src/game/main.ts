@@ -22,7 +22,7 @@ const config: Phaser.Types.Core.GameConfig = {
     physics: {
         default: "matter",
         matter: {
-            debug: true,
+            // debug: true,
         },
     },
     scene: [Boot, Preloader, MainMenu, MainGame],
