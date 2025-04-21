@@ -1,7 +1,7 @@
 import {
     ItemSubCategoryId,
-    PecipePartType,
     RecipeItemType,
+    RecipePartType,
 } from "../../../../craftModel";
 import { registerRecipeItem } from "../../../registry";
 
@@ -14,7 +14,7 @@ registerRecipeItem(RecipeItemType.BladeWeapon, {
     name: "Short Sword",
     sockets: [
         {
-            acceptType: PecipePartType.ShortSwordBlade,
+            acceptType: RecipePartType.ShortSwordBlade,
             relativeWeight: 6,
             pinpoint: {
                 coords: { x: 0, y: 0 },
@@ -24,7 +24,7 @@ registerRecipeItem(RecipeItemType.BladeWeapon, {
             },
         },
         {
-            acceptType: PecipePartType.BladeWeaponHilt,
+            acceptType: RecipePartType.BladeWeaponHilt,
             relativeWeight: 4,
             pinpoint: {
                 coords: { x: 0, y: 0 },

@@ -4,10 +4,10 @@ import {
     JunkPart,
     JunkPartType,
     LootConfig,
-    PecipePart,
-    PecipePartType,
     RecipeItem,
     RecipeItemType,
+    RecipePart,
+    RecipePartType,
 } from "../craftModel";
 
 /**
@@ -18,7 +18,7 @@ import {
 // Storage for all registered items
 const registry: {
     recipeItems: Map<RecipeItemType, RecipeItem[]>;
-    recipeParts: Map<PecipePartType, PecipePart[]>;
+    recipeParts: Map<RecipePartType, RecipePart[]>;
     junkParts: Map<JunkPartType, JunkPart[]>;
     junkDetails: Map<JunkDetailType, JunkDetail[]>;
 } = {
@@ -49,8 +49,8 @@ export function registerRecipeItem(
  * @param part The recipe part to register
  */
 export function registerRecipePart(
-    type: PecipePartType,
-    part: PecipePart
+    type: RecipePartType,
+    part: RecipePart
 ): void {
     if (!registry.recipeParts.has(type)) {
         registry.recipeParts.set(type, []);

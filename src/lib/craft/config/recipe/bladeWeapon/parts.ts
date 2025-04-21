@@ -1,11 +1,11 @@
-import { PecipePartType, RecipeDetailType } from "../../../craftModel";
+import { RecipeDetailType, RecipePartType } from "../../../craftModel";
 import { registerRecipePart } from "../../registry";
 
 // === Common Recipe Parts for all Blade weapons ===
 
-registerRecipePart(PecipePartType.BladeWeaponHilt, {
+registerRecipePart(RecipePartType.BladeWeaponHilt, {
     id: "blade_weapon_hilt",
-    type: PecipePartType.BladeWeaponHilt,
+    type: RecipePartType.BladeWeaponHilt,
     name: "Blade Hilt",
     sockets: [
         {

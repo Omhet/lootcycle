@@ -1,11 +1,11 @@
 // === Common Recipe Parts for all Short Swords ===
 
-import { PecipePartType, RecipeDetailType } from "../../../../craftModel";
+import { RecipeDetailType, RecipePartType } from "../../../../craftModel";
 import { registerRecipePart } from "../../../registry";
 
-registerRecipePart(PecipePartType.ShortSwordBlade, {
+registerRecipePart(RecipePartType.ShortSwordBlade, {
     id: "short_sword_blade",
-    type: PecipePartType.ShortSwordBlade,
+    type: RecipePartType.ShortSwordBlade,
     name: "Short Sword Blade",
     sockets: [
         {

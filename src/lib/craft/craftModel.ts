@@ -89,7 +89,7 @@ export const initialItemSubCategories: ItemSubCategory[] = [
 ];
 
 export type RecipeItemId = string;
-export type PecipePartId = string;
+export type RecipePartId = string;
 export type RecipeDetailId = string;
 
 export enum RecipeItemType {
@@ -102,26 +102,26 @@ export interface RecipeItem {
     subCategory: ItemSubCategoryId;
     type: RecipeItemType;
     name: string;
-    sockets: PecipePartSocket[];
+    sockets: RecipePartSocket[];
     baseSellPrice: number;
     perfectTemperature: number; // In Celsius
     baseTemperatureOffset: number; // In Celsius
 }
 
-export type PecipePartSocket = {
-    acceptType: PecipePartType;
+export type RecipePartSocket = {
+    acceptType: RecipePartType;
     relativeWeight: number;
     pinpoint: Pinpoint;
 };
 
-export enum PecipePartType {
+export enum RecipePartType {
     BladeWeaponHilt = "hilt",
     ShortSwordBlade = "short_sword_blade",
 }
 
-export type PecipePart = {
-    id: PecipePartId;
-    type: PecipePartType;
+export type RecipePart = {
+    id: RecipePartId;
+    type: RecipePartType;
     name: string;
     sockets: RecipeDetailSocket[];
 };
@@ -219,7 +219,7 @@ export type LootItem = {
 
 export type LootPart = {
     id: LootPartId;
-    recipePartId: PecipePartId;
+    recipePartId: RecipePartId;
     details: LootDetailId[];
 };
 
@@ -233,7 +233,7 @@ export type LootDetail = {
 // Define the structure for the overall configuration
 export interface LootConfig {
     recipeItems: Record<RecipeItemType, RecipeItem[]>;
-    recipeParts: Record<PecipePartType, PecipePart[]>;
+    recipeParts: Record<RecipePartType, RecipePart[]>;
     junkParts: Record<JunkPartType, JunkPart[]>;
     junkDetails: Record<JunkDetailType, JunkDetail[]>;
 }

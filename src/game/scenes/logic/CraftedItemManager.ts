@@ -3,15 +3,26 @@ import { lootConfig } from "../../../lib/craft/config";
 import {
     JunkDetail,
     JunkDetailId,
-    LootItem,
+    LootItem, // Corrected typo if present in original
     Pinpoint,
+    RecipeDetailSocket, // Added RecipeItem type
+    RecipeDetailType,
+    RecipeItem,
+    RecipePart,
+    RecipePartSocket,
+    RecipePartType, // Corrected typo if present in original
 } from "../../../lib/craft/craftModel";
-import { DepthLayers } from "../Game"; // Assuming DepthLayers is exported from Game.ts or moved
+import { DepthLayers } from "../Game";
 
 export class CraftedItemManager {
     private scene: Scene;
     private craftedItemRT: Phaser.GameObjects.RenderTexture;
     private craftedItem: LootItem | null = null;
+    // Cache for estimated part dimensions
+    private estimatedPartDimensionsCache = new Map<
+        RecipePartType,
+        { width: number; height: number }
+    >();
 
     constructor(scene: Scene) {
         this.scene = scene;
@@ -25,7 +36,7 @@ export class CraftedItemManager {
         const rtWidth = 400;
         const rtHeight = 400;
         const rtX = this.scene.cameras.main.width / 2;
-        const rtY = this.scene.cameras.main.height / 2 - rtHeight / 2;
+        const rtY = this.scene.cameras.main.height / 2; // Center vertically
 
         this.craftedItemRT = this.scene.add.renderTexture(
             rtX,
@@ -33,7 +44,8 @@ export class CraftedItemManager {
             rtWidth,
             rtHeight
         );
-        this.craftedItemRT.setDepth(DepthLayers.UI); // Ensure DepthLayers is accessible
+        this.craftedItemRT.setOrigin(0.5, 0.5); // Set origin to center for easier positioning
+        this.craftedItemRT.setDepth(DepthLayers.UI);
         this.craftedItemRT.setVisible(false);
         this.craftedItemRT.fill(0x000000, 0.7); // Initial background
     }
@@ -48,9 +60,133 @@ export class CraftedItemManager {
         this.renderCraftedItem();
     }
 
+    // --- Pass 1: Estimate Part Dimensions ---
+    private estimateAllPartDimensions(recipeItem: RecipeItem): void {
+        this.estimatedPartDimensionsCache.clear();
+        const junkDetailDataMap = this.getJunkDetailMap();
+        const uniquePartTypes = new Set<RecipePartType>(
+            recipeItem.sockets.map((s: RecipePartSocket) => s.acceptType)
+        );
+
+        uniquePartTypes.forEach((partType) => {
+            const partDefinition = this.findPartDefinition(partType);
+            if (!partDefinition) {
+                console.warn(
+                    `Part definition not found for type ${partType} during estimation.`
+                );
+                this.estimatedPartDimensionsCache.set(partType, {
+                    width: 1,
+                    height: 1,
+                }); // Default
+                return;
+            }
+
+            let minX = Infinity,
+                minY = Infinity,
+                maxX = -Infinity,
+                maxY = -Infinity;
+            let hasDetails = false;
+
+            partDefinition.sockets.forEach(
+                (detailSocket: RecipeDetailSocket) => {
+                    // Find *a* representative detail for dimension estimation
+                    const detailData = this.findRepresentativeDetail(
+                        detailSocket.acceptType,
+                        junkDetailDataMap
+                    );
+                    if (!detailData) {
+                        // console.warn(`No representative detail found for ${detailSocket.acceptType} in part ${partType}`);
+                        return; // Skip if no suitable detail found for estimation
+                    }
+
+                    const frameName = `${detailData.id}.png`;
+                    const texture = this.scene.textures.get("details-sprites");
+                    const frame = texture.get(frameName);
+
+                    if (!frame || frame.name === "__MISSING") {
+                        console.warn(
+                            `Frame not found for detail ${detailData.id} during estimation.`
+                        );
+                        return;
+                    }
+
+                    const detailDimensions = {
+                        width: frame.cutWidth,
+                        height: frame.cutHeight,
+                    };
+
+                    // Calculate position offset for estimation based ONLY on localOffset relative to {0,0}
+                    const detailPosX =
+                        detailSocket.pinpoint.localOffset.x *
+                        detailDimensions.width;
+                    const detailPosY =
+                        detailSocket.pinpoint.localOffset.y *
+                        detailDimensions.height;
+
+                    // Update bounding box (Phaser sprites default origin is 0.5, 0.5)
+                    const halfWidth = detailDimensions.width / 2;
+                    const halfHeight = detailDimensions.height / 2;
+                    minX = Math.min(minX, detailPosX - halfWidth);
+                    minY = Math.min(minY, detailPosY - halfHeight);
+                    maxX = Math.max(maxX, detailPosX + halfWidth);
+                    maxY = Math.max(maxY, detailPosY + halfHeight);
+                    hasDetails = true;
+                }
+            );
+
+            if (hasDetails && isFinite(minX)) {
+                this.estimatedPartDimensionsCache.set(partType, {
+                    width: Math.max(1, maxX - minX), // Ensure minimum size 1
+                    height: Math.max(1, maxY - minY),
+                });
+                // console.log(`Estimated dimensions for ${partType}: w=${maxX - minX}, h=${maxY - minY}`);
+            } else {
+                this.estimatedPartDimensionsCache.set(partType, {
+                    width: 1,
+                    height: 1,
+                });
+                console.warn(
+                    `Could not estimate dimensions for part ${partType} (no valid details found?), using default 1x1.`
+                );
+            }
+        });
+    }
+
+    // Helper to find a detail matching the type for estimation
+    private findRepresentativeDetail(
+        detailType: RecipeDetailType,
+        map: Map<JunkDetailId, JunkDetail>
+    ): JunkDetail | undefined {
+        for (const detail of map.values()) {
+            if (detail.suitableForRecipeDetails.includes(detailType)) {
+                return detail;
+            }
+        }
+        return undefined;
+    }
+
+    // Helper to get junk details map
+    private getJunkDetailMap(): Map<JunkDetailId, JunkDetail> {
+        const map = new Map<JunkDetailId, JunkDetail>();
+        Object.values(lootConfig.junkDetails)
+            .flat()
+            .forEach((detail) => {
+                map.set(detail.id, detail);
+            });
+        return map;
+    }
+
+    // Helper to find part definition
+    private findPartDefinition(
+        partType: RecipePartType
+    ): RecipePart | undefined {
+        return Object.values(lootConfig.recipeParts)
+            .flat()
+            .find((p) => p.type === partType);
+    }
+
     /**
-     * Renders the current crafted item directly to the render texture
-     * using the socket and pinpoint structure from the recipe.
+     * Renders the current crafted item using the two-pass approach.
      */
     private renderCraftedItem(): void {
         if (!this.craftedItem) return;
@@ -66,219 +202,227 @@ export class CraftedItemManager {
             return;
         }
 
+        // --- Pass 1: Estimate Dimensions ---
+        this.estimateAllPartDimensions(recipeItem);
+
+        // --- Pass 2: Final Rendering ---
         this.craftedItemRT.setVisible(true);
-        this.craftedItemRT.clear(); // Clear previous drawing
-        this.craftedItemRT.fill(0x000000, 0.7); // Re-apply background
+        this.craftedItemRT.clear();
+        this.craftedItemRT.fill(0x000000, 0.7);
 
-        const rtCenter = {
-            x: this.craftedItemRT.width / 2,
-            y: this.craftedItemRT.height / 2,
+        const rtDimensions = {
+            width: this.craftedItemRT.width,
+            height: this.craftedItemRT.height,
         };
+        const rtAnchor = { x: 0, y: 0 }; // RT center
 
-        // --- Data Preparation ---
-        const junkDetailDataMap = new Map<JunkDetailId, JunkDetail>();
-        Object.values(lootConfig.junkDetails)
-            .flat()
-            .forEach((detail) => {
-                junkDetailDataMap.set(detail.id, detail);
-            });
-
+        const junkDetailDataMap = this.getJunkDetailMap();
         const availableDetailIds = new Set<JunkDetailId>(
             this.craftedItem.details
         );
 
-        // --- Rendering Loop ---
-        // Iterate through RecipeItem sockets (defining Part anchors and offsets)
-        recipeItem.sockets
-            .sort((a, b) => a.pinpoint.zIndex - b.pinpoint.zIndex) // Draw parts based on their zIndex
-            .forEach((partSocket) => {
-                const partDefinition = Object.values(lootConfig.recipeParts)
-                    .flat()
-                    .find((p) => p.type === partSocket.acceptType);
+        // Store details and their calculated positions before drawing
+        const detailsToDraw: {
+            sprite: Phaser.GameObjects.Sprite;
+            x: number;
+            y: number;
+            rotation: number;
+        }[] = [];
+        let overallMinX = Infinity,
+            overallMinY = Infinity,
+            overallMaxX = -Infinity,
+            overallMaxY = -Infinity;
 
-                if (!partDefinition) {
-                    console.error(
-                        `RecipePart definition not found for type: ${partSocket.acceptType}`
-                    );
-                    return;
+        // Sort parts by zIndex for correct drawing order
+        const sortedPartSockets = [...recipeItem.sockets].sort(
+            (a, b) => a.pinpoint.zIndex - b.pinpoint.zIndex
+        );
+
+        sortedPartSockets.forEach((partSocket) => {
+            const partDefinition = this.findPartDefinition(
+                partSocket.acceptType
+            );
+            if (!partDefinition) {
+                console.warn(
+                    `Part definition not found for type ${partSocket.acceptType} during rendering.`
+                );
+                return;
+            }
+
+            const estimatedPartDimensions =
+                this.estimatedPartDimensionsCache.get(
+                    partSocket.acceptType
+                ) ?? { width: 1, height: 1 }; // Use default if not found
+
+            const partFinalAnchorPos = this.calculatePosition(
+                rtAnchor,
+                rtDimensions,
+                estimatedPartDimensions,
+                partSocket.pinpoint
+            );
+
+            const sortedDetailSockets = [...partDefinition.sockets].sort(
+                (a, b) => a.pinpoint.zIndex - b.pinpoint.zIndex
+            );
+
+            sortedDetailSockets.forEach((detailSocket) => {
+                const requiredDetailType = detailSocket.acceptType;
+                let foundDetailId: JunkDetailId | null = null;
+
+                // Find a suitable available JunkDetail
+                for (const detailId of availableDetailIds) {
+                    const detailData = junkDetailDataMap.get(detailId);
+                    if (
+                        detailData &&
+                        detailData.suitableForRecipeDetails.includes(
+                            requiredDetailType
+                        )
+                    ) {
+                        foundDetailId = detailId;
+                        break;
+                    }
                 }
 
-                // 1. Calculate the BASE anchor position for this part (ignoring part's localOffset for now)
-                const partBaseAnchorPos = {
-                    x: rtCenter.x + partSocket.pinpoint.coords.x,
-                    y: rtCenter.y + partSocket.pinpoint.coords.y,
-                };
+                if (foundDetailId) {
+                    availableDetailIds.delete(foundDetailId);
 
-                // Temporary storage for details belonging to this part
-                const partDetailsToDraw: {
-                    sprite: Phaser.GameObjects.Sprite;
-                    position: { x: number; y: number }; // Position relative to partBaseAnchorPos
-                    rotation: number;
-                }[] = [];
+                    const frameName = `${foundDetailId}.png`;
+                    const tempSprite = this.scene.add.sprite(
+                        0,
+                        0,
+                        "details-sprites",
+                        frameName
+                    );
+                    tempSprite.setOrigin(0.5, 0.5);
 
-                // Bounding box for the part based on its details
-                let minX = Infinity,
-                    minY = Infinity,
-                    maxX = -Infinity,
-                    maxY = -Infinity;
+                    const detailDimensions = {
+                        width: tempSprite.displayWidth,
+                        height: tempSprite.displayHeight,
+                    };
 
-                // 2. Iterate through the Part's sockets (defining Detail positions relative to the part)
-                partDefinition.sockets
-                    .sort((a, b) => a.pinpoint.zIndex - b.pinpoint.zIndex) // Draw details within part based on their zIndex
-                    .forEach((detailSocket) => {
-                        const requiredDetailType = detailSocket.acceptType;
-                        let foundDetailId: JunkDetailId | null = null;
+                    const detailFinalPos = this.calculatePosition(
+                        partFinalAnchorPos,
+                        estimatedPartDimensions,
+                        detailDimensions,
+                        detailSocket.pinpoint
+                    );
 
-                        // Find a suitable available JunkDetail
-                        for (const detailId of availableDetailIds) {
-                            const detailData = junkDetailDataMap.get(detailId);
-                            if (
-                                detailData &&
-                                detailData.suitableForRecipeDetails.includes(
-                                    requiredDetailType
-                                )
-                            ) {
-                                foundDetailId = detailId;
-                                break; // Found one, stop searching
-                            }
-                        }
+                    const detailRotation = Phaser.Math.DegToRad(
+                        detailSocket.pinpoint.localRotationAngle
+                    );
 
-                        if (foundDetailId) {
-                            availableDetailIds.delete(foundDetailId); // Mark as used for this item
-
-                            const frameName = `${foundDetailId}.png`;
-                            const tempSprite = this.scene.add.sprite(
-                                0,
-                                0,
-                                "details-sprites",
-                                frameName
-                            );
-
-                            const detailDimensions = {
-                                width: tempSprite.displayWidth,
-                                height: tempSprite.displayHeight,
-                            };
-
-                            // Calculate detail's position relative to the part's BASE anchor
-                            const detailRelativePos =
-                                this.calculatePinpointPosition(
-                                    { x: 0, y: 0 }, // Relative to the part's base anchor (0,0)
-                                    detailSocket.pinpoint,
-                                    detailDimensions
-                                );
-
-                            const detailRotation = Phaser.Math.DegToRad(
-                                detailSocket.pinpoint.localRotationAngle
-                            );
-
-                            // Store for later drawing and bounding box calculation
-                            partDetailsToDraw.push({
-                                sprite: tempSprite,
-                                position: detailRelativePos,
-                                rotation: detailRotation,
-                            });
-
-                            // Update bounding box (consider sprite origin is 0.5, 0.5)
-                            const halfWidth = detailDimensions.width / 2;
-                            const halfHeight = detailDimensions.height / 2;
-                            minX = Math.min(
-                                minX,
-                                detailRelativePos.x - halfWidth
-                            );
-                            minY = Math.min(
-                                minY,
-                                detailRelativePos.y - halfHeight
-                            );
-                            maxX = Math.max(
-                                maxX,
-                                detailRelativePos.x + halfWidth
-                            );
-                            maxY = Math.max(
-                                maxY,
-                                detailRelativePos.y + halfHeight
-                            );
-                        } else {
-                            console.warn(
-                                `No suitable JunkDetail found for RecipeDetailType: ${requiredDetailType} in part ${partDefinition.type}`
-                            );
-                        }
+                    // Store for later drawing and bounds calculation
+                    detailsToDraw.push({
+                        sprite: tempSprite,
+                        x: detailFinalPos.x,
+                        y: detailFinalPos.y,
+                        rotation: detailRotation,
                     });
 
-                // 3. Calculate Part Dimensions and Local Offset
-                let partWidth = 0;
-                let partHeight = 0;
-                let partLocalOffsetX = 0;
-                let partLocalOffsetY = 0;
-
-                if (partDetailsToDraw.length > 0 && isFinite(minX)) {
-                    partWidth = maxX - minX;
-                    partHeight = maxY - minY;
-
-                    // Calculate the part's local offset in pixels based on its calculated dimensions
-                    partLocalOffsetX =
-                        partSocket.pinpoint.localOffset.x * partWidth;
-                    partLocalOffsetY =
-                        partSocket.pinpoint.localOffset.y * partHeight;
+                    // Update overall bounds (sprite origin is 0.5, 0.5)
+                    const halfWidth = detailDimensions.width / 2;
+                    const halfHeight = detailDimensions.height / 2;
+                    overallMinX = Math.min(
+                        overallMinX,
+                        detailFinalPos.x - halfWidth
+                    );
+                    overallMinY = Math.min(
+                        overallMinY,
+                        detailFinalPos.y - halfHeight
+                    );
+                    overallMaxX = Math.max(
+                        overallMaxX,
+                        detailFinalPos.x + halfWidth
+                    );
+                    overallMaxY = Math.max(
+                        overallMaxY,
+                        detailFinalPos.y + halfHeight
+                    );
                 } else {
-                    console.warn(
-                        `Part ${partDefinition.type} has no details to render or invalid bounds.`
-                    );
+                    // console.warn(`No suitable JunkDetail found for RecipeDetailType: ${requiredDetailType} in part ${partDefinition.type}`);
                 }
-
-                // 4. Draw the collected details for this part, applying the final offsets
-                partDetailsToDraw.forEach((detailInfo) => {
-                    // Final position = Base Part Anchor + Relative Detail Pos + Part Local Offset
-                    const finalDrawX =
-                        partBaseAnchorPos.x +
-                        detailInfo.position.x +
-                        partLocalOffsetX;
-                    const finalDrawY =
-                        partBaseAnchorPos.y +
-                        detailInfo.position.y +
-                        partLocalOffsetY;
-
-                    detailInfo.sprite.setRotation(detailInfo.rotation);
-
-                    this.craftedItemRT.draw(
-                        detailInfo.sprite,
-                        finalDrawX,
-                        finalDrawY
-                    );
-
-                    detailInfo.sprite.destroy(); // Clean up temporary sprite
-                });
             });
+        });
+
+        // --- Pass 3: Calculate Centering Offset and Draw ---
+        let offsetX = 0;
+        let offsetY = 0;
+
+        if (detailsToDraw.length > 0 && isFinite(overallMinX)) {
+            const centerX = (overallMinX + overallMaxX) / 2;
+            const centerY = (overallMinY + overallMaxY) / 2;
+            offsetX = -centerX; // Offset needed to move center to (0,0)
+            offsetY = -centerY;
+
+            // --- DEBUG LOGGING ---
+            console.log(
+                `[Centering] Bounds: X[${overallMinX.toFixed(
+                    2
+                )}, ${overallMaxX.toFixed(2)}], Y[${overallMinY.toFixed(
+                    2
+                )}, ${overallMaxY.toFixed(2)}]`
+            );
+            console.log(
+                `[Centering] Calculated Center: (${centerX.toFixed(
+                    2
+                )}, ${centerY.toFixed(2)})`
+            );
+            console.log(
+                `[Centering] Applied Offset: (${offsetX.toFixed(
+                    2
+                )}, ${offsetY.toFixed(2)})`
+            );
+            // --- END DEBUG LOGGING ---
+        } else {
+            console.log(
+                "[Centering] No details or invalid bounds, skipping offset calculation."
+            );
+        }
+
+        // Draw all stored details with the centering offset
+        detailsToDraw.forEach((detailInfo) => {
+            detailInfo.sprite.setRotation(detailInfo.rotation);
+            // Adjust coordinates from center-relative to top-left-relative for draw()
+            const drawX = detailInfo.x + offsetX + this.craftedItemRT.width / 2;
+            const drawY =
+                detailInfo.y + offsetY + this.craftedItemRT.height / 2;
+            this.craftedItemRT.draw(
+                detailInfo.sprite,
+                drawX, // Top-left-relative X
+                drawY // Top-left-relative Y
+            );
+            detailInfo.sprite.destroy(); // Clean up
+        });
     }
 
     /**
-     * Calculates the final drawing position for an element based on its parent anchor,
-     * its pinpoint configuration, and its own dimensions.
-     *
-     * - `coords` are treated as direct offsets from the parent anchor.
-     * - `localOffset` is calculated relative to the element's own dimensions.
-     *
-     * @param parentAnchor The anchor point {x, y} of the parent.
-     * @param pinpoint The pinpoint data containing coords and localOffset.
-     * @param selfDimensions The dimensions {width, y} of the element being positioned.
-     * @returns The calculated final position {x, y}.
+     * Calculates final position based on parent anchor, parent dimensions, self dimensions, and pinpoint.
+     * coords: Relative offset based on parent dimensions (e.g., {x:0, y:-0.5} is top-center of parent).
+     * localOffset: Relative offset based on own dimensions (e.g., {x:0, y:-0.5} shifts self up by half own height).
+     * Assumes parentAnchor is the reference point (e.g., center {0,0} if parent origin is 0.5,0.5)
      */
-    private calculatePinpointPosition(
+    private calculatePosition(
         parentAnchor: { x: number; y: number },
-        pinpoint: Pinpoint,
-        selfDimensions: { width: number; height: number }
+        parentDimensions: { width: number; height: number },
+        selfDimensions: { width: number; height: number },
+        pinpoint: Pinpoint
     ): { x: number; y: number } {
-        // 1. Position based on parent anchor and coords (direct offset)
-        const basePosX = parentAnchor.x + pinpoint.coords.x;
-        const basePosY = parentAnchor.y + pinpoint.coords.y;
+        // 1. Calculate base position offset using coords relative to parent anchor and dimensions
+        const coordOffsetX = pinpoint.coords.x * parentDimensions.width;
+        const coordOffsetY = pinpoint.coords.y * parentDimensions.height;
+        const basePos = {
+            x: parentAnchor.x + coordOffsetX,
+            y: parentAnchor.y + coordOffsetY,
+        };
 
-        // 2. Calculate offset based on localOffset and self dimensions
+        // 2. Calculate local offset relative to self dimensions
         const localOffsetX = pinpoint.localOffset.x * selfDimensions.width;
         const localOffsetY = pinpoint.localOffset.y * selfDimensions.height;
 
-        // 3. Final position
+        // 3. Final position = base position + local offset
         return {
-            x: basePosX + localOffsetX,
-            y: basePosY + localOffsetY,
+            x: basePos.x + localOffsetX,
+            y: basePos.y + localOffsetY,
         };
     }
 
@@ -288,7 +432,9 @@ export class CraftedItemManager {
     public clearDisplay(): void {
         this.craftedItemRT.setVisible(false);
         this.craftedItemRT.clear(); // Clear drawings
+        this.craftedItemRT.fill(0x000000, 0.7); // Re-apply background
         this.craftedItem = null;
+        this.estimatedPartDimensionsCache.clear(); // Clear cache when display is cleared
     }
 
     /**
@@ -296,7 +442,10 @@ export class CraftedItemManager {
      * Should be called when the scene shuts down.
      */
     public destroy(): void {
-        this.craftedItemRT.destroy();
+        this.estimatedPartDimensionsCache.clear();
+        if (this.craftedItemRT) {
+            this.craftedItemRT.destroy();
+        }
         this.craftedItem = null;
     }
 }
