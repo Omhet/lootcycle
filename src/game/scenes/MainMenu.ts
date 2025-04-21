@@ -1,5 +1,3 @@
-import { saveAs } from "file-saver"; // Import file-saver (implicitly installed via jszip types?) - Need to install if not: pnpm add file-saver @types/file-saver
-import JSZip from "jszip"; // Import JSZip
 import { GameObjects, Scene } from "phaser";
 
 import { lootConfig } from "../../lib/craft/config"; // Import lootConfig
@@ -138,11 +136,10 @@ export class MainMenu extends Scene {
     // --- Download Recipe Images ---
     public async downloadRecipeImages(): Promise<void> {
         console.log("Starting recipe image generation for all combinations...");
-        const zip = new JSZip();
         const allRecipes = Object.values(lootConfig.recipeItems).flat();
         const allJunkDetailsMap = this.getJunkDetailMap();
-        const tempRTWidth = 400; // Define size for temporary textures
-        const tempRTHeight = 400;
+        const tempRTWidth = 512; // Define size for temporary textures
+        const tempRTHeight = 512;
 
         for (const recipe of allRecipes) {
             console.log(`Processing recipe: ${recipe.id}`);
@@ -210,16 +207,86 @@ export class MainMenu extends Scene {
                 });
 
                 try {
+                    // Define a key for this combination for logging and naming
+                    const comboKey = `${recipe.id}_${combinationIndex}`;
+                    console.log(
+                        `Rendering recipe ${recipe.id} combination ${combinationIndex}`
+                    );
                     this.itemRenderer.renderItemToTexture(tempLootItem, tempRT);
-                    const imageDataUrl =
-                        await this.itemRenderer.getImageDataUrl(tempRT);
+                    console.log(
+                        `Rendered to RenderTexture for ${recipe.id}_${combinationIndex}`
+                    );
+                    // Take a snapshot of the RenderTexture to a canvas
+                    console.log(
+                        `Snapshotting RenderTexture for key: ${comboKey}`
+                    );
+                    // Snapshot returns an HTMLImageElement. Draw it to a temp canvas to get dataURL.
+                    const imageDataUrl: string = await new Promise(
+                        (resolve) => {
+                            tempRT.snapshot(
+                                (
+                                    image:
+                                        | HTMLImageElement
+                                        | Phaser.Display.Color
+                                ) => {
+                                    if (!(image instanceof HTMLImageElement)) {
+                                        console.error(
+                                            "Received Color instead of Image"
+                                        );
+                                        resolve("");
+                                        return;
+                                    }
+                                    console.log(
+                                        `Snapshot captured for ${comboKey} (as Image)`
+                                    );
+                                    if (
+                                        image.width === 0 ||
+                                        image.height === 0
+                                    ) {
+                                        console.warn(
+                                            `Snapshot image for ${comboKey} has zero dimensions.`
+                                        );
+                                        resolve(""); // Resolve with empty string on error/empty image
+                                        return;
+                                    }
+                                    const tempCanvas =
+                                        document.createElement("canvas");
+                                    tempCanvas.width = image.width;
+                                    tempCanvas.height = image.height;
+                                    const ctx = tempCanvas.getContext("2d");
+                                    if (ctx) {
+                                        ctx.drawImage(image, 0, 0);
+                                        resolve(
+                                            tempCanvas.toDataURL("image/png")
+                                        );
+                                    } else {
+                                        console.error(
+                                            `Could not get 2D context for temp canvas (${comboKey})`
+                                        );
+                                        resolve(""); // Resolve with empty string on context error
+                                    }
+                                }
+                            );
+                        }
+                    );
+                    console.log(
+                        `snapshot dataURL length for ${comboKey}: ${imageDataUrl.length}`
+                    );
 
-                    if (imageDataUrl) {
+                    if (imageDataUrl && imageDataUrl.length > 0) {
+                        // Download the generated image directly
                         const filename = `${recipe.id}_combination_${combinationIndex}.png`;
-                        zip.file(filename, imageDataUrl.split(",")[1], {
-                            base64: true,
-                        });
+                        console.log(
+                            `Downloading image for ${comboKey} as ${filename}`
+                        );
+                        const link = document.createElement("a");
+                        link.href = imageDataUrl;
+                        link.download = filename;
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
                     } else {
+                        console.warn(`No imageDataUrl for key: ${comboKey}`);
                         console.warn(
                             `Failed to get image data for ${recipe.id} combination ${combinationIndex}`
                         );
@@ -241,14 +308,7 @@ export class MainMenu extends Scene {
             );
         }
 
-        console.log("Generating zip file...");
-        try {
-            const content = await zip.generateAsync({ type: "blob" });
-            saveAs(content, "loot_cycle_recipe_combinations.zip"); // Changed zip filename
-            console.log("Zip file generated and download triggered.");
-        } catch (error) {
-            console.error("Error generating zip file:", error);
-        }
+        console.log("All images downloaded.");
     }
 
     // --- Scene Shutdown ---

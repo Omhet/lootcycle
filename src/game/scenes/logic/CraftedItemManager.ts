@@ -19,8 +19,8 @@ export class CraftedItemManager {
      * Initializes the render texture for displaying crafted items in the scene
      */
     private initializeDisplay(): void {
-        const rtWidth = 400;
-        const rtHeight = 400;
+        const rtWidth = 512;
+        const rtHeight = 512;
         // Position the display RT (e.g., next to the cauldron or wherever needed in the Game scene)
         // Adjust these coordinates as needed for the Game scene layout
         const rtX = this.scene.cameras.main.width / 2; // Example position
