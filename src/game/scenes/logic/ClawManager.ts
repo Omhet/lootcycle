@@ -8,8 +8,8 @@ export class ClawManager {
     private anchor: Phaser.Physics.Matter.Image | null = null;
 
     // Constants for configuration
-    private readonly ANCHOR_X_OFFSET = 0; // Relative to screen center
-    private readonly ANCHOR_Y = 50; // Fixed Y position for the top anchor
+    private readonly ANCHOR_X_OFFSET = 350; // Relative to screen center
+    private readonly ANCHOR_Y = 100; // Fixed Y position for the top anchor
 
     constructor(scene: Scene) {
         this.scene = scene;
@@ -47,7 +47,7 @@ export class ClawManager {
                 collisionFilter: { group },
             }
         );
-        this.anchor.setDepth(DepthLayers.Claw);
+        this.anchor.setDepth(DepthLayers.BackgroundFrame - 1);
 
         let prev = this.anchor;
         let y = anchorY;
