@@ -29,7 +29,7 @@
 
     - Focus on one conceptual change at a time.
     - Apply the planned changes directly.
-    - Provide concise explanations for the applied changes, referencing line numbers and filenames.
+    - Provide concise explanations for the applied changes
     - Always check if the edit maintains the project's coding style.
 
 ### Edit sequence:
