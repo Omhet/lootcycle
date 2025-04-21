@@ -1,0 +1,125 @@
+{
+	"textures": [
+		{
+			"image": "claw-parts-sprites.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 182,
+				"h": 99
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "claw_hand.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 53,
+						"h": 96
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 1,
+						"w": 50,
+						"h": 94
+					},
+					"frame": {
+						"x": 1,
+						"y": 1,
+						"w": 50,
+						"h": 94
+					}
+				},
+				{
+					"filename": "claw_chain_front.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 45,
+						"h": 50
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 45,
+						"h": 50
+					},
+					"frame": {
+						"x": 53,
+						"y": 1,
+						"w": 45,
+						"h": 50
+					}
+				},
+				{
+					"filename": "claw_center.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 57,
+						"h": 60
+					},
+					"spriteSourceSize": {
+						"x": 6,
+						"y": 0,
+						"w": 44,
+						"h": 60
+					},
+					"frame": {
+						"x": 100,
+						"y": 1,
+						"w": 44,
+						"h": 60
+					}
+				},
+				{
+					"filename": "claw_chain_side.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 29,
+						"h": 45
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 29,
+						"h": 45
+					},
+					"frame": {
+						"x": 53,
+						"y": 53,
+						"w": 29,
+						"h": 45
+					}
+				},
+				{
+					"filename": "claw_shoulder.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 37,
+						"h": 95
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 3,
+						"w": 35,
+						"h": 92
+					},
+					"frame": {
+						"x": 146,
+						"y": 1,
+						"w": 35,
+						"h": 92
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:9c537840157c992968f58c1186113d74:550337a577ad5a09b1fcc2a041de06f4:bfa0d66371c339e4de03f6820181cb2d$"
+	}
+}
