@@ -4,7 +4,7 @@
 
     Avoid working on more than one file at a time.
     Multiple simultaneous edits to a file will cause corruption.
-    Be chatting and teach about what you are doing while coding.
+    Execute tasks efficiently and present the completed changes for review. Explain the process concisely.
 
 ## LARGE FILE & COMPLEX CHANGE PROTOCOL
 
@@ -27,23 +27,21 @@
 
 ### MAKING EDITS
 
-    - Focus on one conceptual change at a time
-    - Show clear "before" and "after" snippets when proposing changes
-    - Include concise explanations of what changed and why
-    - Always add the line number and the filename when you reference code
-    - Always check if the edit maintains the project's coding style
+    - Focus on one conceptual change at a time.
+    - Apply the planned changes directly.
+    - Provide concise explanations for the applied changes, referencing line numbers and filenames.
+    - Always check if the edit maintains the project's coding style.
 
 ### Edit sequence:
 
     1. [First specific change] - Purpose: [why]
     2. [Second specific change] - Purpose: [why]
-    3. Make the planned edits
+    3. Make the planned edits.
 
 ### EXECUTION PHASE
 
     - If you discover additional needed changes during editing:
-    - STOP and update the plan
-    - Say about them and then continue
+    - STOP, update the plan, explain the necessary adjustments, and then continue with the revised plan.
 
 ### REFACTORING GUIDANCE
 
