@@ -54,9 +54,17 @@ export class ClawManager {
             );
             link.setDepth(DepthLayers.Claw);
 
-            this.scene.matter.add.joint(prev, link, 90, 0.1, {
-                pointA: { x: 0, y: i === 0 ? 100 : 0 },
-            });
+            const isFirst = i === 0;
+
+            this.scene.matter.add.joint(
+                prev.body as MatterJS.BodyType,
+                link.body as MatterJS.BodyType,
+                isFirst ? 90 : 35,
+                0.1,
+                {
+                    pointA: { x: 0, y: isFirst ? 100 : 0 },
+                }
+            );
 
             prev = link;
 
@@ -65,23 +73,6 @@ export class ClawManager {
     }
 
     public destroy(): void {
-        if (this.parts) {
-            // Destroy sprites (which also removes their Matter bodies)
-            this.parts.chain.forEach((p) => p.destroy());
-            this.parts.center.destroy();
-            this.parts.leftShoulder.destroy();
-            this.parts.leftHand.destroy();
-            this.parts.rightShoulder.destroy();
-            this.parts.rightHand.destroy();
-            this.parts = null;
-        }
-
-        // Constraints are removed automatically when bodies are destroyed,
-        // but explicit removal is safer if managing constraints separately.
-        if (this.constraints) {
-            this.constraints = null;
-        }
-
         console.log("ClawManager destroyed");
     }
 }
