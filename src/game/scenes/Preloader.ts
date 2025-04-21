@@ -86,6 +86,14 @@ export class Preloader extends Scene {
             "junk-details-shapes",
             "game/details/junk-details-shapes.json"
         );
+
+        this.load.atlas(
+            "clawParts", // Load claw parts atlas
+            "game/elements/claw-parts-sprites.png",
+            "game/elements/claw-parts-sprites.json"
+        );
+
+        this.load.json("clawPhysics", "game/elements/claw-parts-shapes.json"); // Load claw physics
     }
 
     create() {
