@@ -11,7 +11,7 @@ registerRecipePart(PecipePartType.BladeWeaponHilt, {
         {
             acceptType: RecipeDetailType.Guard,
             pinpoint: {
-                coords: { x: 0, y: 0.5 },
+                coords: { x: 0, y: -0.5 },
                 localOffset: { x: 0, y: -0.5 },
                 localRotationAngle: 0,
                 zIndex: 1,
@@ -29,7 +29,7 @@ registerRecipePart(PecipePartType.BladeWeaponHilt, {
         {
             acceptType: RecipeDetailType.Pommel,
             pinpoint: {
-                coords: { x: 0, y: -0.5 },
+                coords: { x: 0, y: 0.5 },
                 localOffset: { x: 0, y: 0.5 },
                 localRotationAngle: 0,
                 zIndex: 1,
