@@ -3,134 +3,111 @@ import { DepthLayers } from "../Game";
 
 // Define interfaces using Phaser's Matter types
 export class ClawManager {
-    private scene: Scene;
+  private scene: Scene;
 
-    private anchor: Phaser.Physics.Matter.Image | null = null;
+  private anchor: Phaser.Physics.Matter.Image | null = null;
 
-    // Constants for configuration
-    private readonly ANCHOR_X_OFFSET = 350; // Relative to screen center
-    private readonly ANCHOR_Y = 100; // Fixed Y position for the top anchor
+  // Constants for configuration
+  private readonly ANCHOR_X_OFFSET = 350; // Relative to screen center
+  private readonly ANCHOR_Y = 100; // Fixed Y position for the top anchor
 
-    private speed = 150;
+  private speed = 150;
 
-    constructor(scene: Scene) {
-        this.scene = scene;
-        this.createClaw();
+  constructor(scene: Scene) {
+    this.scene = scene;
+    this.createClaw();
+  }
+
+  /**
+   * Creates the composite claw with physics.
+   */
+  private createClaw(): void {
+    const centerX = this.scene.cameras.main.width / 2;
+    const anchorX = centerX + this.ANCHOR_X_OFFSET;
+    const anchorY = this.ANCHOR_Y;
+
+    const clawPhysicsShapes = this.scene.cache.json.get("clawPhysics");
+    if (!clawPhysicsShapes) {
+      console.error("Claw physics shapes not loaded!");
+      return;
     }
 
-    /**
-     * Creates the composite claw with physics.
-     */
-    private createClaw(): void {
-        const centerX = this.scene.cameras.main.width / 2;
-        const anchorX = centerX + this.ANCHOR_X_OFFSET;
-        const anchorY = this.ANCHOR_Y;
+    const clawPhysics = this.scene.cache.json.get("clawPhysics");
 
-        const clawPhysicsShapes = this.scene.cache.json.get("clawPhysics");
-        if (!clawPhysicsShapes) {
-            console.error("Claw physics shapes not loaded!");
-            return;
-        }
+    // Create a collision group for the claw parts
+    const group = this.scene.matter.world.nextGroup(true);
 
-        const clawPhysics = this.scene.cache.json.get("clawPhysics");
+    // Chain
+    this.anchor = this.scene.matter.add.sprite(anchorX, anchorY, "claw_anchor", undefined, {
+      isStatic: true, // Make the anchor completely static instead of just ignoring gravity
+      collisionFilter: { group },
+    });
+    this.anchor.setDepth(DepthLayers.BackgroundFrame - 1);
 
-        // Create a collision group for the claw parts
-        const group = this.scene.matter.world.nextGroup(true);
+    let prev = this.anchor;
+    let y = anchorY;
+    const linkHeight = 50; // Approximate height of the chain link sprite
 
-        // Chain
-        this.anchor = this.scene.matter.add.sprite(
-            anchorX,
-            anchorY,
-            "claw_anchor",
-            undefined,
-            {
-                isStatic: true, // Make the anchor completely static instead of just ignoring gravity
-                collisionFilter: { group },
-            }
+    for (let i = 0; i < 4; i++) {
+      const isEven = i % 2 === 0;
+
+      let link = this.scene.matter.add.sprite(anchorX, y, "clawParts", isEven ? "claw_chain_front.png" : "claw_chain_side.png", {
+        shape: isEven ? clawPhysics.claw_chain_front : clawPhysics.claw_chain_side,
+        mass: 0.3, // Increase mass slightly for more stability
+        frictionAir: 0.01, // Increase air friction to reduce movement
+        friction: 0.2, // Increase surface friction
+        restitution: 0.1, // Low restitution (bounciness)
+        collisionFilter: { group },
+      });
+      link.setDepth(isEven ? DepthLayers.Claw : DepthLayers.Claw + 1);
+
+      const isFirst = i === 0;
+      const jointLength = 0;
+      const stiffness = 1;
+      const damping = 0.5; // Increased from 0.1 to reduce oscillation
+
+      // Create main joint
+      this.scene.matter.add.joint(prev.body as MatterJS.BodyType, link.body as MatterJS.BodyType, jointLength, stiffness, {
+        pointA: { x: 0, y: isFirst ? 100 : linkHeight / 4 },
+        pointB: { x: 0, y: -linkHeight / 4 },
+        damping,
+      });
+
+      // Add an angle constraint to prevent excessive rotation
+      if (!isFirst) {
+        this.scene.matter.add.constraint(
+          prev.body as MatterJS.BodyType,
+          link.body as MatterJS.BodyType,
+          0, // Length
+          0.9, // Stiffness
+          {
+            angleA: 0,
+            angleB: 0,
+            pointA: { x: 0, y: linkHeight / 4 },
+            pointB: { x: 0, y: -linkHeight / 4 },
+          }
         );
-        this.anchor.setDepth(DepthLayers.BackgroundFrame - 1);
+      }
 
-        let prev = this.anchor;
-        let y = anchorY;
-        const linkHeight = 50; // Approximate height of the chain link sprite
+      prev = link;
 
-        for (let i = 0; i < 4; i++) {
-            const isEven = i % 2 === 0;
-
-            let link = this.scene.matter.add.sprite(
-                anchorX,
-                y,
-                "clawParts",
-                isEven ? "claw_chain_front.png" : "claw_chain_side.png",
-                {
-                    shape: isEven
-                        ? clawPhysics.claw_chain_front
-                        : clawPhysics.claw_chain_side,
-                    mass: 0.3, // Increase mass slightly for more stability
-                    frictionAir: 0.01, // Increase air friction to reduce movement
-                    friction: 0.2, // Increase surface friction
-                    restitution: 0.1, // Low restitution (bounciness)
-                    collisionFilter: { group },
-                }
-            );
-            link.setDepth(isEven ? DepthLayers.Claw : DepthLayers.Claw + 1);
-
-            const isFirst = i === 0;
-            const jointLength = 0;
-            const stiffness = 1;
-            const damping = 0.5; // Increased from 0.1 to reduce oscillation
-
-            // Create main joint
-            this.scene.matter.add.joint(
-                prev.body as MatterJS.BodyType,
-                link.body as MatterJS.BodyType,
-                jointLength,
-                stiffness,
-                {
-                    pointA: { x: 0, y: isFirst ? 100 : linkHeight / 4 },
-                    pointB: { x: 0, y: -linkHeight / 4 },
-                    damping,
-                }
-            );
-
-            // Add an angle constraint to prevent excessive rotation
-            if (!isFirst) {
-                this.scene.matter.add.constraint(
-                    prev.body as MatterJS.BodyType,
-                    link.body as MatterJS.BodyType,
-                    0, // Length
-                    0.9, // Stiffness
-                    {
-                        angleA: 0,
-                        angleB: 0,
-                        pointA: { x: 0, y: linkHeight / 4 },
-                        pointB: { x: 0, y: -linkHeight / 4 },
-                    }
-                );
-            }
-
-            prev = link;
-
-            y += linkHeight; // Use linkHeight for positioning
-        }
+      y += linkHeight; // Use linkHeight for positioning
     }
+  }
 
-    public move(moveFactor: number): void {
-        // Since the anchor is now static, we need to handle position changes directly
-        if (this.anchor && this.anchor.body) {
-            // For static bodies, we need to update position directly
-            const newX = this.anchor.x + moveFactor * this.speed * (1 / 60); // Assuming 60fps
-            this.scene.matter.body.setPosition(
-                this.anchor.body as MatterJS.BodyType,
-                {
-                    x: newX,
-                    y: this.anchor.y,
-                }
-            );
-        }
+  public move(moveFactor: number): void {
+    // Since the anchor is now static, we need to handle position changes directly
+    if (this.anchor && this.anchor.body) {
+      // For static bodies, we need to update position directly
+      const newX = this.anchor.x + moveFactor * this.speed * (1 / 60); // Assuming 60fps
+      this.scene.matter.body.setPosition(this.anchor.body as MatterJS.BodyType, {
+        x: newX,
+        y: this.anchor.y,
+      });
     }
+  }
 
-    public destroy(): void {
-        console.log("ClawManager destroyed");
-    }
+  public destroy(): void {
+    console.log("ClawManager destroyed");
+  }
 }
