@@ -32,13 +32,20 @@ export class ClawManager {
 
         const clawPhysics = this.scene.cache.json.get("clawPhysics");
 
+        // Create a collision group for the claw parts
+        const group = this.scene.matter.world.nextGroup(true);
+
         // Chain
         this.anchor = this.scene.matter.add.sprite(
             anchorX,
             anchorY,
             "claw_anchor",
             undefined,
-            { ignoreGravity: true, isStatic: true }
+            {
+                ignoreGravity: true,
+                isStatic: true,
+                collisionFilter: { group },
+            }
         );
         this.anchor.setDepth(DepthLayers.Claw);
 
@@ -51,7 +58,11 @@ export class ClawManager {
                 y,
                 "clawParts",
                 "claw_chain_front.png",
-                { shape: clawPhysics.claw_chain_front, mass: 0.1 }
+                {
+                    shape: clawPhysics.claw_chain_front,
+                    mass: 0.1,
+                    collisionFilter: { group },
+                }
             );
             link.setDepth(DepthLayers.Claw);
 
@@ -60,7 +71,7 @@ export class ClawManager {
             this.scene.matter.add.joint(
                 prev.body as MatterJS.BodyType,
                 link.body as MatterJS.BodyType,
-                isFirst ? 0 : 36,
+                isFirst ? 45 : 45,
                 0.1,
                 {
                     pointA: { x: 0, y: isFirst ? 100 : 0 },
@@ -69,7 +80,7 @@ export class ClawManager {
 
             prev = link;
 
-            y += 18;
+            y += 36;
         }
     }
 
