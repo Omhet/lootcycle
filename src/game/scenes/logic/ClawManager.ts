@@ -54,11 +54,13 @@ export class ClawManager {
         const linkHeight = 50; // Approximate height of the chain link sprite
 
         for (let i = 0; i < 4; i++) {
+            const isEven = i % 2 === 0;
+
             let link = this.scene.matter.add.sprite(
                 anchorX,
                 y,
                 "clawParts",
-                "claw_chain_front.png",
+                isEven ? "claw_chain_front.png" : "claw_chain_side.png",
                 {
                     shape: clawPhysics.claw_chain_front,
                     mass: 0.1,
@@ -78,8 +80,8 @@ export class ClawManager {
                 jointLength,
                 stiffness,
                 {
-                    pointA: { x: 0, y: isFirst ? 100 : linkHeight / 3 },
-                    pointB: { x: 0, y: -linkHeight / 3 },
+                    pointA: { x: 0, y: isFirst ? 100 : linkHeight / 4 },
+                    pointB: { x: 0, y: -linkHeight / 4 },
                     damping,
                 }
             );
