@@ -1,7 +1,14 @@
-// === Recipe Detail Variants for Basic Short Sword ===
+import { Durability, Rarity, RecipeDetailType } from "../../craftModel";
+import { registerJunkDetail } from "../registry";
 
-import { Durability, Rarity, RecipeDetailType } from "../../../../craftModel";
-import { registerJunkDetail } from "../../../registry";
+registerJunkDetail("bone", {
+    suitableForRecipeDetails: [RecipeDetailType.Grip, RecipeDetailType.Pommel],
+    name: "Bone",
+    rarity: Rarity.Common,
+    durability: Durability.Medium,
+    sellPriceCoefficient: 0.5,
+    temperatureCoefficient: 0.5,
+});
 
 registerJunkDetail("basic_short_sword_blade", {
     suitableForRecipeDetails: [RecipeDetailType.ShortSwordBlade],
