@@ -98,12 +98,12 @@ export class Game extends Scene {
 
         // Setup input listener
         this.input.keyboard?.on("keydown-ENTER", () => {
-            this.junkPileManager.generateNextPortion();
+            // this.junkPileManager.generateNextPortion();
             this.craftAndRenderItem();
         });
 
         // Generate the initial junk portion
-        this.junkPileManager.generateJunkPortion();
+        // this.junkPileManager.generateJunkPortion();
 
         // Add shutdown listener for cleanup
         this.events.on(Phaser.Scenes.Events.SHUTDOWN, () => {
