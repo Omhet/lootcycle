@@ -28,24 +28,6 @@ registerJunkDetail("curved_silver_short_sword_blade", {
     temperatureCoefficient: 1.5,
 });
 
-registerJunkDetail("basic_short_sword_guard", {
-    suitableForRecipeDetails: [RecipeDetailType.Guard],
-    name: "Basic Short Sword Guard",
-    rarity: Rarity.Common,
-    durability: Durability.Medium,
-    sellPriceCoefficient: 1,
-    temperatureCoefficient: 1,
-});
-
-registerJunkDetail("golden_short_sword_guard", {
-    suitableForRecipeDetails: [RecipeDetailType.Guard],
-    name: "Golden Short Sword Guard",
-    rarity: Rarity.Rare,
-    durability: Durability.High,
-    sellPriceCoefficient: 2,
-    temperatureCoefficient: 1.5,
-});
-
 registerJunkDetail("basic_short_sword_grip", {
     suitableForRecipeDetails: [RecipeDetailType.Grip],
     name: "Basic Short Sword Grip",
@@ -55,7 +37,7 @@ registerJunkDetail("basic_short_sword_grip", {
     temperatureCoefficient: 1,
 });
 
-registerJunkDetail("tree_short_sword_grip", {
+registerJunkDetail("tree", {
     suitableForRecipeDetails: [RecipeDetailType.Grip],
     name: "Tree Short Sword Grip",
     rarity: Rarity.Uncommon,
@@ -73,11 +55,65 @@ registerJunkDetail("basic_short_sword_pommel", {
     temperatureCoefficient: 1,
 });
 
-registerJunkDetail("golden_with_emerald_short_sword_pommel", {
+registerJunkDetail("golden_with_emerald_pommel", {
     suitableForRecipeDetails: [RecipeDetailType.Pommel],
     name: "Golden With Emerald Short Sword Pommel",
     rarity: Rarity.Epic,
     durability: Durability.Low,
     sellPriceCoefficient: 2,
     temperatureCoefficient: 2,
+});
+
+registerJunkDetail("iron_ore", {
+    suitableForRecipeDetails: [RecipeDetailType.Guard],
+    name: "Iron Ore",
+    rarity: Rarity.Common,
+    durability: Durability.Medium,
+    sellPriceCoefficient: 1,
+    temperatureCoefficient: 1,
+});
+
+registerJunkDetail("silver_ore", {
+    suitableForRecipeDetails: [RecipeDetailType.Guard],
+    name: "Silver Ore",
+    rarity: Rarity.Uncommon,
+    durability: Durability.Medium,
+    sellPriceCoefficient: 1.5,
+    temperatureCoefficient: 1.5,
+});
+
+registerJunkDetail("gold_ore", {
+    suitableForRecipeDetails: [RecipeDetailType.Guard],
+    name: "Gold Ore",
+    rarity: Rarity.Rare,
+    durability: Durability.Low,
+    sellPriceCoefficient: 2,
+    temperatureCoefficient: 1,
+});
+
+registerJunkDetail("fluff-yellow", {
+    suitableForRecipeDetails: [RecipeDetailType.Guard],
+    name: "Fluff",
+    rarity: Rarity.Common,
+    durability: Durability.Low,
+    sellPriceCoefficient: 1,
+    temperatureCoefficient: 1,
+});
+
+registerJunkDetail("fluff-blue", {
+    suitableForRecipeDetails: [RecipeDetailType.Guard],
+    name: "Fluff",
+    rarity: Rarity.Common,
+    durability: Durability.Low,
+    sellPriceCoefficient: 1,
+    temperatureCoefficient: 1,
+});
+
+registerJunkDetail("fluff-green", {
+    suitableForRecipeDetails: [RecipeDetailType.Guard],
+    name: "Fluff",
+    rarity: Rarity.Common,
+    durability: Durability.Low,
+    sellPriceCoefficient: 1,
+    temperatureCoefficient: 1,
 });
