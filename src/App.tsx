@@ -135,8 +135,47 @@ function App() {
                                 ],
                             },
                         ]}
-                        upgrades={[]}
-                        equipmentFixes={[]}
+                        upgrades={[
+                            {
+                                id: "upgrade1",
+                                name: "Upgrade 1",
+                                imageUrl: "https://example.com/sword.png",
+                                price: 10,
+                                description:
+                                    "An upgrade that improves your crafting speed.",
+                            },
+                            {
+                                id: "upgrade2",
+                                name: "Upgrade 2",
+                                imageUrl: "https://example.com/sword.png",
+                                price: 10,
+                                description:
+                                    "An upgrade that improves your claw speed.",
+                            },
+                        ]}
+                        equipmentFixes={[
+                            {
+                                id: "claw",
+                                name: "Claw Fix",
+                                imageUrl: "https://example.com/sword.png",
+                                price: 10,
+                                description: "Fixes your claw.",
+                            },
+                            {
+                                id: "stove",
+                                name: "Stove Fix",
+                                imageUrl: "https://example.com/sword.png",
+                                price: 10,
+                                description: "Fixes your stove.",
+                            },
+                            {
+                                id: "cauldron",
+                                name: "Cauldron Fix",
+                                imageUrl: "https://example.com/sword.png",
+                                price: 20,
+                                description: "Fixes your cauldron.",
+                            },
+                        ]}
                         balance={10}
                         onBuy={(purchaseItemId: string) => {
                             console.log("Item bought:", purchaseItemId);

@@ -2,6 +2,8 @@ import { useState } from "react";
 import s from "./Shop.module.css";
 import { RecipesTab } from "./RecipesTab";
 import { EquipmentFix, RecipeCategory, Upgrade } from "./types";
+import { UpgradesTab } from "./UpgradesTab";
+import { EquipmentFixTab } from "./EquipmentFixTab";
 
 type ShopProps = {
     recipes: RecipeCategory[];
@@ -61,7 +63,28 @@ export const Shop = ({
                 </button>
             </div>
             {selectedTab === Tabs.RECIPES && (
-                <RecipesTab recipes={recipes} onBuy={onBuy} balance={balance} />
+                <RecipesTab
+                    recipes={recipes}
+                    onBuy={onBuy}
+                    balance={balance}
+                    onClose={onClose}
+                />
+            )}
+            {selectedTab === Tabs.UPGRADES && (
+                <UpgradesTab
+                    upgrades={upgrades}
+                    onBuy={onBuy}
+                    balance={balance}
+                    onClose={onClose}
+                />
+            )}
+            {selectedTab === Tabs.EQUIPMENT_FIXES && (
+                <EquipmentFixTab
+                    equipmentFixes={equipmentFixes}
+                    onBuy={onBuy}
+                    balance={balance}
+                    onClose={onClose}
+                />
             )}
         </div>
     );

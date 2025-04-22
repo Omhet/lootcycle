@@ -6,15 +6,21 @@ type RecipesTabProps = {
     recipes: RecipeCategory[];
     balance: number;
     onBuy: (purchaseItemId: string) => void;
+    onClose: () => void;
 };
 
-export const RecipesTab = ({ recipes, balance, onBuy }: RecipesTabProps) => {
+export const RecipesTab = ({
+    recipes,
+    balance,
+    onBuy,
+    onClose,
+}: RecipesTabProps) => {
     const [selectedItem, setSelectedItem] = useState<RecipeItem>(
         recipes[0].items[0]
     );
 
     return (
-        <div className={s.recipesTabContainer}>
+        <div className={s.tabContainer}>
             <div className={s.recipeCategoriesContainer}>
                 {recipes.map((category) => (
                     <div key={category.name} className={s.category}>
@@ -40,6 +46,9 @@ export const RecipesTab = ({ recipes, balance, onBuy }: RecipesTabProps) => {
                         </div>
                     </div>
                 ))}
+                <button className={s.button} onClick={onClose}>
+                    I gol all I need, thanks!
+                </button>
             </div>
             <div className={s.recipeDetailsContainer}>
                 <div className={s.recipeTitleContainer}>
