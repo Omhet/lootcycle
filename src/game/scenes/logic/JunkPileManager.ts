@@ -72,10 +72,11 @@ export class JunkPileManager {
       // Create a sprite with the correct physics shape
       physicsBody = this.scene.matter.add.sprite(spawnX, spawnY, "junk-details-sprites", frameName, {
         shape: shapesData[physicsKey],
-        restitution: 0.04, // Bounciness
+        restitution: 0.01, // Bounciness
         frictionAir: 0.001, // Air friction
         friction: 0.01, // Surface friction
-        sleepThreshold: 60,
+        mass: 0.2, // Mass
+        inverseMass: 20,
         chamfer: 10,
       });
 
