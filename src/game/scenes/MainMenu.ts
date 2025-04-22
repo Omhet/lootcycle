@@ -94,34 +94,8 @@ export class MainMenu extends Scene {
     return requirements;
   }
 
-  /**
-   * Generates combinations of LootDetailIds that satisfy the recipe requirements
-   * @param recipe The recipe to generate combinations for
-   * @returns Array of valid detail combinations
-   */
-  private generateLootDetailCombinations(recipe: RecipeItem): LootDetailId[][] {
-    console.log(`Generating combinations for recipe: ${recipe.id}`);
-
-    // 1. Get required detail types for recipe
-    const requiredDetailTypes = this.getRecipeDetailRequirements(recipe);
-    console.log(`Required detail types: ${requiredDetailTypes.join(", ")}`);
-
-    // 2. Get available details by type
-    const detailsByType = this.getAvailableLootDetailsByType();
-
-    // 3. Ensure we have at least one detail available for each required type
-    const validCombinations: LootDetailId[][] = [];
-    const unavailableTypes: RecipeDetailType[] = [];
-
-    requiredDetailTypes.forEach((type) => {
-      if (!detailsByType.has(type) || detailsByType.get(type)?.length === 0) {
-        unavailableTypes.push(type);
-      }
-    });
-
-    if (unavailableTypes.length > 0) {
-      console.warn(`Missing details for types: ${unavailableTypes.join(", ")}`);
-      return [];
+        // Temporary start game right away to debug - REMOVE THIS LATER
+        // this.startGame();
     }
 
     // 4. Generate all valid combinations

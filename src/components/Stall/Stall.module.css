@@ -1,0 +1,118 @@
+.stallContainer {
+    width: 100%;
+    height: 100%;
+    padding: 4vmin;
+    display: flex;
+    justify-content: space-between;
+    gap: 8vmin;
+    background-color: #7b6e65;
+    color: #ebe6e1;
+    font-size: 2vmin;
+}
+.stall {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 3vmin;
+}
+.stallHeader {
+    width: 100%;
+    display: flex;
+    align-items: baseline;
+    gap: 2.5vmin;
+}
+.stallHeaderTitle {
+    font-size: 4vmin;
+    text-transform: capitalize;
+}
+.stallHeaderDescription {
+    font-size: 2vmin;
+    text-transform: capitalize;
+}
+.groupsContainer {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 3vmin;
+    overflow-y: auto;
+}
+.group {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5vmin;
+}
+.groupTitle {
+    font-size: 2.5vmin;
+    text-transform: capitalize;
+}
+.itemsContainer {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5vmin;
+}
+.item {
+    width: 8vmin;
+    height: 8vmin;
+    border: 2px solid #574436;
+    border-radius: 12px;
+    background-color: #ada39a;
+    overflow: hidden;
+}
+.item:hover {
+    border-color: #d6ba56;
+}
+.item.active {
+    border-color: #5e8e54;
+}
+.itemImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.button {
+    margin-top: auto;
+    width: 100%;
+    padding: 1vmin 2vmin;
+    border: none;
+    background-color: #ada39a;
+    color: #2b201c;
+    font-size: 2.5vmin;
+    cursor: pointer;
+}
+.button:hover {
+    background-color: #574436;
+    color: #ebe6e1;
+}
+.lootDetailsContainer {
+    width: 100%;
+    max-width: 40vmin;
+    display: flex;
+    flex-direction: column;
+    gap: 3vmin;
+    overflow-y: auto;
+}
+.imageContainer {
+    flex-shrink: 0;
+    width: 100%;
+    aspect-ratio: 1/1;
+    position: relative;
+    border: 2px solid #574436;
+    border-radius: 12px;
+    background-color: #ada39a;
+    overflow: hidden;
+}
+.image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.price {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 1vmin 1.5vmin;
+    font-size: 3vmin;
+}

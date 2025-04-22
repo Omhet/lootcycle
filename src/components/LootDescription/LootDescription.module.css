@@ -1,0 +1,48 @@
+.textContainer {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 3.5vmin;
+}
+.titleContainer {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5vmin;
+}
+.name {
+    font-size: 4vmin;
+    text-transform: capitalize;
+}
+.category {
+    font-size: 2vmin;
+    text-transform: capitalize;
+}
+.detailsContainer {
+    width: 100%;
+    display: flex;
+    gap: 2vmin 5vmin;
+    flex-wrap: wrap;
+}
+.detailItem {
+    display: flex;
+    align-items: center;
+    gap: 1vmin;
+}
+.detailName {
+    text-transform: capitalize;
+    font-size: 2.5vmin;
+}
+.junkImageContainer {
+    width: 5vmin;
+    height: 5vmin;
+    border: 2px solid #574436;
+    border-radius: 12px;
+    background-color: #ada39a;
+    overflow: hidden;
+}
+.junkImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}

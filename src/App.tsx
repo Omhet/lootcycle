@@ -4,7 +4,11 @@ import "react-toastify/dist/ReactToastify.css";
 import { EventBus } from "./game/EventBus";
 import { IRefPhaserGame, PhaserGame } from "./game/PhaserGame";
 import { MainMenu } from "./game/scenes/MainMenu";
-import { CraftingFailureReason } from "./lib/craft/craftModel";
+import { TestModalContainer } from "./components/TestModalContainer/TestModalContainer";
+import { NewLootInfo } from "./components/NewLootInfo/NewLootInfo";
+import { Stall } from "./components/Stall/Stall";
+import { DayResults } from "./components/DayResults/DayResults";
+import { Shop } from "./components/Shop/Shop";
 
 function App() {
   // The sprite can only be moved in the MainMenu Scene
@@ -14,40 +18,13 @@ function App() {
   // State to hold the current scene key
   const [currentSceneKey, setCurrentSceneKey] = useState<string | null>(null);
 
-  // Event emitted from the PhaserGame component
-  const currentScene = (scene: Phaser.Scene) => {
-    console.log("Current Scene: ", scene.scene.key);
-    setCurrentSceneKey(scene.scene.key); // Update state with scene key
-  };
+    // State to control the visibility of the test modal. Remove this in the final version.
+    const [isTestModalOpen, setIsTestModalOpen] = useState(false);
 
-  // Set up event listeners for crafting failures
-  useEffect(() => {
-    const handleCraftingFailure = (failure: { reason: CraftingFailureReason; message?: string }) => {
-      // Create user-friendly messages based on failure reasons
-      let toastMessage = failure.message || "Crafting failed";
-
-      // Override with more user-friendly messages if needed
-      //   switch (failure.reason) {
-      //     case CraftingFailureReason.NotEnoughJunk:
-      //       toastMessage = "Not enough materials to craft this item";
-      //       break;
-      //     case CraftingFailureReason.TooLowTemperature:
-      //       toastMessage = "The temperature is too low for crafting";
-      //       break;
-      //     case CraftingFailureReason.TooHighTemperature:
-      //       toastMessage = "The temperature is too high for crafting";
-      //       break;
-      //   }
-
-      // Show the toast notification
-      toast.error(toastMessage, {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-      });
+    // Event emitted from the PhaserGame component
+    const currentScene = (scene: Phaser.Scene) => {
+        console.log("Current Scene: ", scene.scene.key);
+        setCurrentSceneKey(scene.scene.key); // Update state with scene key
     };
 
     // Subscribe to the crafting-failure event
@@ -59,64 +36,284 @@ function App() {
     };
   }, []);
 
-  // Function to handle the Play button click
-  const handlePlayClick = () => {
-    if (phaserRef.current && phaserRef.current.scene) {
-      const scene = phaserRef.current.scene;
-      if (
-        scene.scene.key === "MainMenu" &&
-        typeof (scene as any).startGame === "function" // Check if method exists before casting
-      ) {
-        // Cast safely after check
-        (scene as unknown as MainMenu).startGame();
-      }
-    }
-  };
-
-  // Function to handle the Download Loot Images button click
-  const handleDownloadLootImagesClick = () => {
-    if (phaserRef.current && phaserRef.current.scene) {
-      const scene = phaserRef.current.scene;
-      if (
-        scene.scene.key === "MainMenu" &&
-        typeof (scene as any).downloadRecipeImages === "function" // Check if method exists before casting
-      ) {
-        // Cast safely after check
-        (scene as unknown as MainMenu).downloadRecipeImages();
-      } else {
-        console.warn("Download function not available on the current scene or scene is not MainMenu.");
-      }
-    }
-  };
-
-  return (
-    <div id="app">
-      <PhaserGame ref={phaserRef} currentActiveScene={currentScene} />
-      {/* UI Container */}
-      <div id="uiContainer">
-        {/* Main Menu Container - Visible only when in MainMenu scene */}
-        {currentSceneKey === "MainMenu" && (
-          <div id="mainMenuContainer">
-            {/* Can add title or other elements here */}
-            <div id="menuButtonsContainer">
-              <button className="button" onClick={handlePlayClick}>
-                Play
-              </button>
-              {/* Add the new download button */}
-              <button
-                className="button"
-                onClick={handleDownloadLootImagesClick} // Attach the new handler
-              >
-                Download Loot Images
-              </button>
+    return (
+        <div id="app">
+            <PhaserGame ref={phaserRef} currentActiveScene={currentScene} />
+            {/* UI Container */}
+            <div id="uiContainer">
+                {/* Main Menu Container - Visible only when in MainMenu scene */}
+                {currentSceneKey === "MainMenu" && (
+                    <div id="mainMenuContainer">
+                        {/* Can add title or other elements here */}
+                        <div id="menuButtonsContainer">
+                            <button
+                                className="button"
+                                onClick={handlePlayClick}
+                            >
+                                Play
+                            </button>
+                            {/* Add the new download button */}
+                            <button
+                                className="button"
+                                onClick={handleDownloadLootImagesClick} // Attach the new handler
+                            >
+                                Download Loot Images
+                            </button>
+                            <button
+                                className="button"
+                                onClick={() => setIsTestModalOpen(true)} // Open the test modal
+                            >
+                                Open Modal
+                            </button>
+                        </div>
+                    </div>
+                )}
             </div>
-          </div>
-        )}
-      </div>
-      {/* Add ToastContainer for notifications */}
-      <ToastContainer />
-    </div>
-  );
+            {isTestModalOpen && (
+                <TestModalContainer isOpen={isTestModalOpen}>
+                    <Shop
+                        recipes={[
+                            {
+                                name: "swords",
+                                items: [
+                                    {
+                                        id: "recipe1",
+                                        name: "sword",
+                                        category: "sword",
+                                        description:
+                                            "A basic sword, nothing special.",
+                                        imageUrl:
+                                            "https://example.com/sword.png",
+                                        price: 10,
+                                        priceForCraftedBaseItem: 5,
+                                        alreadyBought: true,
+                                    },
+                                    {
+                                        id: "recipe2",
+                                        name: "katana",
+                                        category: "sword",
+                                        description:
+                                            "A sharp katana, perfect for slicing.",
+
+                                        imageUrl:
+                                            "https://example.com/sword.png",
+                                        price: 30,
+                                        priceForCraftedBaseItem: 10,
+                                        alreadyBought: false,
+                                    },
+                                ],
+                            },
+                            {
+                                name: "axes",
+                                items: [
+                                    {
+                                        id: "recipe3",
+                                        name: "battle axe",
+                                        category: "axe",
+                                        description:
+                                            "A heavy battle axe, great for combat.",
+
+                                        imageUrl:
+                                            "https://example.com/sword.png",
+                                        price: 10,
+                                        priceForCraftedBaseItem: 5,
+                                        alreadyBought: false,
+                                    },
+                                    {
+                                        id: "recipe4",
+                                        name: "throwing axe",
+                                        category: "axe",
+                                        description:
+                                            "A lightweight axe for throwing.",
+
+                                        imageUrl:
+                                            "https://example.com/sword.png",
+                                        price: 30,
+                                        priceForCraftedBaseItem: 10,
+                                        alreadyBought: false,
+                                    },
+                                ],
+                            },
+                        ]}
+                        upgrades={[]}
+                        equipmentFixes={[]}
+                        balance={10}
+                        onBuy={(purchaseItemId: string) => {
+                            console.log("Item bought:", purchaseItemId);
+                        }}
+                        onClose={() => setIsTestModalOpen(false)}
+                    />
+                    {/* <DayResults
+                        dayNumber={1}
+                        onClose={() => setIsTestModalOpen(false)}
+                        balance={123}
+                        junkRecycled={6}
+                        junkBurnt={7}
+                        lootCrafted={2}
+                        lootScrewedUp={1}
+                        profit={40}
+                        clawWearout={54}
+                        cauldronWearout={91}
+                        stoveWearout={32}
+                    /> */}
+                    {/* <Stall
+                        groups={[
+                            {
+                                name: "swords",
+                                items: [
+                                    {
+                                        name: "shiny sword",
+                                        category: "swords",
+                                        imageUrl:
+                                            "https://example.com/sword.png",
+                                        price: 10,
+                                        lootDetails: [
+                                            {
+                                                lootDetailName: "blade",
+                                                junkImageUrl:
+                                                    "https://example.com/sword.png",
+                                            },
+                                            {
+                                                lootDetailName: "guard",
+                                                junkImageUrl:
+                                                    "https://example.com/sword.png",
+                                            },
+                                            {
+                                                lootDetailName: "grip",
+                                                junkImageUrl:
+                                                    "https://example.com/sword.png",
+                                            },
+                                            {
+                                                lootDetailName: "pommel",
+                                                junkImageUrl:
+                                                    "https://example.com/sword.png",
+                                            },
+                                        ],
+                                    },
+                                    {
+                                        name: "elven sword",
+                                        category: "swords",
+                                        imageUrl:
+                                            "https://example.com/sword.png",
+                                        price: 10,
+                                        lootDetails: [
+                                            {
+                                                lootDetailName: "blade",
+                                                junkImageUrl:
+                                                    "https://example.com/sword.png",
+                                            },
+                                            {
+                                                lootDetailName: "guard",
+                                                junkImageUrl:
+                                                    "https://example.com/sword.png",
+                                            },
+                                            {
+                                                lootDetailName: "grip",
+                                                junkImageUrl:
+                                                    "https://example.com/sword.png",
+                                            },
+                                            {
+                                                lootDetailName: "pommel",
+                                                junkImageUrl:
+                                                    "https://example.com/sword.png",
+                                            },
+                                        ],
+                                    },
+                                ],
+                            },
+                            {
+                                name: "shields",
+                                items: [
+                                    {
+                                        name: "oak shield",
+                                        category: "shields",
+                                        imageUrl:
+                                            "https://example.com/sword.png",
+                                        price: 10,
+                                        lootDetails: [
+                                            {
+                                                lootDetailName: "blade",
+                                                junkImageUrl:
+                                                    "https://example.com/sword.png",
+                                            },
+                                            {
+                                                lootDetailName: "guard",
+                                                junkImageUrl:
+                                                    "https://example.com/sword.png",
+                                            },
+                                            {
+                                                lootDetailName: "grip",
+                                                junkImageUrl:
+                                                    "https://example.com/sword.png",
+                                            },
+                                            {
+                                                lootDetailName: "pommel",
+                                                junkImageUrl:
+                                                    "https://example.com/sword.png",
+                                            },
+                                        ],
+                                    },
+                                    {
+                                        name: "iron shield",
+                                        category: "shields",
+                                        imageUrl:
+                                            "https://example.com/sword.png",
+                                        price: 10,
+                                        lootDetails: [
+                                            {
+                                                lootDetailName: "blade",
+                                                junkImageUrl:
+                                                    "https://example.com/sword.png",
+                                            },
+                                            {
+                                                lootDetailName: "guard",
+                                                junkImageUrl:
+                                                    "https://example.com/sword.png",
+                                            },
+                                            {
+                                                lootDetailName: "grip",
+                                                junkImageUrl:
+                                                    "https://example.com/sword.png",
+                                            },
+                                            {
+                                                lootDetailName: "pommel",
+                                                junkImageUrl:
+                                                    "https://example.com/sword.png",
+                                            },
+                                        ],
+                                    },
+                                ],
+                            },
+                        ]}
+                        onSellAndClose={() => setIsTestModalOpen(false)}
+                    /> */}
+                    {/* <NewLootInfo
+                        name={"shiny sword"}
+                        category={"swords"}
+                        details={[
+                            {
+                                lootDetailName: "blade",
+                                junkImageUrl: "https://example.com/sword.png",
+                            },
+                            {
+                                lootDetailName: "guard",
+                                junkImageUrl: "https://example.com/sword.png",
+                            },
+                            {
+                                lootDetailName: "grip",
+                                junkImageUrl: "https://example.com/sword.png",
+                            },
+                            {
+                                lootDetailName: "pommel",
+                                junkImageUrl: "https://example.com/sword.png",
+                            },
+                        ]}
+                        onClose={() => setIsTestModalOpen(false)}
+                    /> */}
+                </TestModalContainer>
+            )}
+        </div>
+    );
 }
 
 export default App;

@@ -1,0 +1,25 @@
+.newLootInfo {
+    width: 100%;
+    height: 100%;
+    padding: 4vmin;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 4.5vmin;
+    background-color: #7b6e65;
+    color: #ebe6e1;
+    font-size: 2vmin;
+}
+.button {
+    width: 100%;
+    padding: 1vmin 2vmin;
+    border: none;
+    background-color: #ada39a;
+    color: #2b201c;
+    font-size: 2.5vmin;
+    cursor: pointer;
+}
+.button:hover {
+    background-color: #574436;
+    color: #ebe6e1;
+}
