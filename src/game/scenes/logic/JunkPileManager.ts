@@ -149,7 +149,6 @@ export class JunkPileManager {
 
     // Spawn each junk item with a delay to create a sequential dropping effect
     newJunkPortion.forEach((junkPiece, index) => {
-      // Random delay between 300-500ms for each item
       const delay = 100 + Math.random() * 200;
 
       // Create a timer for spawning this item
