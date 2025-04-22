@@ -107,6 +107,8 @@ export class ClawManager {
     this.scene.matter.add.joint(prev.body as MatterJS.BodyType, clawCenter.body as MatterJS.BodyType, 0, 1, {
       pointA: { x: 0, y: linkHeight / 4 },
       pointB: { x: 0, y: -linkHeight / 4 },
+      angleA: 0,
+      angleB: 0,
       damping: 0.5,
     });
 
