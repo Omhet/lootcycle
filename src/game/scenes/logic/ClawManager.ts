@@ -53,8 +53,8 @@ export class ClawManager {
 
       let link = this.scene.matter.add.sprite(anchorX, y, "clawParts", isEven ? "claw_chain_front.png" : "claw_chain_side.png", {
         shape: isEven ? clawPhysics.claw_chain_front : clawPhysics.claw_chain_side,
-        mass: 0.3, // Increase mass slightly for more stability
-        frictionAir: 0.01, // Increase air friction to reduce movement
+        mass: 0.1, // Increase mass slightly for more stability
+        frictionAir: 0.05, // Increase air friction to reduce movement
         friction: 0.2, // Increase surface friction
         restitution: 0.1, // Low restitution (bounciness)
         collisionFilter: { group },
@@ -97,7 +97,7 @@ export class ClawManager {
     // Claw Center
     const clawCenter = this.scene.matter.add.sprite(anchorX, y, "clawParts", "claw_center.png", {
       shape: clawPhysics.claw_center,
-      mass: 0.3,
+      mass: 0.2,
       frictionAir: 0.01,
       friction: 0.2,
       restitution: 0.1,
@@ -125,17 +125,11 @@ export class ClawManager {
       collisionFilter: { group },
     });
     clawShoulderLeft.setDepth(DepthLayers.Claw + 1);
-
-    // Get the dimensions of the shoulder sprite to calculate the pivot point
-    const shoulderLeftHeight = clawShoulderLeft.height;
-    const shoulderLeftWidth = clawShoulderLeft.width;
-
     this.scene.matter.add.constraint(clawCenter.body as MatterJS.BodyType, clawShoulderLeft.body as MatterJS.BodyType, 0, 1, {
-      pointA: { x: 0, y: -centerHeight / 2 + shoulderLeftWidth / 2 }, // Attach point on the claw center (adjust as needed)
-      pointB: { x: 0, y: -shoulderLeftHeight / 2 }, // Top middle point of the shoulder
+      pointA: { x: 0, y: -centerHeight / 2 + clawShoulderLeft.width / 2 }, // Attach point on the claw center (adjust as needed)
+      pointB: { x: 0, y: -clawShoulderLeft.height / 2 }, // Top middle point of the shoulder
       damping: 0.5,
     });
-
     // Set angle using Phaser's Matter interface
     this.scene.matter.body.setAngle(clawShoulderLeft.body as MatterJS.BodyType, Phaser.Math.DegToRad(100));
     // Lock branch rotation initially
@@ -151,21 +145,36 @@ export class ClawManager {
       collisionFilter: { group },
     });
     clawShoulderRight.setDepth(DepthLayers.Claw + 1);
-
-    // Get the dimensions of the shoulder sprite to calculate the pivot point
-    const shoulderRightHeight = clawShoulderRight.height;
-    const shoulderRightWidth = clawShoulderRight.width;
-
     this.scene.matter.add.constraint(clawCenter.body as MatterJS.BodyType, clawShoulderRight.body as MatterJS.BodyType, 0, 1, {
-      pointA: { x: 0, y: -centerHeight / 2 + shoulderRightWidth / 2 }, // Attach point on the claw center (adjust as needed)
-      pointB: { x: 0, y: -shoulderRightHeight / 2 }, // Top middle point of the shoulder
+      pointA: { x: 0, y: -centerHeight / 2 + clawShoulderRight.width / 2 }, // Attach point on the claw center (adjust as needed)
+      pointB: { x: 0, y: -clawShoulderRight.height / 2 }, // Top middle point of the shoulder
       damping: 0.5,
     });
-
     // Set angle using Phaser's Matter interface
     this.scene.matter.body.setAngle(clawShoulderRight.body as MatterJS.BodyType, Phaser.Math.DegToRad(-100));
     // Lock branch rotation initially
     this.scene.matter.body.setInertia(clawShoulderRight.body as MatterJS.BodyType, Infinity);
+
+    // Claw Hands
+    // Claw Hand Left
+    const clawHandLeft = this.scene.matter.add.sprite(anchorX - 50, y + 20, "clawParts", "claw_hand_left.png", {
+      shape: clawPhysics.claw_hand_left,
+      mass: 0.2,
+      frictionAir: 0.01,
+      friction: 0.2,
+      restitution: 0.1,
+      collisionFilter: { group },
+    });
+    clawHandLeft.setDepth(DepthLayers.Claw);
+    this.scene.matter.add.constraint(clawShoulderLeft.body as MatterJS.BodyType, clawHandLeft.body as MatterJS.BodyType, 0, 1, {
+      pointA: { x: -clawShoulderLeft.height / 2, y: 0 },
+      pointB: { x: 0, y: -clawHandLeft.height / 2 + 20 },
+      damping: 0.5,
+    });
+    // Set angle using Phaser's Matter interface
+    this.scene.matter.body.setAngle(clawHandLeft.body as MatterJS.BodyType, Phaser.Math.DegToRad(0));
+    // Lock branch rotation initially
+    this.scene.matter.body.setInertia(clawHandLeft.body as MatterJS.BodyType, Infinity);
   }
 
   public move(moveFactor: number): void {
