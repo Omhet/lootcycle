@@ -133,7 +133,7 @@ export class Game extends Scene {
 
     // Add the space key for toggling claw open/closed
     this.input.keyboard?.on("keydown-SPACE", () => {
-      this.clawManager.startGrabSequence();
+      this.clawManager.toggleClaw();
     });
 
     // Generate the initial junk portion

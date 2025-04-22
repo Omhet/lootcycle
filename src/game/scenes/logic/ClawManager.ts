@@ -186,19 +186,23 @@ export class ClawManager {
   /**
    * Initiates the automated claw grab sequence
    */
-  public startGrabSequence(): void {
-    // Only allow starting a grab sequence when in IDLE state and claw is open
-    if (this.state !== ClawState.IDLE || !this.isOpen) {
-      return;
+  public toggleClaw(): void {
+    // If in IDLE state, toggle between opening and closing the claw
+    if (this.state === ClawState.IDLE) {
+      if (this.isOpen) {
+        // Start the descent and grab sequence
+        this.state = ClawState.DESCENDING;
+
+        // Set up collision detection for the claw parts
+        this.setupCollisionDetection();
+
+        console.log("Claw grab sequence started - descending");
+      } else {
+        // Open the claw to release any caught items
+        this.openClaw();
+        console.log("Opening claw to release items");
+      }
     }
-
-    // Start the descent
-    this.state = ClawState.DESCENDING;
-
-    // Set up collision detection for the claw parts
-    this.setupCollisionDetection();
-
-    console.log("Claw grab sequence started - descending");
   }
 
   /**
@@ -266,6 +270,40 @@ export class ClawManager {
 
     // Create a virtual object to tween and use its value to set the pincer angles
     const animationObject = { angle: this.OPEN_ANGLE };
+
+    this.angleAnimationTween = this.scene.tweens.add({
+      targets: animationObject,
+      angle: this.targetAngle,
+      duration: 500, // Animation duration in ms
+      ease: "Power2",
+      onUpdate: () => {
+        if (this.leftPincer && this.rightPincer) {
+          // Update the left pincer angle
+          this.scene.matter.body.setAngle(this.leftPincer.body as MatterJS.BodyType, Phaser.Math.DegToRad(animationObject.angle));
+
+          // Update the right pincer angle (opposite direction)
+          this.scene.matter.body.setAngle(this.rightPincer.body as MatterJS.BodyType, Phaser.Math.DegToRad(-animationObject.angle));
+        }
+      },
+      onComplete: () => {
+        this.angleAnimationTween = null;
+      },
+    });
+  }
+
+  /**
+   * Opens the claw to release any caught items
+   */
+  private openClaw(): void {
+    if (this.angleAnimationTween) {
+      this.angleAnimationTween.stop();
+    }
+
+    this.isOpen = true;
+    this.targetAngle = this.OPEN_ANGLE;
+
+    // Create a virtual object to tween and use its value to set the pincer angles
+    const animationObject = { angle: this.CLOSED_ANGLE };
 
     this.angleAnimationTween = this.scene.tweens.add({
       targets: animationObject,
