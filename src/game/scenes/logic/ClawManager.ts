@@ -109,6 +109,30 @@ export class ClawManager {
       pointB: { x: 0, y: -linkHeight / 4 },
       damping: 0.5,
     });
+
+    // Claw Pincers (Pincer is Shoulder + Hand)
+
+    // Claw Shoulders
+    const clawShoulderLeft = this.scene.matter.add.sprite(anchorX - 50, y, "clawParts", "claw_shoulder_left.png", {
+      shape: clawPhysics.claw_shoulder_left,
+      mass: 0.3,
+      frictionAir: 0.01,
+      friction: 0.2,
+      restitution: 0.1,
+      collisionFilter: { group },
+    });
+    clawShoulderLeft.setDepth(DepthLayers.Claw + 3);
+    this.scene.matter.add.joint(clawCenter.body as MatterJS.BodyType, clawShoulderLeft.body as MatterJS.BodyType, 0, 1, {
+      //   pointA: { x: -50, y: 0 },
+      //   pointB: { x: 50, y: 0 },
+      damping: 0.5,
+    });
+
+    // Set angle using Phaser's Matter interface
+    this.scene.matter.body.setAngle(clawShoulderLeft.body as MatterJS.BodyType, Phaser.Math.DegToRad(-45));
+
+    // Lock branch rotation initially
+    this.scene.matter.body.setInertia(clawShoulderLeft.body as MatterJS.BodyType, Infinity);
   }
 
   public move(moveFactor: number): void {

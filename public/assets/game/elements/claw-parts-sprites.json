@@ -4,13 +4,13 @@
 			"image": "claw-parts-sprites.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 182,
-				"h": 99
+				"w": 105,
+				"h": 252
 			},
 			"scale": 1,
 			"frames": [
 				{
-					"filename": "claw_hand.png",
+					"filename": "claw_hand_left.png",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -31,24 +31,45 @@
 					}
 				},
 				{
-					"filename": "claw_chain_front.png",
+					"filename": "claw_hand_right.png",
 					"rotated": false,
-					"trimmed": false,
+					"trimmed": true,
 					"sourceSize": {
-						"w": 45,
-						"h": 50
+						"w": 53,
+						"h": 96
 					},
 					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 45,
-						"h": 50
+						"x": 3,
+						"y": 1,
+						"w": 50,
+						"h": 94
 					},
 					"frame": {
 						"x": 53,
 						"y": 1,
-						"w": 45,
-						"h": 50
+						"w": 50,
+						"h": 94
+					}
+				},
+				{
+					"filename": "claw_shoulder_left.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 37,
+						"h": 95
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 3,
+						"w": 35,
+						"h": 92
+					},
+					"frame": {
+						"x": 1,
+						"y": 97,
+						"w": 35,
+						"h": 92
 					}
 				},
 				{
@@ -66,10 +87,52 @@
 						"h": 60
 					},
 					"frame": {
-						"x": 100,
-						"y": 1,
+						"x": 1,
+						"y": 191,
 						"w": 44,
 						"h": 60
+					}
+				},
+				{
+					"filename": "claw_shoulder_right.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 37,
+						"h": 95
+					},
+					"spriteSourceSize": {
+						"x": 2,
+						"y": 3,
+						"w": 35,
+						"h": 92
+					},
+					"frame": {
+						"x": 38,
+						"y": 97,
+						"w": 35,
+						"h": 92
+					}
+				},
+				{
+					"filename": "claw_chain_front.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 45,
+						"h": 49
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 45,
+						"h": 49
+					},
+					"frame": {
+						"x": 47,
+						"y": 191,
+						"w": 45,
+						"h": 49
 					}
 				},
 				{
@@ -87,31 +150,10 @@
 						"h": 45
 					},
 					"frame": {
-						"x": 53,
-						"y": 53,
+						"x": 75,
+						"y": 97,
 						"w": 29,
 						"h": 45
-					}
-				},
-				{
-					"filename": "claw_shoulder.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 37,
-						"h": 95
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 3,
-						"w": 35,
-						"h": 92
-					},
-					"frame": {
-						"x": 146,
-						"y": 1,
-						"w": 35,
-						"h": 92
 					}
 				}
 			]
@@ -120,6 +162,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:9c537840157c992968f58c1186113d74:550337a577ad5a09b1fcc2a041de06f4:bfa0d66371c339e4de03f6820181cb2d$"
+		"smartupdate": "$TexturePacker:SmartUpdate:b8ac820ef6d1cb6221187ee6544e6437:b237cacd8f9cc03dc368e9fe9b87bbb8:bfa0d66371c339e4de03f6820181cb2d$"
 	}
 }
