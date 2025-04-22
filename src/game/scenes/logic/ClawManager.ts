@@ -15,7 +15,7 @@ export class ClawManager {
   private readonly CONTAINER_ZONE_END_X = 300;
 
   private readonly CLAW_MOVEMENT_VERTICAL_ZONE_START = 100;
-  private readonly CLAW_MOVEMENT_VERTICAL_ZONE_END = 100;
+  private readonly CLAW_MOVEMENT_VERTICAL_ZONE_END = 400;
 
   private speed = 150;
 
@@ -120,7 +120,7 @@ export class ClawManager {
 
     this.scene.matter.body.setInertia(clawCenter.body as MatterJS.BodyType, Infinity);
 
-    const deg = 10;
+    const deg = 20;
     // Claw Pincers
     // Claw Pincer Left
     const clawPincerLeft = this.scene.matter.add.sprite(anchorX - 50, y, "clawParts", "claw_pincer_left.png", {
