@@ -8,9 +8,6 @@ export class ClawManager {
   private anchor: Phaser.Physics.Matter.Image | null = null;
 
   // Constants for configuration
-  private readonly ANCHOR_X_OFFSET = 350; // Relative to screen center
-  private readonly ANCHOR_Y = 100; // Fixed Y position for the top anchor
-
   private readonly CONTAINER_ZONE_START_X = 100;
   private readonly CONTAINER_ZONE_END_X = 300;
 
@@ -29,8 +26,9 @@ export class ClawManager {
    */
   private createClaw(): void {
     const centerX = this.scene.cameras.main.width / 2;
-    const anchorX = centerX + this.ANCHOR_X_OFFSET;
-    const anchorY = this.ANCHOR_Y;
+    const anchorX =
+      centerX + this.CONTAINER_ZONE_START_X + (this.scene.cameras.main.width - this.CONTAINER_ZONE_END_X - (centerX + this.CONTAINER_ZONE_START_X)) / 2;
+    const anchorY = this.CLAW_MOVEMENT_VERTICAL_ZONE_START;
 
     const clawPhysicsShapes = this.scene.cache.json.get("clawPhysics");
     if (!clawPhysicsShapes) {
