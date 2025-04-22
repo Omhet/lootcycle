@@ -110,12 +110,14 @@ export class ClawManager {
       damping: 0.5,
     });
 
-    // Claw Pincers (Pincer is Shoulder + Hand)
+    this.scene.matter.body.setInertia(clawCenter.body as MatterJS.BodyType, Infinity);
+
+    const centerHeight = clawCenter.height;
 
     // Claw Shoulders
     const clawShoulderLeft = this.scene.matter.add.sprite(anchorX - 50, y, "clawParts", "claw_shoulder_left.png", {
       shape: clawPhysics.claw_shoulder_left,
-      mass: 0,
+      mass: 0.3,
       frictionAir: 0.01,
       friction: 0.2,
       restitution: 0.1,
@@ -125,18 +127,19 @@ export class ClawManager {
 
     // Get the dimensions of the shoulder sprite to calculate the pivot point
     const shoulderHeight = clawShoulderLeft.height;
+    const shoulderWidth = clawShoulderLeft.width;
 
     // Calculate pivot points for better attachment
     // pointA is on the claw center (where to attach)
     // pointB is on the shoulder (top middle point of the shoulder)
-    this.scene.matter.add.joint(clawCenter.body as MatterJS.BodyType, clawShoulderLeft.body as MatterJS.BodyType, 0, 1, {
-      pointA: { x: -20, y: 0 }, // Attach point on the claw center (adjust as needed)
+    this.scene.matter.add.constraint(clawCenter.body as MatterJS.BodyType, clawShoulderLeft.body as MatterJS.BodyType, 0, 1, {
+      pointA: { x: 0, y: -centerHeight / 2 + shoulderWidth / 2 }, // Attach point on the claw center (adjust as needed)
       pointB: { x: 0, y: -shoulderHeight / 2 }, // Top middle point of the shoulder
       damping: 0.5,
     });
 
     // Set angle using Phaser's Matter interface
-    this.scene.matter.body.setAngle(clawShoulderLeft.body as MatterJS.BodyType, Phaser.Math.DegToRad(-45));
+    this.scene.matter.body.setAngle(clawShoulderLeft.body as MatterJS.BodyType, Phaser.Math.DegToRad(100));
 
     // Lock branch rotation initially
     this.scene.matter.body.setInertia(clawShoulderLeft.body as MatterJS.BodyType, Infinity);
