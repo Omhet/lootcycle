@@ -15,8 +15,8 @@ export class ClawManager {
   private angleAnimationTween: Phaser.Tweens.Tween | null = null;
 
   // Constants for configuration
-  private readonly CONTAINER_ZONE_START_X = 100;
-  private readonly CONTAINER_ZONE_END_X = 300;
+  private readonly CLAW_MOVEMENT_HORIZONTAL_ZONE_START = 275;
+  private readonly CLAW_MOVEMENT_HORIZONTAL_ZONE_END = 275;
 
   private readonly CLAW_MOVEMENT_VERTICAL_ZONE_START = 100;
   private readonly CLAW_MOVEMENT_VERTICAL_ZONE_END = 400;
@@ -33,8 +33,7 @@ export class ClawManager {
    */
   private createClaw(): void {
     const centerX = this.scene.cameras.main.width / 2;
-    const anchorX =
-      centerX + this.CONTAINER_ZONE_START_X + (this.scene.cameras.main.width - this.CONTAINER_ZONE_END_X - (centerX + this.CONTAINER_ZONE_START_X)) / 2;
+    const anchorX = centerX;
     const anchorY = this.CLAW_MOVEMENT_VERTICAL_ZONE_START;
 
     const clawPhysicsShapes = this.scene.cache.json.get("clawPhysics");
@@ -205,7 +204,7 @@ export class ClawManager {
       // For static bodies, we need to update position directly
       const newX = this.anchor.x + moveFactor * this.speed * (1 / 60); // Assuming 60fps
 
-      if (newX >= this.scene.cameras.main.width / 2 + this.CONTAINER_ZONE_START_X && newX <= this.scene.cameras.main.width - this.CONTAINER_ZONE_END_X) {
+      if (newX >= this.CLAW_MOVEMENT_HORIZONTAL_ZONE_START && newX <= this.scene.cameras.main.width - this.CLAW_MOVEMENT_HORIZONTAL_ZONE_END) {
         this.scene.matter.body.setPosition(this.anchor.body as MatterJS.BodyType, {
           x: newX,
           y: this.anchor.y,
