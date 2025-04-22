@@ -89,6 +89,9 @@ export class JunkPileManager {
         },
       });
 
+      // Make junk two times smaller
+      physicsBody.setScale(0.7);
+
       // Set the label through body.parts[0] which is the main body part
       if (physicsBody.body && (physicsBody.body as any).parts && (physicsBody.body as any).parts.length > 0) {
         (physicsBody.body as any).parts[0].label = junkPiece.id;
@@ -133,7 +136,7 @@ export class JunkPileManager {
     }
 
     // For demonstration, using hardcoded values with found recipe IDs
-    const firstPortionSize = 10;
+    const firstPortionSize = 30;
     const qualityChanceLevel = 1;
     const rarityChanceLevel = 1;
 
@@ -147,7 +150,7 @@ export class JunkPileManager {
     // Spawn each junk item with a delay to create a sequential dropping effect
     newJunkPortion.forEach((junkPiece, index) => {
       // Random delay between 300-500ms for each item
-      const delay = 300 + Math.random() * 200;
+      const delay = 100 + Math.random() * 200;
 
       // Create a timer for spawning this item
       const timer = this.scene.time.addEvent({
