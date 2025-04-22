@@ -115,16 +115,23 @@ export class ClawManager {
     // Claw Shoulders
     const clawShoulderLeft = this.scene.matter.add.sprite(anchorX - 50, y, "clawParts", "claw_shoulder_left.png", {
       shape: clawPhysics.claw_shoulder_left,
-      mass: 0.3,
+      mass: 0,
       frictionAir: 0.01,
       friction: 0.2,
       restitution: 0.1,
       collisionFilter: { group },
     });
-    clawShoulderLeft.setDepth(DepthLayers.Claw + 3);
+    clawShoulderLeft.setDepth(DepthLayers.Claw + 1);
+
+    // Get the dimensions of the shoulder sprite to calculate the pivot point
+    const shoulderHeight = clawShoulderLeft.height;
+
+    // Calculate pivot points for better attachment
+    // pointA is on the claw center (where to attach)
+    // pointB is on the shoulder (top middle point of the shoulder)
     this.scene.matter.add.joint(clawCenter.body as MatterJS.BodyType, clawShoulderLeft.body as MatterJS.BodyType, 0, 1, {
-      //   pointA: { x: -50, y: 0 },
-      //   pointB: { x: 50, y: 0 },
+      pointA: { x: -20, y: 0 }, // Attach point on the claw center (adjust as needed)
+      pointB: { x: 0, y: -shoulderHeight / 2 }, // Top middle point of the shoulder
       damping: 0.5,
     });
 
