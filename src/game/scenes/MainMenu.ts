@@ -172,8 +172,8 @@ export class MainMenu extends Scene {
   public async downloadRecipeImages(): Promise<void> {
     console.log("Starting recipe image generation for all combinations...");
     const allRecipes = Object.values(lootConfig.recipeItems).flat();
-    const tempRTWidth = 512;
-    const tempRTHeight = 512;
+    const tempRTWidth = 720;
+    const tempRTHeight = 720;
 
     for (const recipe of allRecipes) {
       console.log(`Processing recipe: ${recipe.id}`);
