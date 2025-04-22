@@ -76,6 +76,7 @@ export class JunkPileManager {
         frictionAir: 0.001, // Air friction
         friction: 0.01, // Surface friction
         sleepThreshold: 60,
+        chamfer: 10,
       });
 
       // Set the label through body.parts[0] which is the main body part
