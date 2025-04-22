@@ -42,12 +42,6 @@ export const RecipesTab = ({ recipes, balance, onBuy }: RecipesTabProps) => {
                 ))}
             </div>
             <div className={s.recipeDetailsContainer}>
-                {/* <div className={s.imageContainer}>
-                            <img
-                                className={s.image}
-                                src={selectedItem.imageUrl}
-                            />
-                        </div> */}
                 <div className={s.recipeTitleContainer}>
                     <span className={s.recipeName}>{selectedItem.name}</span>
                     <span className={s.recipeCategory}>
@@ -61,15 +55,24 @@ export const RecipesTab = ({ recipes, balance, onBuy }: RecipesTabProps) => {
                     You'll make {selectedItem.priceForCraftedBaseItem} gold if
                     you craft the basic configuration
                 </span>
-                <button
-                    className={s.button}
-                    onClick={() => onBuy(selectedItem.id)}
-                    disabled={selectedItem.price > balance}
-                >
-                    {selectedItem.alreadyBought
-                        ? "Already have it"
-                        : `Buy ${selectedItem.price}`}
-                </button>
+                {selectedItem.alreadyBought && (
+                    <span className={s.buttonReplacement}>Already have it</span>
+                )}
+                {!selectedItem.alreadyBought &&
+                    selectedItem.price > balance && (
+                        <span className={s.buttonReplacement}>
+                            Not enough gold
+                        </span>
+                    )}
+                {!selectedItem.alreadyBought &&
+                    selectedItem.price <= balance && (
+                        <button
+                            className={s.button}
+                            onClick={() => onBuy(selectedItem.id)}
+                        >
+                            Buy {selectedItem.price}
+                        </button>
+                    )}
             </div>
         </div>
     );
