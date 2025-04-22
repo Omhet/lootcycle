@@ -69,11 +69,16 @@ export class Game extends Scene {
     this.pipeManager = new PipeManager(this);
     this.containerManager = new ContainerManager(this);
     this.furnaceManager = new FurnaceManager(this);
+    // Initialize junkPileManager before cauldronManager since cauldron needs it
+    this.junkPileManager = new JunkPileManager(this);
+    // Pass junkPileManager reference to cauldronManager
     this.cauldronManager = new CauldronManager(this);
     this.intakeManager = new IntakeManager(this);
-    this.junkPileManager = new JunkPileManager(this);
     this.craftedItemManager = new CraftedItemManager(this);
     this.clawManager = new ClawManager(this); // Instantiate ClawManager
+
+    // Store junkPileManager in registry for easy access (not needed for cauldron but may be useful elsewhere)
+    this.registry.set("junkPileManager", this.junkPileManager);
 
     // Set up physics world (Remains in Scene)
     this.matter.world.setBounds(0, 0, this.cameras.main.width, this.cameras.main.height);
@@ -153,18 +158,40 @@ export class Game extends Scene {
   private craftAndRenderItem(): void {
     this.craftedItemManager.clearDisplay();
 
-    const mockJunkPieces: any[] = [];
-    const mockTemperature = 50;
+    // Get junk pieces currently in the cauldron
+    const junkItemsInCauldron = this.cauldronManager.getJunkPiecesInside();
+    const junkPieces = junkItemsInCauldron.map((item) => item.junkPiece);
+
+    // Get current temperature from the furnace (or use default value)
+    // const temperature = this.furnaceManager.getCurrentTemperature() || 50;
+    const temperature = 50;
+
+    // Check if we have junk pieces to craft with
+    if (junkPieces.length === 0) {
+      console.log("No junk pieces found in cauldron - cannot craft item");
+      EventBus.emit("crafting-failure", { reason: "No materials in cauldron" });
+      return;
+    }
+
+    console.log(`Attempting to craft with ${junkPieces.length} junk pieces at ${temperature} temperature`);
 
     const craftResult = craftLootItem({
-      lootItemRecipeId: "short_sword",
-      junkPieces: mockJunkPieces,
-      temperature: mockTemperature,
+      lootItemRecipeId: "short_sword", // In the future, this could be determined by the junk pieces
+      junkPieces: junkPieces,
+      temperature: temperature,
       config: lootConfig,
     });
 
     if (craftResult.success && craftResult.item) {
       this.craftedItemManager.displayItem(craftResult.item);
+
+      // Clear the junk pieces from the cauldron tracking (they're consumed in crafting)
+      // Note: We're not physically removing the objects here, that would be a separate feature
+      // potentially with an animation showing them being consumed
+      this.cauldronManager.clearJunkPieces();
+
+      // Emit an event for successful crafting
+      EventBus.emit("crafting-success", craftResult.item);
     } else if (craftResult.failure) {
       // Emit an event when crafting fails
       EventBus.emit("crafting-failure", craftResult.failure);

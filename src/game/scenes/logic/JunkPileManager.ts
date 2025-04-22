@@ -95,6 +95,11 @@ export class JunkPileManager {
       // Set the label through body.parts[0] which is the main body part
       if (physicsBody.body && (physicsBody.body as any).parts && (physicsBody.body as any).parts.length > 0) {
         (physicsBody.body as any).parts[0].label = junkPiece.id;
+      } else {
+        // If no parts array exists, set the label directly on the body
+        if (physicsBody.body) {
+          (physicsBody.body as any).label = junkPiece.id;
+        }
       }
 
       // Apply initial velocity with slight randomization to further prevent clumping
