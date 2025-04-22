@@ -64,6 +64,7 @@ export class ClawManager {
       let link = this.scene.matter.add.sprite(anchorX, y, "clawParts", isEven ? "claw_chain_front.png" : "claw_chain_side.png", {
         shape: isEven ? clawPhysics.claw_chain_front : clawPhysics.claw_chain_side,
         mass: 0.1, // Increase mass slightly for more stability
+        inverseMass: 10,
         frictionAir: 0.05, // Increase air friction to reduce movement
         friction: 0.2, // Increase surface friction
         restitution: 0.1, // Low restitution (bounciness)
@@ -107,7 +108,6 @@ export class ClawManager {
     // Claw Center
     const clawCenter = this.scene.matter.add.sprite(anchorX, y, "clawParts", "claw_center.png", {
       shape: clawPhysics.claw_center,
-      mass: 0.2,
       frictionAir: 0.01,
       friction: 0.2,
       restitution: 0.1,
@@ -129,7 +129,6 @@ export class ClawManager {
     // Claw Pincer Left
     this.leftPincer = this.scene.matter.add.sprite(anchorX - 50, y, "clawParts", "claw_pincer_left.png", {
       shape: clawPhysics.claw_pincer_left,
-      mass: 0.3,
       frictionAir: 0.01,
       friction: 0.2,
       restitution: 0.1,
@@ -147,7 +146,6 @@ export class ClawManager {
     // Claw Pincer Right
     this.rightPincer = this.scene.matter.add.sprite(anchorX + 50, y, "clawParts", "claw_pincer_right.png", {
       shape: clawPhysics.claw_pincer_right,
-      mass: 0.3,
       frictionAir: 0.01,
       friction: 0.2,
       restitution: 0.1,
