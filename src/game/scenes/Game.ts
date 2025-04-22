@@ -132,11 +132,19 @@ export class Game extends Scene {
   update() {
     // Claw anchor control
     if (this.cursors?.left.isDown) {
-      this.clawManager.move(-1);
+      this.clawManager.moveHorizontal(-1);
     } else if (this.cursors?.right.isDown) {
-      this.clawManager.move(1);
+      this.clawManager.moveHorizontal(1);
     } else {
-      this.clawManager.move(0);
+      this.clawManager.moveHorizontal(0);
+    }
+
+    if (this.cursors?.down.isDown) {
+      this.clawManager.moveVertical(1);
+    } else if (this.cursors?.up.isDown) {
+      this.clawManager.moveVertical(-1);
+    } else {
+      this.clawManager.moveVertical(0);
     }
   }
 

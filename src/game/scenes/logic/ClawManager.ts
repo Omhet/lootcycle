@@ -14,6 +14,9 @@ export class ClawManager {
   private readonly CONTAINER_ZONE_START_X = 100;
   private readonly CONTAINER_ZONE_END_X = 300;
 
+  private readonly CLAW_MOVEMENT_VERTICAL_ZONE_START = 100;
+  private readonly CLAW_MOVEMENT_VERTICAL_ZONE_END = 100;
+
   private speed = 150;
 
   constructor(scene: Scene) {
@@ -202,7 +205,7 @@ export class ClawManager {
     this.scene.matter.body.setInertia(clawHandRight.body as MatterJS.BodyType, Infinity);
   }
 
-  public move(moveFactor: number): void {
+  public moveHorizontal(moveFactor: number): void {
     // Since the anchor is now static, we need to handle position changes directly
     if (this.anchor && this.anchor.body) {
       // For static bodies, we need to update position directly
@@ -212,6 +215,20 @@ export class ClawManager {
         this.scene.matter.body.setPosition(this.anchor.body as MatterJS.BodyType, {
           x: newX,
           y: this.anchor.y,
+        });
+      }
+    }
+  }
+
+  public moveVertical(moveFactor: number): void {
+    // Since the anchor is now static, we need to handle position changes directly
+    if (this.anchor && this.anchor.body) {
+      const newY = this.anchor.y + moveFactor * this.speed * (1 / 60);
+
+      if (newY >= this.CLAW_MOVEMENT_VERTICAL_ZONE_START && newY <= this.scene.cameras.main.height - this.CLAW_MOVEMENT_VERTICAL_ZONE_END) {
+        this.scene.matter.body.setPosition(this.anchor.body as MatterJS.BodyType, {
+          x: this.anchor.x,
+          y: newY,
         });
       }
     }
