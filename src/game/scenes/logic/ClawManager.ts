@@ -34,7 +34,7 @@ export class ClawManager {
   private readonly CLAW_MOVEMENT_HORIZONTAL_ZONE_END = 275;
 
   private readonly CLAW_MOVEMENT_VERTICAL_ZONE_START = 200;
-  private readonly CLAW_MOVEMENT_VERTICAL_ZONE_END = 400;
+  private readonly CLAW_MOVEMENT_VERTICAL_ZONE_END = 350;
 
   private speed = 150;
 

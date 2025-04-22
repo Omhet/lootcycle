@@ -81,19 +81,23 @@ export class CauldronManager {
           (obj) => obj instanceof Phaser.Physics.Matter.Sprite || obj instanceof Phaser.Physics.Matter.Image
         ) as Array<Phaser.Physics.Matter.Sprite | Phaser.Physics.Matter.Image>;
 
-        const matchingJunkItem = junkItems.find((item) => item.body === junkBody);
+        const matchingJunkItem = junkItems.find((item) => item.body === junkBody.parent);
 
         if (matchingJunkItem) {
           // Get the junk piece ID from the body's label
-          const junkId = junkBody.label;
+          const junkId = junkBody.label || junkBody.parent.label;
+          console.log(junkId);
 
           // Find the corresponding JunkPileItem
           const junkPile = (this.scene.registry.get("junkPileManager") as JunkPileManager)?.getJunkPile() || [];
           const junkPileItem = junkPile.find((item) => item.body === matchingJunkItem);
+          console.log(!this.isJunkAlreadyInside(junkPileItem!));
 
           if (junkPileItem && !this.isJunkAlreadyInside(junkPileItem)) {
             this.junkPiecesInside.push(junkPileItem);
             console.log(`Junk piece ${junkId} entered cauldron. Total pieces inside: ${this.junkPiecesInside.length}`);
+          } else {
+            console.log(`Junk piece ${junkId} is already inside the cauldron or not found in the pile.`);
           }
         }
       }

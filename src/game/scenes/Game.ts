@@ -69,9 +69,7 @@ export class Game extends Scene {
     this.pipeManager = new PipeManager(this);
     this.containerManager = new ContainerManager(this);
     this.furnaceManager = new FurnaceManager(this);
-    // Initialize junkPileManager before cauldronManager since cauldron needs it
     this.junkPileManager = new JunkPileManager(this);
-    // Pass junkPileManager reference to cauldronManager
     this.cauldronManager = new CauldronManager(this);
     this.intakeManager = new IntakeManager(this);
     this.craftedItemManager = new CraftedItemManager(this);
