@@ -25,9 +25,9 @@ export enum DepthLayers {
   SpawnedObjects = 30,
   JunkPile = 30, // Same depth as SpawnedObjects for consistency
   PipeFront = 40,
+  BackgroundDecor = 42,
   Claw = 45,
   BackgroundFrame = 50,
-  BackgroundDecor = 60,
   Ground = 70,
   UI = 100,
 }
