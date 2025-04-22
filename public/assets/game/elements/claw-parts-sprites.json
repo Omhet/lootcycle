@@ -4,72 +4,51 @@
 			"image": "claw-parts-sprites.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 105,
-				"h": 252
+				"w": 308,
+				"h": 113
 			},
 			"scale": 1,
 			"frames": [
 				{
-					"filename": "claw_hand_left.png",
+					"filename": "claw_pincer_left.png",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
-						"w": 53,
-						"h": 96
+						"w": 114,
+						"h": 109
 					},
 					"spriteSourceSize": {
-						"x": 0,
-						"y": 1,
-						"w": 50,
-						"h": 94
+						"x": 1,
+						"y": 0,
+						"w": 113,
+						"h": 107
 					},
 					"frame": {
 						"x": 1,
 						"y": 1,
-						"w": 50,
-						"h": 94
+						"w": 113,
+						"h": 107
 					}
 				},
 				{
-					"filename": "claw_hand_right.png",
+					"filename": "claw_pincer_right.png",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
-						"w": 53,
-						"h": 96
-					},
-					"spriteSourceSize": {
-						"x": 3,
-						"y": 1,
-						"w": 50,
-						"h": 94
-					},
-					"frame": {
-						"x": 53,
-						"y": 1,
-						"w": 50,
-						"h": 94
-					}
-				},
-				{
-					"filename": "claw_shoulder_left.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 37,
-						"h": 95
+						"w": 114,
+						"h": 109
 					},
 					"spriteSourceSize": {
 						"x": 0,
-						"y": 3,
-						"w": 35,
-						"h": 92
+						"y": 0,
+						"w": 113,
+						"h": 107
 					},
 					"frame": {
-						"x": 1,
-						"y": 97,
-						"w": 35,
-						"h": 92
+						"x": 116,
+						"y": 1,
+						"w": 113,
+						"h": 107
 					}
 				},
 				{
@@ -77,7 +56,7 @@
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
-						"w": 57,
+						"w": 58,
 						"h": 60
 					},
 					"spriteSourceSize": {
@@ -87,31 +66,10 @@
 						"h": 60
 					},
 					"frame": {
-						"x": 1,
-						"y": 191,
+						"x": 231,
+						"y": 1,
 						"w": 44,
 						"h": 60
-					}
-				},
-				{
-					"filename": "claw_shoulder_right.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 37,
-						"h": 95
-					},
-					"spriteSourceSize": {
-						"x": 2,
-						"y": 3,
-						"w": 35,
-						"h": 92
-					},
-					"frame": {
-						"x": 38,
-						"y": 97,
-						"w": 35,
-						"h": 92
 					}
 				},
 				{
@@ -119,19 +77,19 @@
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
-						"w": 45,
+						"w": 46,
 						"h": 49
 					},
 					"spriteSourceSize": {
 						"x": 0,
 						"y": 0,
-						"w": 45,
+						"w": 46,
 						"h": 49
 					},
 					"frame": {
-						"x": 47,
-						"y": 191,
-						"w": 45,
+						"x": 231,
+						"y": 63,
+						"w": 46,
 						"h": 49
 					}
 				},
@@ -140,19 +98,19 @@
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
-						"w": 29,
+						"w": 30,
 						"h": 45
 					},
 					"spriteSourceSize": {
 						"x": 0,
 						"y": 0,
-						"w": 29,
+						"w": 30,
 						"h": 45
 					},
 					"frame": {
-						"x": 75,
-						"y": 97,
-						"w": 29,
+						"x": 277,
+						"y": 1,
+						"w": 30,
 						"h": 45
 					}
 				}
@@ -162,6 +120,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:b8ac820ef6d1cb6221187ee6544e6437:b237cacd8f9cc03dc368e9fe9b87bbb8:bfa0d66371c339e4de03f6820181cb2d$"
+		"smartupdate": "$TexturePacker:SmartUpdate:82ed4511c5c51c62c2801b13defebd04:e94e5b950ff0e6745ae278261b5e0829:bfa0d66371c339e4de03f6820181cb2d$"
 	}
 }

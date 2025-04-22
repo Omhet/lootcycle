@@ -120,89 +120,43 @@ export class ClawManager {
 
     this.scene.matter.body.setInertia(clawCenter.body as MatterJS.BodyType, Infinity);
 
-    const centerHeight = clawCenter.height;
-
-    // Claw Shoulders
-    // Claw Shoulder Left
-    const clawShoulderLeft = this.scene.matter.add.sprite(anchorX - 50, y, "clawParts", "claw_shoulder_left.png", {
-      shape: clawPhysics.claw_shoulder_left,
+    const deg = 10;
+    // Claw Pincers
+    // Claw Pincer Left
+    const clawPincerLeft = this.scene.matter.add.sprite(anchorX - 50, y, "clawParts", "claw_pincer_left.png", {
+      shape: clawPhysics.claw_pincer_left,
       mass: 0.3,
       frictionAir: 0.01,
       friction: 0.2,
       restitution: 0.1,
       collisionFilter: { group },
     });
-    clawShoulderLeft.setDepth(DepthLayers.Claw + 1);
-    this.scene.matter.add.constraint(clawCenter.body as MatterJS.BodyType, clawShoulderLeft.body as MatterJS.BodyType, 0, 1, {
-      pointA: { x: 0, y: -centerHeight / 2 + clawShoulderLeft.width / 2 }, // Attach point on the claw center (adjust as needed)
-      pointB: { x: 0, y: -clawShoulderLeft.height / 2 }, // Top middle point of the shoulder
+    clawPincerLeft.setDepth(DepthLayers.Claw + 1);
+    this.scene.matter.add.constraint(clawCenter.body as MatterJS.BodyType, clawPincerLeft.body as MatterJS.BodyType, 0, 1, {
+      pointA: { x: 0, y: 10 },
+      pointB: { x: clawPincerLeft.width / 2, y: 0 },
       damping: 0.5,
     });
-    // Set angle using Phaser's Matter interface
-    this.scene.matter.body.setAngle(clawShoulderLeft.body as MatterJS.BodyType, Phaser.Math.DegToRad(100));
-    // Lock rotation initially
-    this.scene.matter.body.setInertia(clawShoulderLeft.body as MatterJS.BodyType, Infinity);
+    this.scene.matter.body.setAngle(clawPincerLeft.body as MatterJS.BodyType, Phaser.Math.DegToRad(deg));
+    this.scene.matter.body.setInertia(clawPincerLeft.body as MatterJS.BodyType, Infinity);
 
-    // Claw Shoulder Right
-    const clawShoulderRight = this.scene.matter.add.sprite(anchorX + 50, y, "clawParts", "claw_shoulder_right.png", {
-      shape: clawPhysics.claw_shoulder_right,
+    // Claw Pincer Right
+    const clawPincerRight = this.scene.matter.add.sprite(anchorX + 50, y, "clawParts", "claw_pincer_right.png", {
+      shape: clawPhysics.claw_pincer_right,
       mass: 0.3,
       frictionAir: 0.01,
       friction: 0.2,
       restitution: 0.1,
       collisionFilter: { group },
     });
-    clawShoulderRight.setDepth(DepthLayers.Claw + 1);
-    this.scene.matter.add.constraint(clawCenter.body as MatterJS.BodyType, clawShoulderRight.body as MatterJS.BodyType, 0, 1, {
-      pointA: { x: 0, y: -centerHeight / 2 + clawShoulderRight.width / 2 }, // Attach point on the claw center (adjust as needed)
-      pointB: { x: 0, y: -clawShoulderRight.height / 2 }, // Top middle point of the shoulder
+    clawPincerRight.setDepth(DepthLayers.Claw + 1);
+    this.scene.matter.add.constraint(clawCenter.body as MatterJS.BodyType, clawPincerRight.body as MatterJS.BodyType, 0, 1, {
+      pointA: { x: 0, y: 10 },
+      pointB: { x: -clawPincerRight.width / 2, y: 0 },
       damping: 0.5,
     });
-    // Set angle using Phaser's Matter interface
-    this.scene.matter.body.setAngle(clawShoulderRight.body as MatterJS.BodyType, Phaser.Math.DegToRad(-100));
-    // Lock rotation initially
-    this.scene.matter.body.setInertia(clawShoulderRight.body as MatterJS.BodyType, Infinity);
-
-    // Claw Hands
-    // Claw Hand Left
-    const clawHandLeft = this.scene.matter.add.sprite(clawShoulderLeft.x, clawShoulderLeft.y, "clawParts", "claw_hand_left.png", {
-      shape: clawPhysics.claw_hand_left,
-      mass: 0.2,
-      frictionAir: 0.01,
-      friction: 0.2,
-      restitution: 0.1,
-      collisionFilter: { group },
-    });
-    clawHandLeft.setDepth(DepthLayers.Claw);
-    this.scene.matter.add.constraint(clawShoulderLeft.body as MatterJS.BodyType, clawHandLeft.body as MatterJS.BodyType, 0, 1, {
-      pointA: { x: -clawShoulderLeft.height / 2, y: 0 },
-      pointB: { x: 0, y: -clawHandLeft.height / 2 + 20 },
-      damping: 0.5,
-    });
-    // Set angle using Phaser's Matter interface
-    this.scene.matter.body.setAngle(clawHandLeft.body as MatterJS.BodyType, Phaser.Math.DegToRad(0));
-    // Lock rotation initially
-    this.scene.matter.body.setInertia(clawHandLeft.body as MatterJS.BodyType, Infinity);
-
-    // Claw Hand Right
-    const clawHandRight = this.scene.matter.add.sprite(clawShoulderRight.x, clawShoulderRight.y, "clawParts", "claw_hand_right.png", {
-      shape: clawPhysics.claw_hand_right,
-      mass: 0.2,
-      frictionAir: 0.01,
-      friction: 0.2,
-      restitution: 0.1,
-      collisionFilter: { group },
-    });
-    clawHandRight.setDepth(DepthLayers.Claw);
-    this.scene.matter.add.constraint(clawShoulderRight.body as MatterJS.BodyType, clawHandRight.body as MatterJS.BodyType, 0, 1, {
-      pointA: { x: clawShoulderRight.height / 2, y: 0 },
-      pointB: { x: 0, y: -clawShoulderRight.height / 2 + 20 },
-      damping: 0.5,
-    });
-    // Set angle using Phaser's Matter interface
-    this.scene.matter.body.setAngle(clawHandRight.body as MatterJS.BodyType, Phaser.Math.DegToRad(0));
-    // Lock rotation initially
-    this.scene.matter.body.setInertia(clawHandRight.body as MatterJS.BodyType, Infinity);
+    this.scene.matter.body.setAngle(clawPincerRight.body as MatterJS.BodyType, Phaser.Math.DegToRad(-deg));
+    this.scene.matter.body.setInertia(clawPincerRight.body as MatterJS.BodyType, Infinity);
   }
 
   public moveHorizontal(moveFactor: number): void {
