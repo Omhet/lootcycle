@@ -13,7 +13,6 @@ registerRecipeItem(RecipeItemType.BladeWeapon, {
       acceptType: RecipePartType.ShortSwordBlade,
       relativeWeight: 6,
       pinpoint: {
-        coords: { x: 0, y: 0 },
         zIndex: 0,
       },
     },
@@ -21,7 +20,6 @@ registerRecipeItem(RecipeItemType.BladeWeapon, {
       acceptType: RecipePartType.BladeWeaponHilt,
       relativeWeight: 4,
       pinpoint: {
-        coords: { x: 0, y: 0 },
         zIndex: 1,
       },
     },

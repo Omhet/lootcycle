@@ -41,7 +41,6 @@ export interface TemperatureRange {
 // ======= ITEMS =======
 
 export type Pinpoint = {
-  coords: { x: number; y: number };
   zIndex: number;
 };
 

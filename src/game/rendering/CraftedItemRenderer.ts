@@ -53,11 +53,14 @@ export class CraftedItemRenderer {
     // Sort by zIndex before drawing
     detailsToDraw.sort((a, b) => a.zIndex - b.zIndex);
 
+    // Calculate center of the render texture
+    const centerX = targetRT.width / 2;
+    const centerY = targetRT.height / 2;
+
     // Draw all details to the render texture
     detailsToDraw.forEach((detailInfo) => {
-      // Calculate center-aligned position for the render texture
-      const drawX = detailInfo.x * targetRT.width;
-      const drawY = detailInfo.y * targetRT.height;
+      const drawX = centerX;
+      const drawY = centerY;
 
       targetRT.draw(detailInfo.sprite, drawX, drawY);
 
@@ -135,9 +138,8 @@ export class CraftedItemRenderer {
 
           tempSprite.setOrigin(0.5, 0.5);
 
-          // Use direct pinpoint coordinates for positioning
-          const x = detailSocket.pinpoint.coords.x;
-          const y = detailSocket.pinpoint.coords.y;
+          const x = 0;
+          const y = 0;
 
           // Calculate combined zIndex to maintain proper layering
           const combinedZIndex = partSocket.pinpoint.zIndex * 100 + detailSocket.pinpoint.zIndex;
