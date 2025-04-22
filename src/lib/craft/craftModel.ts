@@ -42,8 +42,6 @@ export interface TemperatureRange {
 
 export type Pinpoint = {
   coords: { x: number; y: number };
-  localOffset: { x: number; y: number };
-  localRotationAngle: number; // In degrees
   zIndex: number;
 };
 

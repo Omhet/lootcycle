@@ -14,8 +14,6 @@ registerRecipeItem(RecipeItemType.BladeWeapon, {
       relativeWeight: 6,
       pinpoint: {
         coords: { x: 0, y: 0 },
-        localOffset: { x: 0, y: -0.5 },
-        localRotationAngle: 0,
         zIndex: 0,
       },
     },
@@ -24,8 +22,6 @@ registerRecipeItem(RecipeItemType.BladeWeapon, {
       relativeWeight: 4,
       pinpoint: {
         coords: { x: 0, y: 0 },
-        localOffset: { x: 0, y: 0.5 },
-        localRotationAngle: 0,
         zIndex: 1,
       },
     },
