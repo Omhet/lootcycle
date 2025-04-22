@@ -1,9 +1,9 @@
 import { Scene } from "phaser";
 import { craftLootItem } from "../../lib/craft/craftLootItem";
-import { LootConfig } from "../../lib/craft/craftModel";
 import { EventBus } from "../EventBus";
 import { CollisionCategories, CollisionMasks } from "../physics/CollisionCategories";
 // Import all managers
+import { lootConfig } from "../../lib/craft/config";
 import { BackgroundManager } from "./logic/BackgroundManager";
 import { CauldronManager } from "./logic/CauldronManager";
 import { ClawManager } from "./logic/ClawManager";
@@ -155,13 +155,12 @@ export class Game extends Scene {
 
     const mockJunkPieces: any[] = [];
     const mockTemperature = 50;
-    const mockConfig = {} as LootConfig;
 
     const craftResult = craftLootItem({
       lootItemRecipeId: "short_sword",
       junkPieces: mockJunkPieces,
       temperature: mockTemperature,
-      config: mockConfig,
+      config: lootConfig,
     });
 
     if (craftResult.success && craftResult.item) {

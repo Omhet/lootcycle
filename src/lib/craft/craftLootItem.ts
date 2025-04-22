@@ -395,6 +395,12 @@ function generateLootItemId(recipeId: RecipeItemId, detailIds: LootDetailId[]): 
   return `${recipeId.substring(0, 8)}-${hashString}`;
 }
 
+function findRecipeItem(recipeId: string, config: LootConfig): RecipeItem | undefined {
+  return Object.values(config.recipeItems)
+    .flat()
+    .find((item) => item.id === recipeId);
+}
+
 // ======= CRAFTING FUNCTION =======
 
 /**
@@ -404,15 +410,7 @@ export function craftLootItem(params: craftLootItemParams): CraftingResult {
   const { lootItemRecipeId, junkPieces, temperature, config } = params;
 
   // Find the recipe item
-  let recipe: RecipeItem | undefined;
-  for (const type in config.recipeItems) {
-    const recipes = config.recipeItems[type as keyof typeof config.recipeItems];
-    const found = recipes.find((r) => r.id === lootItemRecipeId);
-    if (found) {
-      recipe = found;
-      break;
-    }
-  }
+  const recipe = findRecipeItem(lootItemRecipeId, config);
 
   // Check if recipe exists
   if (!recipe) {
