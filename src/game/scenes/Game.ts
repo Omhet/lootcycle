@@ -96,6 +96,11 @@ export class Game extends Scene {
       this.craftAndRenderItem();
     });
 
+    // Add the space key for toggling claw open/closed
+    this.input.keyboard?.on("keydown-SPACE", () => {
+      this.clawManager.toggleOpen();
+    });
+
     // Generate the initial junk portion
     this.junkPileManager.generateJunkPortion();
 
@@ -166,5 +171,6 @@ export class Game extends Scene {
 
     // Remove specific listeners
     this.input.keyboard?.off("keydown-ENTER");
+    this.input.keyboard?.off("keydown-SPACE"); // Remove space key listener
   }
 }

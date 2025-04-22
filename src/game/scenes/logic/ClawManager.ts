@@ -6,6 +6,13 @@ export class ClawManager {
   private scene: Scene;
 
   private anchor: Phaser.Physics.Matter.Image | null = null;
+  private leftPincer: Phaser.Physics.Matter.Sprite | null = null;
+  private rightPincer: Phaser.Physics.Matter.Sprite | null = null;
+  private isOpen: boolean = true;
+  private targetAngle: number = 20;
+  private readonly OPEN_ANGLE: number = 20;
+  private readonly CLOSED_ANGLE: number = -50;
+  private angleAnimationTween: Phaser.Tweens.Tween | null = null;
 
   // Constants for configuration
   private readonly CONTAINER_ZONE_START_X = 100;
@@ -118,10 +125,10 @@ export class ClawManager {
 
     this.scene.matter.body.setInertia(clawCenter.body as MatterJS.BodyType, Infinity);
 
-    const deg = 20;
+    const pincersAngle = this.OPEN_ANGLE;
     // Claw Pincers
     // Claw Pincer Left
-    const clawPincerLeft = this.scene.matter.add.sprite(anchorX - 50, y, "clawParts", "claw_pincer_left.png", {
+    this.leftPincer = this.scene.matter.add.sprite(anchorX - 50, y, "clawParts", "claw_pincer_left.png", {
       shape: clawPhysics.claw_pincer_left,
       mass: 0.3,
       frictionAir: 0.01,
@@ -129,17 +136,17 @@ export class ClawManager {
       restitution: 0.1,
       collisionFilter: { group },
     });
-    clawPincerLeft.setDepth(DepthLayers.Claw + 1);
-    this.scene.matter.add.constraint(clawCenter.body as MatterJS.BodyType, clawPincerLeft.body as MatterJS.BodyType, 0, 1, {
+    this.leftPincer.setDepth(DepthLayers.Claw + 1);
+    this.scene.matter.add.constraint(clawCenter.body as MatterJS.BodyType, this.leftPincer.body as MatterJS.BodyType, 0, 1, {
       pointA: { x: 0, y: 10 },
-      pointB: { x: clawPincerLeft.width / 2, y: 0 },
+      pointB: { x: this.leftPincer.width / 2, y: 0 },
       damping: 0.5,
     });
-    this.scene.matter.body.setAngle(clawPincerLeft.body as MatterJS.BodyType, Phaser.Math.DegToRad(deg));
-    this.scene.matter.body.setInertia(clawPincerLeft.body as MatterJS.BodyType, Infinity);
+    this.scene.matter.body.setAngle(this.leftPincer.body as MatterJS.BodyType, Phaser.Math.DegToRad(pincersAngle));
+    this.scene.matter.body.setInertia(this.leftPincer.body as MatterJS.BodyType, Infinity);
 
     // Claw Pincer Right
-    const clawPincerRight = this.scene.matter.add.sprite(anchorX + 50, y, "clawParts", "claw_pincer_right.png", {
+    this.rightPincer = this.scene.matter.add.sprite(anchorX + 50, y, "clawParts", "claw_pincer_right.png", {
       shape: clawPhysics.claw_pincer_right,
       mass: 0.3,
       frictionAir: 0.01,
@@ -147,14 +154,55 @@ export class ClawManager {
       restitution: 0.1,
       collisionFilter: { group },
     });
-    clawPincerRight.setDepth(DepthLayers.Claw + 1);
-    this.scene.matter.add.constraint(clawCenter.body as MatterJS.BodyType, clawPincerRight.body as MatterJS.BodyType, 0, 1, {
+    this.rightPincer.setDepth(DepthLayers.Claw + 1);
+    this.scene.matter.add.constraint(clawCenter.body as MatterJS.BodyType, this.rightPincer.body as MatterJS.BodyType, 0, 1, {
       pointA: { x: 0, y: 10 },
-      pointB: { x: -clawPincerRight.width / 2, y: 0 },
+      pointB: { x: -this.rightPincer.width / 2, y: 0 },
       damping: 0.5,
     });
-    this.scene.matter.body.setAngle(clawPincerRight.body as MatterJS.BodyType, Phaser.Math.DegToRad(-deg));
-    this.scene.matter.body.setInertia(clawPincerRight.body as MatterJS.BodyType, Infinity);
+    this.scene.matter.body.setAngle(this.rightPincer.body as MatterJS.BodyType, Phaser.Math.DegToRad(-pincersAngle));
+    this.scene.matter.body.setInertia(this.rightPincer.body as MatterJS.BodyType, Infinity);
+  }
+
+  /**
+   * Toggles the claw between open and closed states with smooth animation
+   */
+  public toggleOpen(): void {
+    // Stop any existing animation
+    if (this.angleAnimationTween) {
+      this.angleAnimationTween.stop();
+    }
+
+    this.isOpen = !this.isOpen;
+    this.targetAngle = this.isOpen ? this.OPEN_ANGLE : this.CLOSED_ANGLE;
+
+    // Create a virtual object to tween and use its value to set the pincer angles
+    const animationObject = { angle: this.isOpen ? this.CLOSED_ANGLE : this.OPEN_ANGLE };
+    
+    this.angleAnimationTween = this.scene.tweens.add({
+      targets: animationObject,
+      angle: this.targetAngle,
+      duration: 500, // Animation duration in ms
+      ease: 'Power2',
+      onUpdate: () => {
+        if (this.leftPincer && this.rightPincer) {
+          // Update the left pincer angle
+          this.scene.matter.body.setAngle(
+            this.leftPincer.body as MatterJS.BodyType, 
+            Phaser.Math.DegToRad(animationObject.angle)
+          );
+          
+          // Update the right pincer angle (opposite direction)
+          this.scene.matter.body.setAngle(
+            this.rightPincer.body as MatterJS.BodyType, 
+            Phaser.Math.DegToRad(-animationObject.angle)
+          );
+        }
+      },
+      onComplete: () => {
+        this.angleAnimationTween = null;
+      }
+    });
   }
 
   public moveHorizontal(moveFactor: number): void {
@@ -187,6 +235,11 @@ export class ClawManager {
   }
 
   public destroy(): void {
+    // Stop any ongoing animations
+    if (this.angleAnimationTween) {
+      this.angleAnimationTween.stop();
+      this.angleAnimationTween = null;
+    }
     console.log("ClawManager destroyed");
   }
 }
