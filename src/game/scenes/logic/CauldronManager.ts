@@ -39,12 +39,12 @@ export class CauldronManager {
 
     // Create a sensor area inside the cauldron to detect junk pieces
     // Size is slightly smaller than the cauldron sprite
-    const sensorWidth = frame.width * 0.7;
-    const sensorHeight = frame.height * 0.8;
+    const sensorWidth = frame.width * 0.8;
+    const sensorHeight = frame.height * 1.25;
 
     // Position the sensor in the top part of the cauldron
     const sensorX = xPos;
-    const sensorY = yPos - frame.height * 0.1;
+    const sensorY = yPos + frame.height * 0.1;
 
     this.cauldronSensor = this.scene.matter.add.rectangle(sensorX, sensorY, sensorWidth, sensorHeight, {
       isSensor: true, // This makes it a trigger that detects collisions but doesn't resolve them physically
@@ -84,20 +84,20 @@ export class CauldronManager {
         const matchingJunkItem = junkItems.find((item) => item.body === junkBody.parent);
 
         if (matchingJunkItem) {
-          // Get the junk piece ID from the body's label
-          const junkId = junkBody.label || junkBody.parent.label;
-          console.log(junkId);
+          // Get the unique ID from the body
+          const uniqueJunkId = junkBody.label || junkBody.parent?.label;
 
           // Find the corresponding JunkPileItem
           const junkPile = (this.scene.registry.get("junkPileManager") as JunkPileManager)?.getJunkPile() || [];
-          const junkPileItem = junkPile.find((item) => item.body === matchingJunkItem);
-          console.log(!this.isJunkAlreadyInside(junkPileItem!));
+          const junkPileItem = junkPile.find((item) => item.uniqueId === uniqueJunkId);
 
           if (junkPileItem && !this.isJunkAlreadyInside(junkPileItem)) {
             this.junkPiecesInside.push(junkPileItem);
-            console.log(`Junk piece ${junkId} entered cauldron. Total pieces inside: ${this.junkPiecesInside.length}`);
+            console.log(`Junk piece ${junkPileItem.uniqueId} entered cauldron. Total pieces inside: ${this.junkPiecesInside.length}`);
+          } else if (junkPileItem) {
+            console.log(`Junk piece ${junkPileItem.uniqueId} is already inside the cauldron.`);
           } else {
-            console.log(`Junk piece ${junkId} is already inside the cauldron or not found in the pile.`);
+            console.log(`Junk piece with ID ${uniqueJunkId} not found in the pile.`);
           }
         }
       }
@@ -119,12 +119,26 @@ export class CauldronManager {
         // The other body is what left our sensor
         const junkBody = bodyA.label === "cauldronSensor" ? bodyB : bodyA;
 
-        // Find the corresponding JunkPileItem
-        const junkIndex = this.junkPiecesInside.findIndex((item) => item.body.body === junkBody);
+        // Find the junk item in the scene
+        const junkItems = this.scene.children.list.filter(
+          (obj) => obj instanceof Phaser.Physics.Matter.Sprite || obj instanceof Phaser.Physics.Matter.Image
+        ) as Array<Phaser.Physics.Matter.Sprite | Phaser.Physics.Matter.Image>;
 
-        if (junkIndex !== -1) {
-          const removedJunk = this.junkPiecesInside.splice(junkIndex, 1);
-          console.log(`Junk piece ${removedJunk[0].junkPiece.id} left cauldron. Remaining pieces: ${this.junkPiecesInside.length}`);
+        const matchingJunkItem = junkItems.find((item) => item.body === junkBody.parent);
+
+        if (matchingJunkItem) {
+          // Get the unique ID from the body's label (which we set in JunkPileManager)
+          const uniqueJunkId = junkBody.label || junkBody.parent?.label;
+
+          if (uniqueJunkId) {
+            // Find the corresponding JunkPileItem by unique ID
+            const junkIndex = this.junkPiecesInside.findIndex((item) => item.uniqueId === uniqueJunkId);
+
+            if (junkIndex !== -1) {
+              const removedJunk = this.junkPiecesInside.splice(junkIndex, 1);
+              console.log(`Junk piece ${removedJunk[0].uniqueId} left cauldron. Remaining pieces: ${this.junkPiecesInside.length}`);
+            }
+          }
         }
       }
     }
@@ -134,7 +148,7 @@ export class CauldronManager {
    * Checks if a junk piece is already registered inside the cauldron
    */
   private isJunkAlreadyInside(junkItem: JunkPileItem): boolean {
-    return this.junkPiecesInside.some((item) => item.body === junkItem.body);
+    return this.junkPiecesInside.some((item) => item.uniqueId === junkItem.uniqueId);
   }
 
   /**

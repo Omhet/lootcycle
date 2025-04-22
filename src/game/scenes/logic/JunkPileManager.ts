@@ -9,6 +9,7 @@ import { DepthLayers } from "../Game";
 export interface JunkPileItem {
   junkPiece: JunkPiece;
   body: Phaser.Physics.Matter.Image | Phaser.Physics.Matter.Sprite;
+  uniqueId: string; // Unique identifier for each junk piece instance
 }
 
 export class JunkPileManager {
@@ -16,6 +17,7 @@ export class JunkPileManager {
   private portionNumber: number = 1;
   private junkPile: JunkPileItem[] = []; // Total accumulated junk collection
   private spawnTimers: Phaser.Time.TimerEvent[] = [];
+  private junkIdCounter: number = 0; // Counter for generating unique IDs
 
   // Spawn point coordinates
   private spawnX: number;
@@ -41,11 +43,24 @@ export class JunkPileManager {
   }
 
   /**
+   * Generates a unique ID for each junk piece
+   * @param junkPiece The junk piece to create an ID for
+   * @returns A unique identifier string
+   */
+  private generateUniqueJunkId(junkPiece: JunkPiece): string {
+    this.junkIdCounter++;
+    return `${junkPiece.id}_${this.junkIdCounter}`;
+  }
+
+  /**
    * Creates and spawns a physics body representing a junk piece
    * @param junkPiece The junk piece to visualize
    * @returns The created junk pile item with physics body
    */
   private spawnJunkItem(junkPiece: JunkPiece): JunkPileItem {
+    // Generate a unique ID for this junk piece instance
+    const uniqueId = this.generateUniqueJunkId(junkPiece);
+
     // Create a spawn zone with random offsets to prevent overlapping
     const spawnOffsetX = Phaser.Math.Between(-15, 15);
     const spawnOffsetY = Phaser.Math.Between(-10, 10);
@@ -92,15 +107,18 @@ export class JunkPileManager {
       // Make junk two times smaller
       physicsBody.setScale(0.7);
 
-      // Set the label through body.parts[0] which is the main body part
+      // Set the unique ID as the label through body.parts[0] which is the main body part
       if (physicsBody.body && (physicsBody.body as any).parts && (physicsBody.body as any).parts.length > 0) {
-        (physicsBody.body as any).parts[0].label = junkPiece.id;
+        (physicsBody.body as any).parts[0].label = uniqueId;
       } else {
         // If no parts array exists, set the label directly on the body
         if (physicsBody.body) {
-          (physicsBody.body as any).label = junkPiece.id;
+          (physicsBody.body as any).label = uniqueId;
         }
       }
+
+      // Store the uniqueId as a property on the physics body for easy access
+      (physicsBody as any).uniqueJunkId = uniqueId;
 
       // Apply initial velocity with slight randomization to further prevent clumping
       const velocityVariance = 0.5;
@@ -112,10 +130,11 @@ export class JunkPileManager {
 
       physicsBody.setDepth(DepthLayers.JunkPile);
 
-      // Return the complete junk pile item
+      // Return the complete junk pile item with the unique ID
       return {
         junkPiece,
         body: physicsBody,
+        uniqueId,
       };
     } else {
       throw new Error(`No physics shape found for junk piece: ${junkPiece.id}`);
