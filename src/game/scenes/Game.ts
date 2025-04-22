@@ -2,6 +2,7 @@ import { Scene } from "phaser";
 import { craftLootItem } from "../../lib/craft/craftLootItem";
 import { LootConfig } from "../../lib/craft/craftModel";
 import { EventBus } from "../EventBus";
+import { CollisionCategories, CollisionMasks } from "../physics/CollisionCategories";
 // Import all managers
 import { BackgroundManager } from "./logic/BackgroundManager";
 import { CauldronManager } from "./logic/CauldronManager";
@@ -87,21 +88,38 @@ export class Game extends Scene {
       {
         isStatic: true,
         label: "ground",
+        collisionFilter: {
+          category: CollisionCategories.ENVIRONMENT,
+          mask: CollisionMasks.ENVIRONMENT,
+        },
       }
     );
 
     this.ceiling = this.matter.add.rectangle(this.cameras.main.width / 2, 0, this.cameras.main.width, 200, {
       isStatic: true,
       label: "ceiling",
+      collisionFilter: {
+        category: CollisionCategories.ENVIRONMENT,
+        mask: CollisionMasks.ENVIRONMENT,
+      },
     });
 
     this.leftWall = this.matter.add.rectangle(0, this.cameras.main.height / 2, 450, this.cameras.main.height, {
       isStatic: true,
       label: "leftWall",
+      collisionFilter: {
+        category: CollisionCategories.ENVIRONMENT,
+        mask: CollisionMasks.ENVIRONMENT,
+      },
     });
+
     this.rightWall = this.matter.add.rectangle(this.cameras.main.width, this.cameras.main.height / 2, 450, this.cameras.main.height, {
       isStatic: true,
       label: "rightWall",
+      collisionFilter: {
+        category: CollisionCategories.ENVIRONMENT,
+        mask: CollisionMasks.ENVIRONMENT,
+      },
     });
 
     // Pass the pipe spawn point from PipeManager to JunkPileManager
@@ -115,7 +133,7 @@ export class Game extends Scene {
 
     // Add the space key for toggling claw open/closed
     this.input.keyboard?.on("keydown-SPACE", () => {
-      this.clawManager.toggleOpen();
+      this.clawManager.startGrabSequence();
     });
 
     // Generate the initial junk portion
@@ -152,6 +170,9 @@ export class Game extends Scene {
   }
 
   update() {
+    // Update claw manager
+    this.clawManager.update();
+
     // Claw anchor control
     if (this.cursors?.left.isDown) {
       this.clawManager.moveHorizontal(-1);
@@ -159,14 +180,6 @@ export class Game extends Scene {
       this.clawManager.moveHorizontal(1);
     } else {
       this.clawManager.moveHorizontal(0);
-    }
-
-    if (this.cursors?.down.isDown) {
-      this.clawManager.moveVertical(1);
-    } else if (this.cursors?.up.isDown) {
-      this.clawManager.moveVertical(-1);
-    } else {
-      this.clawManager.moveVertical(0);
     }
   }
 

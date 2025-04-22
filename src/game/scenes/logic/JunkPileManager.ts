@@ -2,6 +2,7 @@ import { Scene } from "phaser";
 import { lootConfig } from "../../../lib/craft/config";
 import { JunkPiece, RecipeItemId, RecipeItemType } from "../../../lib/craft/craftModel";
 import { getJunkPortion } from "../../../lib/craft/getJunkPortion";
+import { CollisionCategories, CollisionMasks } from "../../physics/CollisionCategories";
 import { DepthLayers } from "../Game";
 
 // Interface to store both junk piece and its physics body
@@ -82,6 +83,10 @@ export class JunkPileManager {
         mass: 0.2, // Mass
         inverseMass: 20,
         chamfer: 10,
+        collisionFilter: {
+          category: CollisionCategories.JUNK,
+          mask: CollisionMasks.JUNK,
+        },
       });
 
       // Set the label through body.parts[0] which is the main body part
