@@ -45,9 +45,13 @@ export class JunkPileManager {
    * @returns The created junk pile item with physics body
    */
   private spawnJunkItem(junkPiece: JunkPiece): JunkPileItem {
-    // Use the configurable spawn point
-    const spawnX = this.spawnX;
-    const spawnY = this.spawnY;
+    // Create a spawn zone with random offsets to prevent overlapping
+    const spawnOffsetX = Phaser.Math.Between(-15, 15);
+    const spawnOffsetY = Phaser.Math.Between(-10, 10);
+
+    // Use the configurable spawn point with the random offset
+    const spawnX = this.spawnX + spawnOffsetX;
+    const spawnY = this.spawnY + spawnOffsetY;
 
     // Get the correct sprite frame name based on junk piece id
     const frameName = `${junkPiece.id}.png`;
@@ -85,8 +89,12 @@ export class JunkPileManager {
         (physicsBody.body as any).parts[0].label = junkPiece.id;
       }
 
-      // Apply initial velocity and rotation
-      physicsBody.setVelocity(velocityX, velocityY);
+      // Apply initial velocity with slight randomization to further prevent clumping
+      const velocityVariance = 0.5;
+      physicsBody.setVelocity(
+        velocityX + Phaser.Math.FloatBetween(-velocityVariance, velocityVariance),
+        velocityY + Phaser.Math.FloatBetween(-velocityVariance, velocityVariance)
+      );
       physicsBody.setAngularVelocity(Phaser.Math.FloatBetween(-0.05, 0.05));
 
       physicsBody.setDepth(DepthLayers.JunkPile);
