@@ -178,30 +178,24 @@ export class ClawManager {
 
     // Create a virtual object to tween and use its value to set the pincer angles
     const animationObject = { angle: this.isOpen ? this.CLOSED_ANGLE : this.OPEN_ANGLE };
-    
+
     this.angleAnimationTween = this.scene.tweens.add({
       targets: animationObject,
       angle: this.targetAngle,
       duration: 500, // Animation duration in ms
-      ease: 'Power2',
+      ease: "Power2",
       onUpdate: () => {
         if (this.leftPincer && this.rightPincer) {
           // Update the left pincer angle
-          this.scene.matter.body.setAngle(
-            this.leftPincer.body as MatterJS.BodyType, 
-            Phaser.Math.DegToRad(animationObject.angle)
-          );
-          
+          this.scene.matter.body.setAngle(this.leftPincer.body as MatterJS.BodyType, Phaser.Math.DegToRad(animationObject.angle));
+
           // Update the right pincer angle (opposite direction)
-          this.scene.matter.body.setAngle(
-            this.rightPincer.body as MatterJS.BodyType, 
-            Phaser.Math.DegToRad(-animationObject.angle)
-          );
+          this.scene.matter.body.setAngle(this.rightPincer.body as MatterJS.BodyType, Phaser.Math.DegToRad(-animationObject.angle));
         }
       },
       onComplete: () => {
         this.angleAnimationTween = null;
-      }
+      },
     });
   }
 
