@@ -175,6 +175,9 @@ export class MainMenu extends Scene {
     const tempRTWidth = 720;
     const tempRTHeight = 720;
 
+    // Helper function to add delay between downloads
+    const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
     for (const recipe of allRecipes) {
       console.log(`Processing recipe: ${recipe.id}`);
 
@@ -245,11 +248,20 @@ export class MainMenu extends Scene {
           if (imageDataUrl && imageDataUrl.length > 0) {
             const filename = `${recipe.id}_combination_${combinationIndex}.png`;
             console.log(`Downloading image for ${comboKey} as ${filename}`);
+
+            // Create download link
             const link = document.createElement("a");
             link.href = imageDataUrl;
             link.download = filename;
             document.body.appendChild(link);
+
+            // Trigger download
             link.click();
+
+            // Wait for a brief delay before removing the link and continuing
+            await delay(300);
+
+            // Clean up the link element
             document.body.removeChild(link);
           } else {
             console.warn(`No imageDataUrl for key: ${comboKey}`);
