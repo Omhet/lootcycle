@@ -65,7 +65,7 @@ export class ClawManager {
     // Chain
     this.anchor = this.scene.matter.add.sprite(anchorX, anchorY, "claw_anchor", undefined, {
       isStatic: true,
-      collisionFilter: { group },
+      collisionFilter: { group, category: CollisionCategories.PLAYER },
     });
     this.anchor.setDepth(DepthLayers.Claw - 1);
     this.anchor.setOrigin(0.5, 1);
