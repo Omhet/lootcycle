@@ -132,7 +132,7 @@ export class ClawManager {
     });
     // Set angle using Phaser's Matter interface
     this.scene.matter.body.setAngle(clawShoulderLeft.body as MatterJS.BodyType, Phaser.Math.DegToRad(100));
-    // Lock branch rotation initially
+    // Lock rotation initially
     this.scene.matter.body.setInertia(clawShoulderLeft.body as MatterJS.BodyType, Infinity);
 
     // Claw Shoulder Right
@@ -152,7 +152,7 @@ export class ClawManager {
     });
     // Set angle using Phaser's Matter interface
     this.scene.matter.body.setAngle(clawShoulderRight.body as MatterJS.BodyType, Phaser.Math.DegToRad(-100));
-    // Lock branch rotation initially
+    // Lock rotation initially
     this.scene.matter.body.setInertia(clawShoulderRight.body as MatterJS.BodyType, Infinity);
 
     // Claw Hands
@@ -173,7 +173,7 @@ export class ClawManager {
     });
     // Set angle using Phaser's Matter interface
     this.scene.matter.body.setAngle(clawHandLeft.body as MatterJS.BodyType, Phaser.Math.DegToRad(0));
-    // Lock branch rotation initially
+    // Lock rotation initially
     this.scene.matter.body.setInertia(clawHandLeft.body as MatterJS.BodyType, Infinity);
 
     // Claw Hand Right
@@ -193,7 +193,7 @@ export class ClawManager {
     });
     // Set angle using Phaser's Matter interface
     this.scene.matter.body.setAngle(clawHandRight.body as MatterJS.BodyType, Phaser.Math.DegToRad(0));
-    // Lock branch rotation initially
+    // Lock rotation initially
     this.scene.matter.body.setInertia(clawHandRight.body as MatterJS.BodyType, Infinity);
   }
 
