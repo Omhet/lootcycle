@@ -17,10 +17,13 @@ import "./recipe/bladeWeapon/shortSword/recipe";
 // Junk
 import "./junk/junk";
 
+// Loot Details
+import "./loot/shortSword/details";
+
 // Validate the configuration
 const validationIssues = validateLootConfig();
 if (validationIssues.length > 0) {
-    console.warn("Loot configuration validation issues:", validationIssues);
+  console.warn("Loot configuration validation issues:", validationIssues);
 }
 
 // Export the dynamically generated configuration

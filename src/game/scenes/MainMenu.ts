@@ -1,18 +1,9 @@
 import { GameObjects, Scene } from "phaser";
 
-import { lootConfig } from "../../lib/craft/config"; // Import lootConfig
-import {
-  LootDetail, // Added
-  LootDetailId, // Added
-  LootItem,
-  Rarity,
-  RecipeDetailSocket,
-  RecipePart,
-  RecipePartSocket,
-  RecipePartType,
-} from "../../lib/craft/craftModel"; // Import necessary types
+import { lootConfig } from "../../lib/craft/config";
+import { LootDetail, LootDetailId, LootItem, Rarity, RecipeDetailType, RecipeItem, RecipePart, RecipePartType } from "../../lib/craft/craftModel";
 import { EventBus } from "../EventBus";
-import { CraftedItemRenderer } from "../rendering/CraftedItemRenderer"; // Import the new renderer
+import { CraftedItemRenderer } from "../rendering/CraftedItemRenderer";
 
 export class MainMenu extends Scene {
   container: GameObjects.Container;
@@ -36,6 +27,8 @@ export class MainMenu extends Scene {
 
     // Temporary start game right away to debug - REMOVE THIS LATER
     // this.startGame();
+
+    console.log({ lootConfig });
   }
 
   startGame() {
@@ -63,102 +56,134 @@ export class MainMenu extends Scene {
   }
 
   /**
-   * Recursively generates all valid combinations of LootDetailIds for a given set of sockets.
-   * Ensures that each detail is used at most once per combination.
-   *
-   * @param socketsToFill The remaining RecipeDetailSockets to find details for.
-   * @param availableDetailsMap A map of all LootDetails available for consideration.
-   * @param currentCombination The combination being built in the current recursion path.
-   * @param usedDetailIds A set of LootDetailIds already used in the current combination.
-   * @param allCombinations The array to accumulate valid combinations.
+   * Gets all available LootDetails grouped by their type
+   * @returns A map of RecipeDetailType to array of LootDetailIds
    */
-  private _generateLootDetailCombinations(
-    socketsToFill: RecipeDetailSocket[],
-    availableDetailsMap: Map<LootDetailId, LootDetail>,
-    currentCombination: LootDetailId[] = [],
-    usedDetailIds: Set<LootDetailId> = new Set(),
-    allCombinations: LootDetailId[][] = []
-  ): LootDetailId[][] {
-    // Base case: All sockets have been filled
-    if (socketsToFill.length === 0) {
-      if (currentCombination.length > 0) {
-        allCombinations.push([...currentCombination]); // Add a copy
+  private getAvailableLootDetailsByType(): Map<RecipeDetailType, LootDetailId[]> {
+    const detailsByType = new Map<RecipeDetailType, LootDetailId[]>();
+    const allLootDetailsMap = this.getLootDetailMap();
+
+    // Group available details by their type
+    for (const [id, detail] of allLootDetailsMap.entries()) {
+      if (!detailsByType.has(detail.type)) {
+        detailsByType.set(detail.type, []);
       }
-      return allCombinations;
+      detailsByType.get(detail.type)?.push(id);
     }
 
-    const currentSocket = socketsToFill[0];
-    const remainingSockets = socketsToFill.slice(1);
-    const requiredType = currentSocket.acceptType;
+    return detailsByType;
+  }
 
-    // Find all details suitable for the current socket that haven't been used yet
-    const suitableDetails: LootDetail[] = [];
-    for (const detail of availableDetailsMap.values()) {
-      if (!usedDetailIds.has(detail.id) && detail.type === requiredType) {
-        suitableDetails.push(detail);
+  /**
+   * Generates all socket requirements for a recipe
+   * @param recipe The recipe to analyze
+   * @returns Array of required detail types
+   */
+  private getRecipeDetailRequirements(recipe: RecipeItem): RecipeDetailType[] {
+    const requirements: RecipeDetailType[] = [];
+
+    recipe.sockets.forEach((partSocket) => {
+      const partDef = this.findPartDefinition(partSocket.acceptType);
+      if (partDef) {
+        partDef.sockets.forEach((detailSocket) => {
+          requirements.push(detailSocket.acceptType);
+        });
       }
+    });
+
+    return requirements;
+  }
+
+  /**
+   * Generates combinations of LootDetailIds that satisfy the recipe requirements
+   * @param recipe The recipe to generate combinations for
+   * @returns Array of valid detail combinations
+   */
+  private generateLootDetailCombinations(recipe: RecipeItem): LootDetailId[][] {
+    console.log(`Generating combinations for recipe: ${recipe.id}`);
+
+    // 1. Get required detail types for recipe
+    const requiredDetailTypes = this.getRecipeDetailRequirements(recipe);
+    console.log(`Required detail types: ${requiredDetailTypes.join(", ")}`);
+
+    // 2. Get available details by type
+    const detailsByType = this.getAvailableLootDetailsByType();
+
+    // 3. Ensure we have at least one detail available for each required type
+    const validCombinations: LootDetailId[][] = [];
+    const unavailableTypes: RecipeDetailType[] = [];
+
+    requiredDetailTypes.forEach((type) => {
+      if (!detailsByType.has(type) || detailsByType.get(type)?.length === 0) {
+        unavailableTypes.push(type);
+      }
+    });
+
+    if (unavailableTypes.length > 0) {
+      console.warn(`Missing details for types: ${unavailableTypes.join(", ")}`);
+      return [];
     }
 
-    // If no suitable details found for this socket, this path is invalid
-    if (suitableDetails.length === 0) {
-      return allCombinations; // Backtrack
+    // 4. Generate all valid combinations
+    // Start with seed combination
+    const initialCombination: LootDetailId[] = [];
+
+    this._generateValidCombinations(requiredDetailTypes, detailsByType, initialCombination, validCombinations);
+
+    return validCombinations;
+  }
+
+  /**
+   * Helper method to recursively generate valid combinations
+   */
+  private _generateValidCombinations(
+    remainingTypes: RecipeDetailType[],
+    availableByType: Map<RecipeDetailType, LootDetailId[]>,
+    currentCombination: LootDetailId[],
+    results: LootDetailId[][]
+  ): void {
+    // Base case: all types have been processed
+    if (remainingTypes.length === 0) {
+      results.push([...currentCombination]);
+      return;
     }
 
-    // Try adding each suitable detail to the combination and recurse
-    for (const detail of suitableDetails) {
-      currentCombination.push(detail.id);
-      usedDetailIds.add(detail.id);
+    // Get current type to process
+    const currentType = remainingTypes[0];
+    const remainingTypesToProcess = remainingTypes.slice(1);
 
-      this._generateLootDetailCombinations(remainingSockets, availableDetailsMap, currentCombination, usedDetailIds, allCombinations);
+    // Get available details for this type
+    const availableDetails = availableByType.get(currentType) || [];
 
-      // Backtrack: remove the detail for the next iteration
+    // Try each available detail for this type
+    for (const detailId of availableDetails) {
+      // Add this detail to the current combination
+      currentCombination.push(detailId);
+
+      // Recursive call to handle remaining types
+      this._generateValidCombinations(remainingTypesToProcess, availableByType, currentCombination, results);
+
+      // Backtrack: remove the current detail
       currentCombination.pop();
-      usedDetailIds.delete(detail.id);
     }
-
-    return allCombinations;
   }
 
   // --- Download Recipe Images ---
   public async downloadRecipeImages(): Promise<void> {
     console.log("Starting recipe image generation for all combinations...");
     const allRecipes = Object.values(lootConfig.recipeItems).flat();
-    const allLootDetailsMap = this.getLootDetailMap(); // Use LootDetails now
     const tempRTWidth = 512;
     const tempRTHeight = 512;
 
     for (const recipe of allRecipes) {
       console.log(`Processing recipe: ${recipe.id}`);
 
-      // 1. Get all required detail sockets for the recipe
-      const requiredDetailSockets: RecipeDetailSocket[] = [];
-      recipe.sockets.forEach((partSocket: RecipePartSocket) => {
-        const partDef = this.findPartDefinition(partSocket.acceptType);
-        if (partDef) {
-          requiredDetailSockets.push(...partDef.sockets);
-        }
-      });
+      // Generate all valid combinations of LootDetailIds using the new approach
+      const detailCombinations = this.generateLootDetailCombinations(recipe);
 
-      requiredDetailSockets.sort((a, b) => a.pinpoint.zIndex - b.pinpoint.zIndex);
-
-      if (requiredDetailSockets.length === 0) {
-        console.log(`Recipe ${recipe.id} has no detail sockets, skipping combination generation.`);
-        continue;
-      }
-
-      // 2. Generate all valid combinations of LootDetailIds
-      console.log(`Generating LootDetail combinations for ${recipe.id} with ${requiredDetailSockets.length} sockets...`);
-      const detailCombinations = this._generateLootDetailCombinations(
-        // Use the new function
-        requiredDetailSockets,
-        allLootDetailsMap, // Pass the map of LootDetails
-        [],
-        new Set(),
-        []
-      );
       console.log(`Found ${detailCombinations.length} valid LootDetail combinations for ${recipe.id}.`);
 
-      // 3. Iterate through each combination and render
+      // Skip if no valid combinations
       if (detailCombinations.length === 0) {
         console.warn(`No valid LootDetail combinations found for recipe ${recipe.id}.`);
         continue;
@@ -166,11 +191,10 @@ export class MainMenu extends Scene {
 
       let combinationIndex = 0;
       for (const combination of detailCombinations) {
-        // 'combination' is now LootDetailId[]
         const tempLootItem: LootItem = {
           id: `temp_${recipe.id}_${combinationIndex}`,
           recipeId: recipe.id,
-          details: combination, // Use the LootDetailId combination directly
+          details: combination,
           name: recipe.name,
           rarity: Rarity.Common,
           sellPrice: 0,
@@ -185,7 +209,7 @@ export class MainMenu extends Scene {
         try {
           const comboKey = `${recipe.id}_${combinationIndex}`;
           console.log(`Rendering recipe ${recipe.id} LootDetail combination ${combinationIndex}`);
-          // The renderer now expects LootItem with LootDetailId[] in 'details'
+
           this.itemRenderer.renderItemToTexture(tempLootItem, tempRT);
           console.log(`Rendered to RenderTexture for ${comboKey}`);
 
