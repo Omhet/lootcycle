@@ -27,24 +27,24 @@ registerLootDetail("golden_with_emerald_short_sword_pommel", {
 
 registerLootDetail("basic_short_sword_blade", {
   type: RecipeDetailType.ShortSwordBlade,
-  canBeCraftedFrom: ["all"],
+  canBeCraftedFrom: [],
   name: "Basic Short Sword Blade",
 });
 
 registerLootDetail("basic_short_sword_grip", {
   type: RecipeDetailType.Grip,
-  canBeCraftedFrom: ["all"],
+  canBeCraftedFrom: [],
   name: "Basic Short Sword Grip",
 });
 
 registerLootDetail("basic_short_sword_pommel", {
   type: RecipeDetailType.Pommel,
-  canBeCraftedFrom: ["all"],
+  canBeCraftedFrom: [],
   name: "Basic Short Sword Pommel",
 });
 
 registerLootDetail("basic_short_sword_guard", {
   type: RecipeDetailType.Guard,
-  canBeCraftedFrom: ["all"],
+  canBeCraftedFrom: [],
   name: "Basic Short Sword Guard",
 });
