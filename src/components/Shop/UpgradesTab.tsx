@@ -47,7 +47,9 @@ export const UpgradesTab = ({
                     {selectedItem.description}
                 </span>
                 {selectedItem.price > balance && (
-                    <span className={s.buttonReplacement}>Not enough gold</span>
+                    <span className={s.buttonReplacement}>
+                        Not enough gold {selectedItem.price}
+                    </span>
                 )}
                 {selectedItem.price <= balance && (
                     <button

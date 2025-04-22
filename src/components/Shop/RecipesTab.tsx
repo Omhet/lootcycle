@@ -70,7 +70,7 @@ export const RecipesTab = ({
                 {!selectedItem.alreadyBought &&
                     selectedItem.price > balance && (
                         <span className={s.buttonReplacement}>
-                            Not enough gold
+                            Not enough gold {selectedItem.price}
                         </span>
                     )}
                 {!selectedItem.alreadyBought &&
