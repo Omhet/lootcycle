@@ -51,6 +51,9 @@ export class Game extends Scene {
   // @ts-ignore
   private groundCollider: MatterJS.BodyType;
   cursors: Phaser.Types.Input.Keyboard.CursorKeys | undefined;
+  leftWall: MatterJS.BodyType;
+  rightWall: MatterJS.BodyType;
+  ceiling: MatterJS.BodyType;
 
   constructor() {
     super("Game");
@@ -86,6 +89,20 @@ export class Game extends Scene {
         label: "ground",
       }
     );
+
+    this.ceiling = this.matter.add.rectangle(this.cameras.main.width / 2, 0, this.cameras.main.width, 200, {
+      isStatic: true,
+      label: "ceiling",
+    });
+
+    this.leftWall = this.matter.add.rectangle(0, this.cameras.main.height / 2, 450, this.cameras.main.height, {
+      isStatic: true,
+      label: "leftWall",
+    });
+    this.rightWall = this.matter.add.rectangle(this.cameras.main.width, this.cameras.main.height / 2, 450, this.cameras.main.height, {
+      isStatic: true,
+      label: "rightWall",
+    });
 
     // Pass the pipe spawn point from PipeManager to JunkPileManager
     this.junkPileManager.setSpawnPoint(this.pipeManager.getSpawnPoint().x, this.pipeManager.getSpawnPoint().y);
