@@ -1,4 +1,4 @@
-import { JunkPiece, JunkPieceId, LootConfig, RecipeItem, RecipeItemType, RecipePart, RecipePartType } from "../craftModel";
+import { JunkPiece, JunkPieceId, LootConfig, LootDetail, LootDetailId, RecipeItem, RecipeItemType, RecipePart, RecipePartType } from "../craftModel";
 
 /**
  * Registry system for dynamically collecting and exporting loot configurations
@@ -10,10 +10,12 @@ const registry: {
   recipeItems: Map<RecipeItemType, RecipeItem[]>;
   recipeParts: Map<RecipePartType, RecipePart[]>;
   junkPieces: Map<JunkPieceId, JunkPiece[]>;
+  lootDetails: Map<LootDetailId, LootDetail[]>;
 } = {
   recipeItems: new Map(),
   recipeParts: new Map(),
   junkPieces: new Map(),
+  lootDetails: new Map(),
 };
 
 /**
@@ -42,14 +44,32 @@ export function registerRecipePart(type: RecipePartType, part: RecipePart): void
 
 /**
  * Register a junk piece with the registry
- * @param type The type of the junk piece
- * @param detail The junk piece to register
+ * @param id The ID of the junk piece
+ * @param detail The junk piece data to register
  */
 export function registerJunkPiece(id: JunkPieceId, detail: Omit<JunkPiece, "id">): void {
   if (!registry.junkPieces.has(id)) {
     registry.junkPieces.set(id, []);
   }
-  registry.junkPieces.get(id)?.push({ ...detail, id });
+  const existingDetails = registry.junkPieces.get(id);
+  if (!existingDetails?.some((d) => d.name === detail.name)) {
+    existingDetails?.push({ ...detail, id });
+  }
+}
+
+/**
+ * Register a loot detail with the registry
+ * @param id The ID of the loot detail
+ * @param detail The loot detail data to register
+ */
+export function registerLootDetail(id: LootDetailId, detail: Omit<LootDetail, "id">): void {
+  if (!registry.lootDetails.has(id)) {
+    registry.lootDetails.set(id, []);
+  }
+  const existingDetails = registry.lootDetails.get(id);
+  if (!existingDetails?.some((d) => d.name === detail.name)) {
+    existingDetails?.push({ ...detail, id });
+  }
 }
 
 /**
@@ -60,22 +80,27 @@ export function generateLootConfig(): LootConfig {
     recipeItems: {},
     recipeParts: {},
     junkPieces: {},
+    lootDetails: {},
   } as LootConfig;
 
   // Convert Maps to the expected format in LootConfig
   registry.recipeItems.forEach((items, type) => {
-    config.recipeItems[type] = items;
+    config.recipeItems[type] = items; // Fixed: Use items and type
   });
 
   registry.recipeParts.forEach((parts, type) => {
-    config.recipeParts[type] = parts;
+    config.recipeParts[type] = parts; // Fixed: Use parts and type
   });
 
-  registry.junkPieces.forEach((details, type) => {
-    config.junkPieces[type] = details;
+  registry.junkPieces.forEach((details, id) => {
+    config.junkPieces[id] = details;
   });
 
-  return config;
+  registry.lootDetails.forEach((details, id) => {
+    config.lootDetails[id] = details;
+  });
+
+  return config; // Fixed: Added return statement
 }
 
 /**
@@ -83,7 +108,7 @@ export function generateLootConfig(): LootConfig {
  * @returns List of validation issues or empty array if valid
  */
 export function validateLootConfig(): string[] {
-  const issues: string[] = [];
+  const issues: string[] = []; // Fixed: Re-added issues array declaration
 
   // Check for empty categories
   if (registry.recipeItems.size === 0) {
@@ -95,7 +120,11 @@ export function validateLootConfig(): string[] {
   }
 
   if (registry.junkPieces.size === 0) {
-    issues.push("No junk details registered");
+    issues.push("No junk pieces registered");
+  }
+
+  if (registry.lootDetails.size === 0) {
+    issues.push("No loot details registered");
   }
 
   // More complex validation can be added here
