@@ -33,7 +33,7 @@ export class ClawManager {
   private readonly CLAW_MOVEMENT_HORIZONTAL_ZONE_START = 275;
   private readonly CLAW_MOVEMENT_HORIZONTAL_ZONE_END = 275;
 
-  private readonly CLAW_MOVEMENT_VERTICAL_ZONE_START = 100;
+  private readonly CLAW_MOVEMENT_VERTICAL_ZONE_START = 200;
   private readonly CLAW_MOVEMENT_VERTICAL_ZONE_END = 400;
 
   private speed = 150;
@@ -64,10 +64,11 @@ export class ClawManager {
 
     // Chain
     this.anchor = this.scene.matter.add.sprite(anchorX, anchorY, "claw_anchor", undefined, {
-      isStatic: true, // Make the anchor completely static instead of just ignoring gravity
+      isStatic: true,
       collisionFilter: { group },
     });
-    this.anchor.setDepth(DepthLayers.BackgroundFrame - 1);
+    this.anchor.setDepth(DepthLayers.Claw - 1);
+    this.anchor.setOrigin(0.5, 1);
 
     let prev = this.anchor;
     let y = anchorY;
@@ -92,15 +93,13 @@ export class ClawManager {
       const stiffness = 1;
       const damping = 0.5; // Increased from 0.1 to reduce oscillation
 
-      // Create main joint
-      this.scene.matter.add.joint(prev.body as MatterJS.BodyType, link.body as MatterJS.BodyType, jointLength, stiffness, {
-        pointA: { x: 0, y: isFirst ? 100 : linkHeight / 4 },
-        pointB: { x: 0, y: -linkHeight / 4 },
-        damping,
-      });
-
-      // Add an angle constraint to prevent excessive rotation
-      if (!isFirst) {
+      if (isFirst) {
+        this.scene.matter.add.joint(prev.body as MatterJS.BodyType, link.body as MatterJS.BodyType, jointLength, stiffness, {
+          pointA: { x: 0, y: isFirst ? 0 : linkHeight / 4 },
+          pointB: { x: 0, y: -linkHeight / 4 },
+          damping,
+        });
+      } else {
         this.scene.matter.add.constraint(
           prev.body as MatterJS.BodyType,
           link.body as MatterJS.BodyType,
