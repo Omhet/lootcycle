@@ -11,6 +11,9 @@ export class ClawManager {
   private readonly ANCHOR_X_OFFSET = 350; // Relative to screen center
   private readonly ANCHOR_Y = 100; // Fixed Y position for the top anchor
 
+  private readonly CONTAINER_ZONE_START_X = 100;
+  private readonly CONTAINER_ZONE_END_X = 300;
+
   private speed = 150;
 
   constructor(scene: Scene) {
@@ -204,10 +207,13 @@ export class ClawManager {
     if (this.anchor && this.anchor.body) {
       // For static bodies, we need to update position directly
       const newX = this.anchor.x + moveFactor * this.speed * (1 / 60); // Assuming 60fps
-      this.scene.matter.body.setPosition(this.anchor.body as MatterJS.BodyType, {
-        x: newX,
-        y: this.anchor.y,
-      });
+
+      if (newX >= this.scene.cameras.main.width / 2 + this.CONTAINER_ZONE_START_X && newX <= this.scene.cameras.main.width - this.CONTAINER_ZONE_END_X) {
+        this.scene.matter.body.setPosition(this.anchor.body as MatterJS.BodyType, {
+          x: newX,
+          y: this.anchor.y,
+        });
+      }
     }
   }
 
