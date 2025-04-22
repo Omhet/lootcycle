@@ -179,6 +179,7 @@ export type LootPart = {
 
 export type LootDetail = {
   id: LootDetailId;
+  type: RecipeDetailType;
   canBeCraftedFrom: JunkPieceId[]; // List of junk pieces that can be used to craft this detail
   name: string;
 };
