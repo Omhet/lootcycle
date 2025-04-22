@@ -165,6 +165,9 @@ export class Game extends Scene {
 
     if (craftResult.success && craftResult.item) {
       this.craftedItemManager.displayItem(craftResult.item);
+    } else if (craftResult.failure) {
+      // Emit an event when crafting fails
+      EventBus.emit("crafting-failure", craftResult.failure);
     }
   }
 
