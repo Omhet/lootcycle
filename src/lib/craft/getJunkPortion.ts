@@ -112,12 +112,10 @@ export function getJunkPortion(
 
   const finalPortion: JunkPiece[] = [];
 
-  // Add generic junk (70%)
   if (genericJunk.length > 0) {
     finalPortion.push(...getRandomItems(genericJunk, genericJunkCount));
   }
 
-  // Add recipe-specific junk (30%)
   if (recipeSpecificJunk.length > 0) {
     finalPortion.push(...getRandomItems(recipeSpecificJunk, recipeSpecificJunkCount));
   }
