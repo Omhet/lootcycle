@@ -23,9 +23,10 @@ type StallLootDetail = {
 type StallProps = {
   groups: StallGroup[];
   onSellAndClose: () => void;
+  onClose: () => void;
 };
 
-export const Stall = ({ groups, onSellAndClose }: StallProps) => {
+export const Stall = ({ groups, onSellAndClose, onClose }: StallProps) => {
   const hasItems = groups.length > 0 && groups.some((group) => group.items.length > 0);
 
   // Only set highlighted item if we have items
@@ -60,17 +61,27 @@ export const Stall = ({ groups, onSellAndClose }: StallProps) => {
                 </div>
               ))}
             </div>
-            <button className={s.button} onClick={onSellAndClose}>
-              {`Sell everything (${totalProfit} gold) & call it a day`}
-            </button>
+            <div className={s.buttonsContainer}>
+              <button className={`${s.button} ${s.sellButton}`} onClick={onSellAndClose}>
+                {`Sell everything (${totalProfit} gold) & call it a day`}
+              </button>
+              <button className={`${s.button} ${s.closeButton}`} onClick={onClose}>
+                Close
+              </button>
+            </div>
           </>
         ) : (
           <div className={s.emptyStateContainer}>
             <p className={s.emptyStateMessage}>You have no items to sell</p>
             <p className={s.emptyStateSubMessage}>Craft some items first to display them here</p>
-            <button className={s.button} onClick={onSellAndClose}>
-              Call it a day
-            </button>
+            <div className={s.buttonsContainer}>
+              <button className={s.button} onClick={onSellAndClose}>
+                Call it a day
+              </button>
+              <button className={`${s.button} ${s.closeButton}`} onClick={onClose}>
+                Close
+              </button>
+            </div>
           </div>
         )}
       </div>

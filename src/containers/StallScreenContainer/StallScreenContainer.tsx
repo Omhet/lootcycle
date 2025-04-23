@@ -92,9 +92,14 @@ export const StallScreenContainer = () => {
     closeScreen();
   };
 
+  const handleClose = () => {
+    // Just close the screen without selling anything
+    closeScreen();
+  };
+
   return (
     <ScreenContainer>
-      <Stall groups={stallGroups} onSellAndClose={handleSellAndClose} />
+      <Stall groups={stallGroups} onSellAndClose={handleSellAndClose} onClose={handleClose} />
     </ScreenContainer>
   );
 };

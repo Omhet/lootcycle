@@ -94,6 +94,47 @@
   gap: 3vmin;
   overflow-y: auto;
 }
+
+/* Button styles */
+.buttonsContainer {
+  display: flex;
+  gap: 1vmin;
+  margin-top: auto;
+  width: 100%;
+}
+
+.button {
+  padding: 1vmin 2vmin;
+  border: none;
+  background-color: #ada39a;
+  color: #2b201c;
+  font-size: 2.5vmin;
+  cursor: pointer;
+  flex: 1;
+}
+
+.button:hover {
+  background-color: #574436;
+  color: #ebe6e1;
+}
+
+.sellButton {
+  background-color: #5e8e54;
+  color: #ebe6e1;
+}
+
+.sellButton:hover {
+  background-color: #487442;
+}
+
+.closeButton {
+  background-color: #92817a;
+}
+
+.closeButton:hover {
+  background-color: #76665f;
+}
+
 .imageContainer {
   flex-shrink: 0;
   width: 100%;
