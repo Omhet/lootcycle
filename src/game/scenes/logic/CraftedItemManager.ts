@@ -52,7 +52,7 @@ export class CraftedItemManager {
     if (!this.craftedItem) return;
 
     // Delegate rendering to the service
-    this.renderer.renderItemToTexture(this.craftedItem, this.craftedItemRT, true); // Pass the item and the target RT
+    this.renderer.renderToTexture(this.craftedItem, this.craftedItemRT, true); // Pass the item and the target RT
 
     // Any additional logic specific to the *display* in the Game scene can go here
     // (e.g., triggering animations on the RT, scaling, etc.)
