@@ -67,7 +67,6 @@ button {
   display: flex; /* Use flexbox */
   justify-content: center; /* Center content horizontally */
   align-items: center; /* Center content vertically */
-  pointer-events: none; /* Allow clicks to pass through to the game canvas by default */
   z-index: 10; /* Ensure UI is above the Phaser canvas */
 }
 
@@ -80,7 +79,6 @@ button {
 
 /* Make buttons inside the UI interactive */
 #uiContainer button {
-  pointer-events: auto; /* Make buttons clickable */
   /* Use relative units for sizing and font */
   width: 15vmin; /* Example: Width relative to the smaller viewport dimension */
   padding: 1vmin 2vmin; /* Example: Padding relative to the smaller viewport dimension */
