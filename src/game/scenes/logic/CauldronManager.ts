@@ -99,12 +99,35 @@ export class CauldronManager {
    */
   private createThresholdLine(x: number, y: number, width: number): void {
     this.thresholdLine = this.scene.add.graphics();
-    this.thresholdLine.lineStyle(5, 0x454359, 1); // Increased stroke width from 3 to 5
-    this.thresholdLine.beginPath();
-    this.thresholdLine.moveTo(x - width / 2, y);
-    this.thresholdLine.lineTo(x + width / 2, y);
-    this.thresholdLine.strokePath();
     this.thresholdLine.setDepth(DepthLayers.Ground - 1); // Make sure it's below the cauldron
+    this.drawDashedLine(this.thresholdLine, x, y, width, 0x454359, 5);
+  }
+
+  /**
+   * Creates a dashed line at the specified position with given color
+   */
+  private drawDashedLine(graphics: Phaser.GameObjects.Graphics, x: number, y: number, width: number, color: number, thickness: number = 5): void {
+    graphics.clear();
+    graphics.lineStyle(thickness, color, 0.8);
+
+    // Create a dashed line by drawing multiple short line segments
+    const dashSize = 10;
+    const gapSize = 5;
+    const segments = Math.floor(width / (dashSize + gapSize));
+
+    const startX = x - width / 2;
+
+    graphics.beginPath();
+
+    for (let i = 0; i < segments; i++) {
+      const segmentStartX = startX + i * (dashSize + gapSize);
+      const segmentEndX = segmentStartX + dashSize;
+
+      graphics.moveTo(segmentStartX, y);
+      graphics.lineTo(segmentEndX, y);
+    }
+
+    graphics.strokePath();
   }
 
   /**
@@ -114,19 +137,12 @@ export class CauldronManager {
     // Color changes to BDB9DD when there are enough junk pieces
     const lineColor = this.hasEnoughJunkForCrafting() ? 0xbdb9dd : 0x454359;
 
-    // Clear the existing line
-    this.thresholdLine.clear();
-
     // Draw the new line with updated color
     const frame = this.scene.textures.get("cauldron").get();
     const xPos = this.cauldronSprite.x + 10;
     const width = frame.width * 0.75;
 
-    this.thresholdLine.lineStyle(5, lineColor, 1);
-    this.thresholdLine.beginPath();
-    this.thresholdLine.moveTo(xPos - width / 2, this.thresholdY);
-    this.thresholdLine.lineTo(xPos + width / 2, this.thresholdY);
-    this.thresholdLine.strokePath();
+    this.drawDashedLine(this.thresholdLine, xPos, this.thresholdY, width, lineColor, 5);
   }
 
   /**
