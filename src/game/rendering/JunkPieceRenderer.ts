@@ -56,11 +56,15 @@ export class JunkPieceRenderer extends ImageRenderer {
     const frameData = tempSprite.frame;
 
     // Calculate the actual source size from the frame data
+    // @ts-ignore
     let sourceWidth = frameData.customData?.sourceSize?.w || frameData.width;
+    // @ts-ignore
     let sourceHeight = frameData.customData?.sourceSize?.h || frameData.height;
 
     // Get the spriteSourceSize data (offset within the sourceSize)
+    // @ts-ignore
     const spriteOffsetX = frameData.customData?.spriteSourceSize?.x || 0;
+    // @ts-ignore
     const spriteOffsetY = frameData.customData?.spriteSourceSize?.y || 0;
 
     // Position the sprite to account for offset (this centers the actual content)
