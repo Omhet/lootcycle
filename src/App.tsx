@@ -26,19 +26,6 @@ function App() {
       // Create user-friendly messages based on failure reasons
       let toastMessage = failure.message || "Crafting failed";
 
-      // Override with more user-friendly messages if needed
-      //   switch (failure.reason) {
-      //     case CraftingFailureReason.NotEnoughJunk:
-      //       toastMessage = "Not enough materials to craft this item";
-      //       break;
-      //     case CraftingFailureReason.TooLowTemperature:
-      //       toastMessage = "The temperature is too low for crafting";
-      //       break;
-      //     case CraftingFailureReason.TooHighTemperature:
-      //       toastMessage = "The temperature is too high for crafting";
-      //       break;
-      //   }
-
       // Show the toast notification
       toast.error(toastMessage, {
         position: "top-right",
