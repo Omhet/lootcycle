@@ -57,7 +57,7 @@ export class RecipeImageDownloader {
           rarity: Rarity.Common,
           sellPrice: 0,
           temperatureRange: { min: 0, max: 100 },
-        };
+        } as LootItem;
 
         const tempRT = this.scene.make.renderTexture({
           width: tempRTWidth,
