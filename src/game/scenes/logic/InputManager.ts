@@ -126,11 +126,18 @@ export class InputManager {
     // Stop cooking and get final temperature
     const finalTemperature = cauldronManager.stopCooking();
 
+    // Check if the temperature is high enough for crafting
+    const temperatureRange = cauldronManager.getTemperatureRange();
+    const isTemperatureValid = temperatureRange && finalTemperature >= temperatureRange.min;
+
     // Emit event to notify scene to craft item with final temperature
     EventBus.emit("craft-item", finalTemperature);
 
-    // Destroy junk pieces in cauldron
-    cauldronManager.destroyJunkPieces();
+    // Only destroy junk pieces if temperature was high enough
+    if (isTemperatureValid) {
+      // Destroy junk pieces in cauldron
+      cauldronManager.destroyJunkPieces();
+    }
   }
 
   /**

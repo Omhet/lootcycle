@@ -617,6 +617,13 @@ export class CauldronManager {
     return this.currentTemperature;
   }
 
+  /**
+   * Gets the current temperature range for crafting
+   */
+  public getTemperatureRange(): TemperatureRange | null {
+    return this.temperatureRange;
+  }
+
   public getSprite(): Phaser.Physics.Matter.Sprite {
     return this.cauldronSprite;
   }
