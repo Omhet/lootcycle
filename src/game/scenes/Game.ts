@@ -10,6 +10,7 @@ import { ClawManager } from "./logic/ClawManager";
 import { ContainerManager } from "./logic/ContainerManager";
 import { CraftedItemManager } from "./logic/CraftedItemManager";
 import { FurnaceManager } from "./logic/FurnaceManager";
+import { InputManager } from "./logic/InputManager";
 import { IntakeManager } from "./logic/IntakeManager";
 import { JunkPileManager } from "./logic/JunkPileManager";
 import { PipeManager } from "./logic/PipeManager";
@@ -45,13 +46,13 @@ export class Game extends Scene {
   private cauldronManager: CauldronManager;
   private intakeManager: IntakeManager;
   private furnaceManager: FurnaceManager;
-  private clawManager: ClawManager; // Add ClawManager property
+  private clawManager: ClawManager;
+  private inputManager: InputManager; // Add InputManager
 
   // Physics bodies (Scene specific)
   private groundHeight = 38;
   // @ts-ignore
   private groundCollider: MatterJS.BodyType;
-  cursors: Phaser.Types.Input.Keyboard.CursorKeys | undefined;
   leftWall: MatterJS.BodyType;
   rightWall: MatterJS.BodyType;
   ceiling: MatterJS.BodyType;
@@ -62,7 +63,6 @@ export class Game extends Scene {
 
   create() {
     this.camera = this.cameras.main;
-    this.cursors = this.input.keyboard?.createCursorKeys();
 
     // Instantiate Managers (Order might matter for dependencies or visual layering setup)
     this.backgroundManager = new BackgroundManager(this);
@@ -73,9 +73,10 @@ export class Game extends Scene {
     this.cauldronManager = new CauldronManager(this);
     this.intakeManager = new IntakeManager(this);
     this.craftedItemManager = new CraftedItemManager(this);
-    this.clawManager = new ClawManager(this); // Instantiate ClawManager
+    this.clawManager = new ClawManager(this);
+    this.inputManager = new InputManager(this); // Initialize InputManager
 
-    // Store junkPileManager in registry for easy access (not needed for cauldron but may be useful elsewhere)
+    // Store junkPileManager in registry for easy access
     this.registry.set("junkPileManager", this.junkPileManager);
 
     // Set up physics world (Remains in Scene)
@@ -128,28 +129,10 @@ export class Game extends Scene {
     // Pass the pipe spawn point from PipeManager to JunkPileManager
     this.junkPileManager.setSpawnPoint(this.pipeManager.getSpawnPoint().x, this.pipeManager.getSpawnPoint().y);
 
-    // Setup input listener
-    this.input.keyboard?.on("keydown-ENTER", () => {
-      this.junkPileManager.generateNextPortion();
-      this.craftAndRenderItem();
-    });
-
-    // Add the space key for toggling claw open/closed
-    this.input.keyboard?.on("keydown-SPACE", () => {
-      this.clawManager.toggleClaw();
-    });
-
-    // Add the I key for toggling the Stall screen
-    this.input.keyboard?.on("keydown-I", () => {
-      // Emit event to toggle the Stall screen
-      EventBus.emit("toggle-screen", "stall");
-    });
-
-    // Add the ESC key for closing any open screen
-    this.input.keyboard?.on("keydown-ESC", () => {
-      // Emit event to close any open screen
-      EventBus.emit("close-screen");
-    });
+    // Setup event listeners for InputManager events
+    EventBus.on("craft-item", this.craftAndRenderItem, this);
+    EventBus.on("toggle-claw", () => this.clawManager.toggleClaw());
+    EventBus.on("claw-move-horizontal", (moveFactor: number) => this.clawManager.moveHorizontal(moveFactor));
 
     // Generate the initial junk portion
     this.junkPileManager.generateJunkPortion();
@@ -209,17 +192,9 @@ export class Game extends Scene {
   }
 
   update() {
-    // Update claw manager
+    // Update managers that need per-frame updates
     this.clawManager.update();
-
-    // Claw anchor control
-    if (this.cursors?.left.isDown) {
-      this.clawManager.moveHorizontal(-1);
-    } else if (this.cursors?.right.isDown) {
-      this.clawManager.moveHorizontal(1);
-    } else {
-      this.clawManager.moveHorizontal(0);
-    }
+    this.inputManager.update(); // Update InputManager to handle input
   }
 
   /**
@@ -227,6 +202,11 @@ export class Game extends Scene {
    */
   private shutdown(): void {
     console.log("Game scene shutting down...");
+
+    // Remove event listeners
+    EventBus.off("craft-item", this.craftAndRenderItem, this);
+    EventBus.off("toggle-claw");
+    EventBus.off("claw-move-horizontal");
 
     // Clean up managers
     this.backgroundManager?.destroy();
@@ -236,12 +216,7 @@ export class Game extends Scene {
     this.cauldronManager?.destroy();
     this.intakeManager?.destroy();
     this.furnaceManager?.destroy();
-    this.clawManager?.destroy(); // Destroy ClawManager
-
-    // Remove specific listeners
-    this.input.keyboard?.off("keydown-ENTER");
-    this.input.keyboard?.off("keydown-SPACE"); // Remove space key listener
-    this.input.keyboard?.off("keydown-I"); // Remove I key listener
-    this.input.keyboard?.off("keydown-ESC"); // Remove ESC key listener
+    this.clawManager?.destroy();
+    this.inputManager?.destroy(); // Destroy InputManager
   }
 }
