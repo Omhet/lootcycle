@@ -1,0 +1,83 @@
+{
+	"textures": [
+		{
+			"image": "smoke.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 438,
+				"h": 166
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "smoke_2.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 164,
+						"h": 164
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 164,
+						"h": 164
+					},
+					"frame": {
+						"x": 1,
+						"y": 1,
+						"w": 164,
+						"h": 164
+					}
+				},
+				{
+					"filename": "smoke_1.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 164,
+						"h": 164
+					},
+					"spriteSourceSize": {
+						"x": 8,
+						"y": 5,
+						"w": 148,
+						"h": 154
+					},
+					"frame": {
+						"x": 167,
+						"y": 1,
+						"w": 148,
+						"h": 154
+					}
+				},
+				{
+					"filename": "smoke_3.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 164,
+						"h": 164
+					},
+					"spriteSourceSize": {
+						"x": 22,
+						"y": 18,
+						"w": 120,
+						"h": 128
+					},
+					"frame": {
+						"x": 317,
+						"y": 1,
+						"w": 120,
+						"h": 128
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:74e8960a6ec8216b93c5e871890c69fd:176a0cde02528b0e5071406f36f2df82:557cac7724a8d29be5c43a56587d549b$"
+	}
+}
