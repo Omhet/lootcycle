@@ -1,0 +1,36 @@
+import { MutableRefObject } from "react";
+import { IRefPhaserGame } from "../../game/PhaserGame";
+import { MainMenu } from "../../game/scenes/MainMenu";
+
+/**
+ * Hook for handling game-related controls
+ * @param phaserRef Reference to the PhaserGame component
+ */
+export const useGameControls = (phaserRef: MutableRefObject<IRefPhaserGame | null>) => {
+  // Handle Play button click
+  const handlePlayClick = () => {
+    if (phaserRef.current && phaserRef.current.scene) {
+      const scene = phaserRef.current.scene;
+      if (scene.scene.key === "MainMenu" && typeof (scene as any).startGame === "function") {
+        (scene as unknown as MainMenu).startGame();
+      }
+    }
+  };
+
+  // Handle Download Loot Images button click
+  const handleDownloadLootImagesClick = () => {
+    if (phaserRef.current && phaserRef.current.scene) {
+      const scene = phaserRef.current.scene;
+      if (scene.scene.key === "MainMenu" && typeof (scene as any).downloadRecipeImages === "function") {
+        (scene as unknown as MainMenu).downloadRecipeImages();
+      } else {
+        console.warn("Download function not available on the current scene or scene is not MainMenu.");
+      }
+    }
+  };
+
+  return {
+    handlePlayClick,
+    handleDownloadLootImagesClick,
+  };
+};
