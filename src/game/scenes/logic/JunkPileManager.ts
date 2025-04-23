@@ -104,8 +104,8 @@ export class JunkPileManager {
         },
       });
 
-      // Make junk two times smaller
-      //   physicsBody.setScale(0.7);
+      // Make junk items slightly random sized between 0.7 and 0.9
+      physicsBody.setScale(Phaser.Math.FloatBetween(0.7, 0.9));
 
       // Set the unique ID as the label through body.parts[0] which is the main body part
       if (physicsBody.body && (physicsBody.body as any).parts && (physicsBody.body as any).parts.length > 0) {
@@ -171,13 +171,18 @@ export class JunkPileManager {
     this.spawnTimers.forEach((timer) => timer.destroy());
     this.spawnTimers = [];
 
-    // Spawn each junk item with a delay to create a sequential dropping effect
+    // Spawn junk items rapidly like a fire hose instead of one by one
     newJunkPortion.forEach((junkPiece, index) => {
-      const delay = 100 + Math.random() * 200;
+      // Use a very small base delay with minimal delay between items
+      const baseDelay = 20;
+      // Group items into small bursts (every 3-5 items) by adding occasional larger gaps
+      const burstDelay = index % Phaser.Math.Between(3, 5) === 0 ? Phaser.Math.Between(30, 50) : 0;
+      // Calculate total delay - minimal base delay + tiny index multiplier + occasional burst delay
+      const delay = baseDelay + index * 5 + burstDelay;
 
       // Create a timer for spawning this item
       const timer = this.scene.time.addEvent({
-        delay: delay * index, // Multiply by index to create sequential spawning
+        delay: delay,
         callback: () => {
           const junkItem = this.spawnJunkItem(junkPiece);
           this.junkPile.push(junkItem);
