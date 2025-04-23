@@ -62,8 +62,8 @@ export class JunkPileManager {
     const uniqueId = this.generateUniqueJunkId(junkPiece);
 
     // Create a spawn zone with random offsets to prevent overlapping
-    const spawnOffsetX = Phaser.Math.Between(-15, 15);
-    const spawnOffsetY = Phaser.Math.Between(-10, 10);
+    const spawnOffsetX = Phaser.Math.Between(-30, 30);
+    const spawnOffsetY = Phaser.Math.Between(-30, 30);
 
     // Use the configurable spawn point with the random offset
     const spawnX = this.spawnX + spawnOffsetX;
@@ -96,8 +96,7 @@ export class JunkPileManager {
         frictionAir: 0.001, // Air friction
         friction: 0.01, // Surface friction
         mass: 0.2, // Mass
-        inverseMass: 20,
-        chamfer: 10,
+        inverseMass: 5,
         collisionFilter: {
           category: CollisionCategories.JUNK,
           mask: CollisionMasks.JUNK,
