@@ -1,5 +1,6 @@
 import { ScreenContainer } from "../../components/ScreenContainer/ScreenContainer";
 import { Stall } from "../../components/Stall/Stall";
+import { lootConfig } from "../../lib/craft/config";
 import { ItemCategoryId, LootItem, initialItemCategories, initialItemSubCategories } from "../../lib/craft/craftModel";
 import { useScreenStore } from "../../store/useScreenStore";
 import { useStallStore } from "../../store/useStallStore";
@@ -30,10 +31,16 @@ const transformLootItemsToStallFormat = (lootItems: LootItem[]) => {
       // These are mocked for now, will be updated later
       imageUrl: `/assets/craftedLootItems/${item.id}.png`,
       price: item.sellPrice,
-      lootDetails: item.details.map((detailId) => ({
-        lootDetailName: `Detail ${detailId}`,
-        junkImageUrl: "/assets/game/details/junk-details-sprites.png", // TODO: Update with actual image URL in the future
-      })),
+      lootDetails: item.details.map((detailId) => {
+        // Find the detail in the loot config
+        const detailArray = lootConfig.lootDetails[detailId] || [];
+        const detail = detailArray.length > 0 ? detailArray[0] : null;
+
+        return {
+          lootDetailName: detail ? detail.name : `Detail ${detailId}`,
+          junkImageUrl: "/assets/game/details/junk-details-sprites.png",
+        };
+      }),
     });
   });
 

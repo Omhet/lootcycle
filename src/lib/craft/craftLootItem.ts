@@ -205,10 +205,10 @@ function calculateSellPrice(
   config: LootConfig
 ): number {
   // Start with base sell price from recipe
-  let sellPrice = recipe.baseSellPrice;
+  let sellPrice = recipe.baseSellPrice || 1; // Ensure base price is at least 1
 
   // Calculate total weight for normalization
-  const totalWeight = recipe.sockets.reduce((sum, socket) => sum + socket.relativeWeight, 0);
+  const totalWeight = recipe.sockets.reduce((sum, socket) => sum + (socket.relativeWeight || 0), 0);
 
   // Map to track weighted contributions from each junk piece
   const detailTypeContributions = new Map<RecipeDetailType, number>();
@@ -228,7 +228,8 @@ function calculateSellPrice(
     const relativeWeight = socketForDetail?.relativeWeight || 1;
 
     // Calculate average sell price coefficient for this detail
-    const avgCoefficient = value.junkPieces.reduce((sum, junk) => sum + junk.sellPriceCoefficient, 0) / value.junkPieces.length;
+    const totalJunkCoefficient = value.junkPieces.reduce((sum, junk) => sum + (junk.sellPriceCoefficient || 1), 0);
+    const avgCoefficient = value.junkPieces.length > 0 ? totalJunkCoefficient / value.junkPieces.length : 1;
 
     // Store weighted contribution
     const weightedCoefficient = avgCoefficient * relativeWeight;
@@ -237,14 +238,14 @@ function calculateSellPrice(
   });
 
   // Apply weighted average if we have junk pieces
-  if (detailTypeContributions.size > 0) {
+  if (detailTypeContributions.size > 0 && totalWeight > 0) {
     // Normalize by total weight
     const normalizedCoefficient = totalWeightedCoefficient / totalWeight;
     sellPrice = Math.round(sellPrice * normalizedCoefficient);
   }
 
   // Apply crafting efficiency adjustment based on coverage of required details
-  const coverageRatio = detailToJunk.size / detailTypes.length;
+  const coverageRatio = detailTypes.length > 0 ? detailToJunk.size / detailTypes.length : 1;
   sellPrice = Math.round(sellPrice * coverageRatio);
 
   return Math.max(1, sellPrice); // Ensure minimum price of 1
