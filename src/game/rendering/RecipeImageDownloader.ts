@@ -1,6 +1,7 @@
 import { Scene } from "phaser";
 import { lootConfig } from "../../lib/craft/config";
 import { LootDetail, LootDetailId, LootItem, Rarity, RecipeDetailType, RecipeItem, RecipePart, RecipePartType } from "../../lib/craft/craftModel";
+import { generateLootItemId } from "../../lib/craft/craftUtils";
 import { CraftedItemRenderer } from "./CraftedItemRenderer";
 
 /**
@@ -45,8 +46,11 @@ export class RecipeImageDownloader {
 
       let combinationIndex = 0;
       for (const combination of detailCombinations) {
+        // Generate consistent ID using the shared utility function
+        const itemId = generateLootItemId(recipe.id, combination);
+
         const tempLootItem: LootItem = {
-          id: `temp_${recipe.id}_${combinationIndex}`,
+          id: itemId,
           recipeId: recipe.id,
           details: combination,
           name: recipe.name,
@@ -61,13 +65,12 @@ export class RecipeImageDownloader {
         });
 
         try {
-          const comboKey = `${recipe.id}_${combinationIndex}`;
-          console.log(`Rendering recipe ${recipe.id} LootDetail combination ${combinationIndex}`);
+          console.log(`Rendering recipe ${recipe.id} LootDetail combination ${combinationIndex} with ID: ${itemId}`);
 
           this.itemRenderer.renderItemToTexture(tempLootItem, tempRT);
-          console.log(`Rendered to RenderTexture for ${comboKey}`);
+          console.log(`Rendered to RenderTexture for ID: ${itemId}`);
 
-          console.log(`Snapshotting RenderTexture for key: ${comboKey}`);
+          console.log(`Snapshotting RenderTexture for ID: ${itemId}`);
           const imageDataUrl: string = await new Promise((resolve) => {
             tempRT.snapshot((image: HTMLImageElement | Phaser.Display.Color) => {
               if (!(image instanceof HTMLImageElement)) {
@@ -75,9 +78,9 @@ export class RecipeImageDownloader {
                 resolve("");
                 return;
               }
-              console.log(`Snapshot captured for ${comboKey} (as Image)`);
+              console.log(`Snapshot captured for ${itemId} (as Image)`);
               if (image.width === 0 || image.height === 0) {
-                console.warn(`Snapshot image for ${comboKey} has zero dimensions.`);
+                console.warn(`Snapshot image for ${itemId} has zero dimensions.`);
                 resolve("");
                 return;
               }
@@ -89,16 +92,16 @@ export class RecipeImageDownloader {
                 ctx.drawImage(image, 0, 0);
                 resolve(tempCanvas.toDataURL("image/png"));
               } else {
-                console.error(`Could not get 2D context for temp canvas (${comboKey})`);
+                console.error(`Could not get 2D context for temp canvas (${itemId})`);
                 resolve("");
               }
             });
           });
-          console.log(`snapshot dataURL length for ${comboKey}: ${imageDataUrl.length}`);
+          console.log(`snapshot dataURL length for ${itemId}: ${imageDataUrl.length}`);
 
           if (imageDataUrl && imageDataUrl.length > 0) {
-            const filename = `${recipe.id}_combination_${combinationIndex}.png`;
-            console.log(`Downloading image for ${comboKey} as ${filename}`);
+            const filename = `${recipe.id}_${itemId}.png`;
+            console.log(`Downloading image for ${itemId} as ${filename}`);
 
             // Create download link
             const link = document.createElement("a");
@@ -115,7 +118,7 @@ export class RecipeImageDownloader {
             // Clean up the link element
             document.body.removeChild(link);
           } else {
-            console.warn(`No imageDataUrl for key: ${comboKey}`);
+            console.warn(`No imageDataUrl for ID: ${itemId}`);
             console.warn(`Failed to get image data for ${recipe.id} combination ${combinationIndex}`);
           }
         } catch (error) {

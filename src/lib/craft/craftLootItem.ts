@@ -11,6 +11,7 @@ import {
   RecipeItemId,
   TemperatureRange,
 } from "./craftModel";
+import { generateLootItemId } from "./craftUtils";
 
 // ======= CRAFTING FUNCTION TYPES =======
 
@@ -368,31 +369,6 @@ function generateItemName(recipe: RecipeItem, detailToJunk: Map<RecipeDetailType
   }
 
   return name.trim();
-}
-
-/**
- * Generates an ID for a loot item based on its recipe ID and the IDs of its details
- */
-function generateLootItemId(recipeId: RecipeItemId, detailIds: LootDetailId[]): string {
-  // Sort detail IDs to ensure consistent ID generation regardless of detail order
-  const sortedDetailIds = [...detailIds].sort();
-
-  // Create a base string combining the recipe ID with all detail IDs
-  const baseString = `${recipeId}-${sortedDetailIds.join("-")}`;
-
-  // Use a simple hash function to create a shorter ID
-  let hash = 0;
-  for (let i = 0; i < baseString.length; i++) {
-    const char = baseString.charCodeAt(i);
-    hash = (hash << 5) - hash + char;
-    hash = hash & hash; // Convert to 32bit integer
-  }
-
-  // Convert hash to a hex string and ensure positive value
-  const hashString = Math.abs(hash).toString(16);
-
-  // Return a combination of recipe ID and hash
-  return `${recipeId.substring(0, 8)}-${hashString}`;
 }
 
 function findRecipeItem(recipeId: string, config: LootConfig): RecipeItem | undefined {

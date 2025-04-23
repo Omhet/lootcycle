@@ -25,7 +25,7 @@ export class MainMenu extends Scene {
     EventBus.emit("current-scene-ready", this);
 
     // Temporary start game right away to debug - REMOVE THIS LATER
-    this.startGame();
+    // this.startGame();
 
     console.log({ lootConfig });
   }
