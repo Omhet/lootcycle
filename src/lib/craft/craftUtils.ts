@@ -37,5 +37,5 @@ export function generateLootItemId(recipeId: RecipeItemId, detailIds: LootDetail
   const hashString = Math.abs(hash).toString(16);
 
   // Return a combination of recipe ID and hash
-  return `${recipeId.substring(0, 8)}-${hashString}`;
+  return `${recipeId}-${hashString}`;
 }

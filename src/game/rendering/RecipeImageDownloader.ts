@@ -100,7 +100,7 @@ export class RecipeImageDownloader {
           console.log(`snapshot dataURL length for ${itemId}: ${imageDataUrl.length}`);
 
           if (imageDataUrl && imageDataUrl.length > 0) {
-            const filename = `${recipe.id}_${itemId}.png`;
+            const filename = `${itemId}.png`;
             console.log(`Downloading image for ${itemId} as ${filename}`);
 
             // Create download link

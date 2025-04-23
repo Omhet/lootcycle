@@ -23,14 +23,13 @@ const transformLootItemsToStallFormat = (lootItems: LootItem[]) => {
         items: [],
       });
     }
-
     // Add item to appropriate group
     groupMap.get(categoryId).items.push({
       id: item.id,
       name: item.name,
       category: getSubCategoryName(item.recipeId),
       // These are mocked for now, will be updated later
-      imageUrl: "/assets/game/details/loot-details-sprites.png",
+      imageUrl: `/assets/craftedLootItems/${item.id}.png`,
       price: item.sellPrice,
       lootDetails: item.details.map((detailId) => ({
         lootDetailName: `Detail ${detailId}`,

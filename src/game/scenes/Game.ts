@@ -169,7 +169,7 @@ export class Game extends Scene {
     console.log(`Attempting to craft with ${junkPieces.length} junk pieces at ${temperature} temperature`);
 
     const craftResult = craftLootItem({
-      lootItemRecipeId: "short_sword", // In the future, this could be determined by the junk pieces
+      lootItemRecipeId: "short_sword", // In the future, this could be determined by cauldron queue
       junkPieces: junkPieces,
       temperature: temperature,
       config: lootConfig,
