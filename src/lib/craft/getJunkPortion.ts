@@ -1,6 +1,4 @@
-import { ChanceTable, JunkPiece, LootConfig, Quality, Rarity, RecipeItemId, RecipeItemType } from "./craftModel";
-
-import { getChanceTables } from "./config/chanceTables";
+import { JunkPiece, LootConfig, Quality, RecipeItemId } from "./craftModel";
 
 /**
  * Determines the quality level based on the sell price coefficient
@@ -64,48 +62,16 @@ function getRandomItems<T>(array: T[], count: number, allowRepeats: boolean = tr
 }
 
 /**
- * Gets a new distribution of items based on the provided chance table
- * @param totalCount The total number of items to distribute
- * @param chanceTable The table containing chances for each category
- * @returns A map of category to item count
+ * Shuffles an array in-place using the Fisher-Yates algorithm
+ * @param array The array to shuffle
+ * @returns The shuffled array (same reference as input array)
  */
-function getDistributionFromChanceTable(totalCount: number, chanceTable: ChanceTable): Map<string, number> {
-  const distribution = new Map<string, number>();
-
-  // Initialize all categories to 0
-  Object.keys(chanceTable).forEach((category) => {
-    distribution.set(category, 0);
-  });
-
-  // Distribute items one by one based on normalized chance table
-  let itemsLeft = totalCount;
-
-  // First, distribute items proportionally based on chances
-  const totalChance = Object.values(chanceTable).reduce((sum, chance) => sum + chance, 0);
-
-  if (totalChance > 0) {
-    for (const [category, chance] of Object.entries(chanceTable)) {
-      const normalizedChance = chance / totalChance;
-      const count = Math.floor(totalCount * normalizedChance);
-      distribution.set(category, count);
-      itemsLeft -= count;
-    }
+function shuffleArray<T>(array: T[]): T[] {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
   }
-
-  // Distribute any remaining items randomly based on relative chances
-  while (itemsLeft > 0) {
-    let randomValue = Math.random() * totalChance;
-    for (const [category, chance] of Object.entries(chanceTable)) {
-      randomValue -= chance;
-      if (randomValue <= 0) {
-        distribution.set(category, (distribution.get(category) || 0) + 1);
-        itemsLeft--;
-        break;
-      }
-    }
-  }
-
-  return distribution;
+  return array;
 }
 
 /**
@@ -136,119 +102,31 @@ export function getJunkPortion(
     alljunkPieces.push(...detailsArray);
   });
 
-  // First, find the favorite recipe objects by their IDs
-  const favoriteRecipeObjects = favoriteRecipes
-    .map((recipeId) => {
-      // Search through all recipe types to find the recipe with matching ID
-      for (const recipeType in lootConfig.recipeItems) {
-        const typedRecipeType = recipeType as RecipeItemType;
-        const recipes = lootConfig.recipeItems[typedRecipeType] || [];
-        const matchingRecipe = recipes.find((recipe) => recipe.id === recipeId);
-        if (matchingRecipe) {
-          return matchingRecipe;
-        }
-      }
-      return null;
-    })
-    .filter((recipe) => recipe !== null);
+  // Separate junk into generic (not suitable for any recipes) and recipe-specific
+  const genericJunk = alljunkPieces.filter((junk) => junk.suitableForRecipeDetails.length === 0);
+  const recipeSpecificJunk = alljunkPieces.filter((junk) => junk.suitableForRecipeDetails.length > 0);
 
-  // Filter junk details suitable for the player's favorite recipes
-  // A junk piece is suitable if it can be used in any of the favorite recipes
-  const suitablejunkPieces = alljunkPieces.filter((detail) => {
-    // If no favorite recipes specified, all details are suitable
-    if (!favoriteRecipes || favoriteRecipes.length === 0) return true;
+  // Calculate how many of each type to include
+  const genericJunkCount = Math.round(portionSize * 0.85);
+  const recipeSpecificJunkCount = portionSize - genericJunkCount;
 
-    // Check if the detail is suitable for any of the favorite recipes
-    return detail.suitableForRecipeDetails.some((recipeDetailType) => {
-      // Check if this detail type is used in any of the favorite recipes
-      return favoriteRecipeObjects.some((recipe) => {
-        // Check if any recipe socket accepts parts that might use this detail type
-        if (!recipe) return false;
-
-        return recipe.sockets.some((socket) => {
-          const recipeParts = lootConfig.recipeParts[socket.acceptType] || [];
-          return recipeParts.some((recipePart) => {
-            // Check if any part socket accepts this detail type
-            return recipePart.sockets.some((s) => s.acceptType === recipeDetailType);
-          });
-        });
-      });
-    });
-  });
-
-  if (suitablejunkPieces.length === 0) {
-    console.warn("No suitable junk details found for the given favorite recipes");
-    return [];
-  }
-
-  // Get the quality and rarity chance tables from config
-  const chanceTables = getChanceTables();
-
-  const qualityChanceTable = chanceTables.qualityChanceTables[qualityChanceLevel] || chanceTables.qualityChanceTables[1];
-
-  const rarityChanceTable = chanceTables.rarityChanceTables[rarityChanceLevel] || chanceTables.rarityChanceTables[1];
-
-  // Group the filtered junk details by quality and rarity
-  const qualityRarityGroups = new Map<string, JunkPiece[]>();
-
-  suitablejunkPieces.forEach((detail) => {
-    const quality = determineQuality(detail.sellPriceCoefficient);
-    const rarity = detail.rarity;
-    const groupKey = `${quality}_${rarity}`;
-
-    if (!qualityRarityGroups.has(groupKey)) {
-      qualityRarityGroups.set(groupKey, []);
-    }
-
-    qualityRarityGroups.get(groupKey)?.push(detail);
-  });
-
-  // Determine distribution by quality and rarity
-  const qualityDistribution = getDistributionFromChanceTable(portionSize, qualityChanceTable);
-  const rarityDistribution = getDistributionFromChanceTable(portionSize, rarityChanceTable);
-
-  // Build the final junk portion
   const finalPortion: JunkPiece[] = [];
 
-  // First, try to distribute by quality-rarity pairs
-  for (const quality of Object.values(Quality)) {
-    const qualityCount = qualityDistribution.get(quality) || 0;
-    if (qualityCount <= 0) continue;
-
-    // Distribute quality quota among rarities
-    let remainingQualityCount = qualityCount;
-    for (const rarity of Object.values(Rarity)) {
-      const rarityCount = rarityDistribution.get(rarity) || 0;
-      if (rarityCount <= 0) continue;
-
-      // Calculate how many items to take from this quality-rarity group
-      // This is a simplistic approach - in reality you might want a more complex distribution
-      const groupKey = `${quality}_${rarity}`;
-      const groupItems = qualityRarityGroups.get(groupKey) || [];
-
-      // Simple proportion algorithm - can be refined
-      const proportion = Math.min(1.0, rarityCount / portionSize);
-      const groupCount = Math.min(Math.ceil(remainingQualityCount * proportion), remainingQualityCount);
-
-      if (groupCount > 0 && groupItems.length > 0) {
-        const selectedItems = getRandomItems(groupItems, groupCount, true);
-        finalPortion.push(...selectedItems);
-        remainingQualityCount -= selectedItems.length;
-      }
-
-      if (remainingQualityCount <= 0) break;
-    }
+  // Add generic junk (70%)
+  if (genericJunk.length > 0) {
+    finalPortion.push(...getRandomItems(genericJunk, genericJunkCount));
   }
 
-  // If we didn't fill the portion size, add random items from any quality-rarity group
+  // Add recipe-specific junk (30%)
+  if (recipeSpecificJunk.length > 0) {
+    finalPortion.push(...getRandomItems(recipeSpecificJunk, recipeSpecificJunkCount));
+  }
+
+  // If either category doesn't have enough items, fill with items from the other category
   if (finalPortion.length < portionSize) {
-    const allItems: JunkPiece[] = [];
-    qualityRarityGroups.forEach((group) => allItems.push(...group));
-
-    const additionalCount = portionSize - finalPortion.length;
-    const additionalItems = getRandomItems(allItems, additionalCount, true);
-    finalPortion.push(...additionalItems);
+    const remainingCount = portionSize - finalPortion.length;
+    finalPortion.push(...getRandomItems(alljunkPieces, remainingCount));
   }
 
-  return finalPortion;
+  return shuffleArray(finalPortion);
 }
