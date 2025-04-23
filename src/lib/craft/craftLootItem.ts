@@ -2,6 +2,7 @@ import {
   CraftingFailureReason,
   ItemCategoryId,
   JunkPiece,
+  JunkPieceId,
   LootConfig,
   LootDetail,
   LootDetailId,
@@ -394,7 +395,7 @@ function findCategoryForSubcategory(subCategoryId: string): string {
  * Attempts to craft a LootItem from a recipe and junk items at a specific temperature.
  */
 export function craftLootItem(params: craftLootItemParams): CraftingResult {
-  const { lootItemRecipeId, junkPieces, temperature, config } = params;
+  const { lootItemRecipeId, junkPieces, temperature: _temperature, config } = params;
 
   // Find the recipe item
   const recipe = findRecipeItem(lootItemRecipeId, config);
@@ -484,6 +485,23 @@ export function craftLootItem(params: craftLootItemParams): CraftingResult {
     details.push(lootDetail.id);
   });
 
+  // Collect all unique junk piece IDs used in crafting
+  const usedJunkPieces: JunkPieceId[] = [];
+  detailToJunk.forEach(({ junkPieces }) => {
+    junkPieces.forEach((junk) => {
+      if (!usedJunkPieces.includes(junk.id)) {
+        usedJunkPieces.push(junk.id);
+      }
+    });
+  });
+
+  // Create map from detail ID to junk piece ID
+  const detailToJunkMap: Record<LootDetailId, JunkPieceId | undefined> = {};
+  detailToJunk.forEach(({ lootDetail, junkPieces }, _detailType) => {
+    // Use the first junk piece for this detail, if any
+    detailToJunkMap[lootDetail.id] = junkPieces.length > 0 ? junkPieces[0].id : undefined;
+  });
+
   // Generate ID based on recipe and details
   const id = generateLootItemId(lootItemRecipeId, details);
 
@@ -502,6 +520,8 @@ export function craftLootItem(params: craftLootItemParams): CraftingResult {
     category,
     subCategory: recipe.subCategory,
     type: recipe.type,
+    junkPieces: usedJunkPieces,
+    detailToJunkMap,
   };
 
   return {

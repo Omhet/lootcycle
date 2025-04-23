@@ -169,6 +169,9 @@ export type LootItem = {
   category: ItemCategoryId;
   subCategory: ItemSubCategoryId;
   type: RecipeItemType;
+  junkPieces: JunkPieceId[];
+  // Maps each detail ID to the junk piece ID it was crafted from (if any)
+  detailToJunkMap: Record<LootDetailId, JunkPieceId | undefined>;
   rarity: Rarity;
   sellPrice: number;
   temperatureRange: TemperatureRange; // In Celsius
