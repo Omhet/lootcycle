@@ -183,8 +183,10 @@ export class Game extends Scene {
       // potentially with an animation showing them being consumed
       this.cauldronManager.clearJunkPieces();
 
-      // Emit an event for successful crafting
+      // Emit an event with the crafted item that will be handled by React
+      // This replaces direct store manipulation
       EventBus.emit("crafting-success", craftResult.item);
+      EventBus.emit("add-crafted-item", craftResult.item);
     } else if (craftResult.failure) {
       // Emit an event when crafting fails
       EventBus.emit("crafting-failure", craftResult.failure);

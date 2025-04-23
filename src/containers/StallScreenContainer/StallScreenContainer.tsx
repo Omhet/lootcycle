@@ -1,83 +1,100 @@
 import { ScreenContainer } from "../../components/ScreenContainer/ScreenContainer";
 import { Stall } from "../../components/Stall/Stall";
+import { ItemCategoryId, LootItem } from "../../lib/craft/craftModel";
 import { useScreenStore } from "../../store/useScreenStore";
+import { useStallStore } from "../../store/useStallStore";
 
-// Mock data for the Stall component
-const mockStallData = {
-  groups: [
-    {
-      name: "Weapons",
-      items: [
-        {
-          id: "sw1",
-          name: "Short Sword",
-          category: "One-handed Blade",
-          imageUrl: "/assets/game/details/loot-details-sprites.png",
-          price: 50,
-          lootDetails: [
-            {
-              lootDetailName: "Sharp Blade",
-              junkImageUrl: "/assets/game/details/junk-details-sprites.png",
-            },
-            {
-              lootDetailName: "Steel Hilt",
-              junkImageUrl: "/assets/game/details/junk-details-sprites.png",
-            },
-          ],
-        },
-        {
-          id: "dg1",
-          name: "Dagger",
-          category: "Knife",
-          imageUrl: "/assets/game/details/loot-details-sprites.png",
-          price: 30,
-          lootDetails: [
-            {
-              lootDetailName: "Sharp Point",
-              junkImageUrl: "/assets/game/details/junk-details-sprites.png",
-            },
-          ],
-        },
-      ],
-    },
-    {
-      name: "Armor",
-      items: [
-        {
-          id: "sh1",
-          name: "Wooden Shield",
-          category: "Shield",
-          imageUrl: "/assets/game/details/loot-details-sprites.png",
-          price: 25,
-          lootDetails: [
-            {
-              lootDetailName: "Sturdy Wood",
-              junkImageUrl: "/assets/game/details/junk-details-sprites.png",
-            },
-          ],
-        },
-      ],
-    },
-  ],
+/**
+ * Transforms LootItem[] from store into the format needed by the Stall component
+ */
+const transformLootItemsToStallFormat = (lootItems: LootItem[]) => {
+  // Create a map to group items by their category
+  const groupMap = new Map();
+
+  lootItems.forEach((item) => {
+    // Extract category from recipeId or use a default
+    const categoryId = getCategoryFromRecipeId(item.recipeId);
+
+    // Create group if it doesn't exist
+    if (!groupMap.has(categoryId)) {
+      const groupName = getCategoryName(categoryId);
+      groupMap.set(categoryId, {
+        name: groupName,
+        items: [],
+      });
+    }
+
+    // Add item to appropriate group
+    groupMap.get(categoryId).items.push({
+      id: item.id,
+      name: item.name,
+      category: getSubCategoryName(item.recipeId),
+      // These are mocked for now, will be updated later
+      imageUrl: "/assets/game/details/loot-details-sprites.png",
+      price: item.sellPrice,
+      lootDetails: item.details.map((detailId) => ({
+        lootDetailName: `Detail ${detailId}`,
+        junkImageUrl: "/assets/game/details/junk-details-sprites.png",
+      })),
+    });
+  });
+
+  // Convert map to array
+  return Array.from(groupMap.values());
+};
+
+/**
+ * Helper function to get category from recipeId
+ */
+const getCategoryFromRecipeId = (recipeId: string): ItemCategoryId => {
+  // For now just return Weapon as default
+  // This will be improved when we have proper mapping
+  return ItemCategoryId.Weapon;
+};
+
+/**
+ * Helper function to get category name
+ */
+const getCategoryName = (categoryId: ItemCategoryId): string => {
+  switch (categoryId) {
+    case ItemCategoryId.Weapon:
+      return "Weapons";
+    default:
+      return "Miscellaneous";
+  }
+};
+
+/**
+ * Helper function to get subcategory name from recipeId
+ */
+const getSubCategoryName = (recipeId: string): string => {
+  // This is a placeholder - in the future we'll have a proper mapping
+  if (recipeId.includes("sword")) {
+    return "One-handed Blade";
+  }
+  return "Miscellaneous";
 };
 
 export const StallScreenContainer = () => {
   const closeScreen = useScreenStore((state) => state.closeScreen);
+  const { craftedLootItems, clearCraftedLootItems } = useStallStore();
+
+  // If no crafted items, use a fallback item for development
+  const items = craftedLootItems || [];
+
+  const stallGroups = transformLootItemsToStallFormat(items);
 
   const handleSellAndClose = () => {
-    // Here you would handle the selling logic
-    console.log(
-      "Selling all items for",
-      mockStallData.groups.reduce((total, group) => total + group.items.reduce((groupTotal, item) => groupTotal + item.price, 0), 0)
-    );
+    // Clear the crafted items after selling
+    clearCraftedLootItems();
 
-    // Close the screen after selling
+    // Close the screen
     closeScreen();
   };
 
   return (
     <ScreenContainer>
-      <Stall groups={mockStallData.groups} onSellAndClose={handleSellAndClose} />
+      <Stall groups={stallGroups} onSellAndClose={handleSellAndClose} />
     </ScreenContainer>
   );
 };
