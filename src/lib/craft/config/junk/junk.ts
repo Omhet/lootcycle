@@ -83,7 +83,7 @@ registerJunkPiece("gold_ore", {
 });
 
 registerJunkPiece("fluff-yellow", {
-  suitableForRecipeDetails: [RecipeDetailType.Guard],
+  suitableForRecipeDetails: [],
   name: "Fluff",
   rarity: Rarity.Common,
   durability: Durability.Low,
@@ -92,7 +92,7 @@ registerJunkPiece("fluff-yellow", {
 });
 
 registerJunkPiece("fluff-blue", {
-  suitableForRecipeDetails: [RecipeDetailType.Guard],
+  suitableForRecipeDetails: [],
   name: "Fluff",
   rarity: Rarity.Common,
   durability: Durability.Low,
@@ -101,8 +101,17 @@ registerJunkPiece("fluff-blue", {
 });
 
 registerJunkPiece("fluff-green", {
-  suitableForRecipeDetails: [RecipeDetailType.Guard],
+  suitableForRecipeDetails: [],
   name: "Fluff",
+  rarity: Rarity.Common,
+  durability: Durability.Low,
+  sellPriceCoefficient: 1,
+  temperatureCoefficient: 1,
+});
+
+registerJunkPiece("banana", {
+  suitableForRecipeDetails: [],
+  name: "Banana",
   rarity: Rarity.Common,
   durability: Durability.Low,
   sellPriceCoefficient: 1,

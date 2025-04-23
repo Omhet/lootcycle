@@ -160,7 +160,7 @@ export class JunkPileManager {
     }
 
     // For demonstration, using hardcoded values with found recipe IDs
-    const firstPortionSize = 10;
+    const firstPortionSize = 100;
     const qualityChanceLevel = 1;
     const rarityChanceLevel = 1;
 

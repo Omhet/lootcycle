@@ -4,32 +4,11 @@
 			"image": "junk-details-sprites.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 254,
-				"h": 294
+				"w": 128,
+				"h": 645
 			},
 			"scale": 1,
 			"frames": [
-				{
-					"filename": "tree.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 190,
-						"h": 190
-					},
-					"spriteSourceSize": {
-						"x": 12,
-						"y": 30,
-						"w": 87,
-						"h": 159
-					},
-					"frame": {
-						"x": 1,
-						"y": 1,
-						"w": 87,
-						"h": 159
-					}
-				},
 				{
 					"filename": "gold_ore.png",
 					"rotated": false,
@@ -45,94 +24,10 @@
 						"h": 75
 					},
 					"frame": {
-						"x": 90,
+						"x": 1,
 						"y": 1,
 						"w": 88,
 						"h": 75
-					}
-				},
-				{
-					"filename": "bone.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 190,
-						"h": 190
-					},
-					"spriteSourceSize": {
-						"x": 8,
-						"y": 85,
-						"w": 47,
-						"h": 100
-					},
-					"frame": {
-						"x": 180,
-						"y": 1,
-						"w": 47,
-						"h": 100
-					}
-				},
-				{
-					"filename": "basic_short_sword_grip.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 190,
-						"h": 190
-					},
-					"spriteSourceSize": {
-						"x": 20,
-						"y": 123,
-						"w": 24,
-						"h": 67
-					},
-					"frame": {
-						"x": 229,
-						"y": 1,
-						"w": 24,
-						"h": 67
-					}
-				},
-				{
-					"filename": "iron_ore.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 190,
-						"h": 190
-					},
-					"spriteSourceSize": {
-						"x": 20,
-						"y": 83,
-						"w": 88,
-						"h": 75
-					},
-					"frame": {
-						"x": 90,
-						"y": 78,
-						"w": 88,
-						"h": 75
-					}
-				},
-				{
-					"filename": "curved_silver_short_sword_blade.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 190,
-						"h": 190
-					},
-					"spriteSourceSize": {
-						"x": 9,
-						"y": 66,
-						"w": 37,
-						"h": 123
-					},
-					"frame": {
-						"x": 180,
-						"y": 103,
-						"w": 37,
-						"h": 123
 					}
 				},
 				{
@@ -150,10 +45,52 @@
 						"h": 123
 					},
 					"frame": {
-						"x": 219,
-						"y": 103,
+						"x": 91,
+						"y": 1,
 						"w": 27,
 						"h": 123
+					}
+				},
+				{
+					"filename": "iron_ore.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 190,
+						"h": 190
+					},
+					"spriteSourceSize": {
+						"x": 20,
+						"y": 83,
+						"w": 88,
+						"h": 75
+					},
+					"frame": {
+						"x": 1,
+						"y": 78,
+						"w": 88,
+						"h": 75
+					}
+				},
+				{
+					"filename": "basic_short_sword_grip.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 190,
+						"h": 190
+					},
+					"spriteSourceSize": {
+						"x": 20,
+						"y": 123,
+						"w": 24,
+						"h": 67
+					},
+					"frame": {
+						"x": 91,
+						"y": 126,
+						"w": 24,
+						"h": 67
 					}
 				},
 				{
@@ -171,14 +108,14 @@
 						"h": 75
 					},
 					"frame": {
-						"x": 90,
+						"x": 1,
 						"y": 155,
 						"w": 88,
 						"h": 75
 					}
 				},
 				{
-					"filename": "fluff-yellow.png",
+					"filename": "tree.png",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -186,16 +123,37 @@
 						"h": 190
 					},
 					"spriteSourceSize": {
-						"x": 0,
-						"y": 128,
-						"w": 65,
-						"h": 59
+						"x": 12,
+						"y": 30,
+						"w": 87,
+						"h": 159
 					},
 					"frame": {
-						"x": 180,
-						"y": 228,
-						"w": 65,
-						"h": 59
+						"x": 1,
+						"y": 232,
+						"w": 87,
+						"h": 159
+					}
+				},
+				{
+					"filename": "curved_silver_short_sword_blade.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 190,
+						"h": 190
+					},
+					"spriteSourceSize": {
+						"x": 9,
+						"y": 66,
+						"w": 37,
+						"h": 123
+					},
+					"frame": {
+						"x": 90,
+						"y": 232,
+						"w": 37,
+						"h": 123
 					}
 				},
 				{
@@ -214,13 +172,13 @@
 					},
 					"frame": {
 						"x": 1,
-						"y": 162,
+						"y": 393,
 						"w": 76,
 						"h": 69
 					}
 				},
 				{
-					"filename": "fluff-blue.png",
+					"filename": "bone.png",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -228,16 +186,16 @@
 						"h": 190
 					},
 					"spriteSourceSize": {
-						"x": 2,
-						"y": 128,
-						"w": 62,
-						"h": 61
+						"x": 8,
+						"y": 85,
+						"w": 47,
+						"h": 100
 					},
 					"frame": {
 						"x": 79,
-						"y": 232,
-						"w": 62,
-						"h": 61
+						"y": 393,
+						"w": 47,
+						"h": 100
 					}
 				},
 				{
@@ -256,9 +214,72 @@
 					},
 					"frame": {
 						"x": 1,
-						"y": 233,
+						"y": 464,
 						"w": 66,
 						"h": 56
+					}
+				},
+				{
+					"filename": "banana.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 190,
+						"h": 190
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 141,
+						"w": 52,
+						"h": 48
+					},
+					"frame": {
+						"x": 69,
+						"y": 495,
+						"w": 52,
+						"h": 48
+					}
+				},
+				{
+					"filename": "fluff-yellow.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 190,
+						"h": 190
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 128,
+						"w": 65,
+						"h": 59
+					},
+					"frame": {
+						"x": 1,
+						"y": 522,
+						"w": 65,
+						"h": 59
+					}
+				},
+				{
+					"filename": "fluff-blue.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 190,
+						"h": 190
+					},
+					"spriteSourceSize": {
+						"x": 2,
+						"y": 128,
+						"w": 62,
+						"h": 61
+					},
+					"frame": {
+						"x": 1,
+						"y": 583,
+						"w": 62,
+						"h": 61
 					}
 				}
 			]
@@ -267,6 +288,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:54bd66a7f2717a29d865785817147e26:2641d02b0f52b6412d7099c732b0e86a:25f397f2321f072f6da8c82765eea154$"
+		"smartupdate": "$TexturePacker:SmartUpdate:e36ae799474965ce575c94b262f3c388:1697ca5f0c89709c44f9dc6e44f455cf:25f397f2321f072f6da8c82765eea154$"
 	}
 }
