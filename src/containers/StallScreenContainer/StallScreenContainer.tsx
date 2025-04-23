@@ -32,7 +32,7 @@ const transformLootItemsToStallFormat = (lootItems: LootItem[]) => {
       price: item.sellPrice,
       lootDetails: item.details.map((detailId) => ({
         lootDetailName: `Detail ${detailId}`,
-        junkImageUrl: "/assets/game/details/junk-details-sprites.png",
+        junkImageUrl: "/assets/game/details/junk-details-sprites.png", // TODO: Update with actual image URL in the future
       })),
     });
   });
