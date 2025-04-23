@@ -9,10 +9,17 @@ export class InputManager {
   private scene: Scene;
   private cursors: Phaser.Types.Input.Keyboard.CursorKeys;
   private keyListeners: { key: string; callback: () => void }[] = [];
+  private keyA: Phaser.Input.Keyboard.Key | undefined;
+  private keyD: Phaser.Input.Keyboard.Key | undefined;
 
   constructor(scene: Scene) {
     this.scene = scene;
     this.cursors = this.scene.input.keyboard?.createCursorKeys() as Phaser.Types.Input.Keyboard.CursorKeys;
+
+    // Create A and D key objects for movement
+    this.keyA = this.scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.A);
+    this.keyD = this.scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.D);
+
     this.setupInputListeners();
   }
 
@@ -52,7 +59,7 @@ export class InputManager {
    */
   private addKeyListener(key: string, callback: () => void): void {
     this.scene.input.keyboard?.on(`keydown-${key}`, callback);
-    
+
     // Store reference to listener for cleanup
     this.keyListeners.push({ key, callback });
   }
@@ -63,10 +70,11 @@ export class InputManager {
   public update(): void {
     // Handle cursor key input for claw movement
     let horizontalMovement = 0;
-    
-    if (this.cursors?.left.isDown) {
+
+    // Check both cursor keys and A/D keys
+    if (this.cursors?.left.isDown || this.keyA?.isDown) {
       horizontalMovement = -1;
-    } else if (this.cursors?.right.isDown) {
+    } else if (this.cursors?.right.isDown || this.keyD?.isDown) {
       horizontalMovement = 1;
     }
 
@@ -89,7 +97,11 @@ export class InputManager {
     this.keyListeners.forEach(({ key, callback }) => {
       this.scene.input.keyboard?.off(`keydown-${key}`, callback);
     });
-    
+
+    // Remove A and D key objects
+    this.keyA?.destroy();
+    this.keyD?.destroy();
+
     this.keyListeners = [];
     console.log("InputManager destroyed");
   }
