@@ -34,18 +34,13 @@ export class PipeManager {
     const pipeWidth = this.pipeBack.width;
     const pipeHeight = this.pipeBack.height;
 
-    const spawnOffsetX = -pipeWidth + 80;
-    const spawnOffsetY = pipeHeight - 80;
+    const spawnOffsetX = -pipeWidth + 50;
+    const spawnOffsetY = pipeHeight - 50;
 
     this.pipeSpawnPoint = new PhaserMath.Vector2(spawnOffsetX, spawnOffsetY);
 
     // Optional: Add a debug marker at the spawn point
-    // this.spawnMarker = this.scene.add.circle(
-    //     pipeX + spawnOffsetX,
-    //     pipeY + spawnOffsetY,
-    //     5,
-    //     0x00ff00
-    // );
+    // this.spawnMarker = this.scene.add.circle(pipeX + spawnOffsetX, pipeY + spawnOffsetY, 5, 0x00ff00);
     // this.spawnMarker.setDepth(DepthLayers.UI);
   }
 
