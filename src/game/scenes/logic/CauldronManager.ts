@@ -6,13 +6,20 @@ import { JunkPileItem, JunkPileManager } from "./JunkPileManager";
 export class CauldronManager {
   private scene: Scene;
   private cauldronSprite: Phaser.Physics.Matter.Sprite;
-  private cauldronSensor: MatterJS.BodyType;
+
+  // Replace single sensor with two separate sensors
+  private belowThresholdSensor: MatterJS.BodyType;
+  private aboveThresholdSensor: MatterJS.BodyType;
+
+  // Track junk pieces in different areas of the cauldron
+  private junkPiecesBelowThreshold: JunkPileItem[] = [];
+  private junkPiecesAboveThreshold: JunkPileItem[] = [];
+
+  // Store all junk pieces inside the cauldron (combination of both areas)
   private junkPiecesInside: JunkPileItem[] = [];
 
-  // New properties for threshold line
   private thresholdLine: Phaser.GameObjects.Graphics;
   private thresholdY: number;
-  private junkPiecesAboveThreshold: Set<string> = new Set();
 
   constructor(scene: Scene) {
     this.scene = scene;
@@ -42,36 +49,49 @@ export class CauldronManager {
     this.cauldronSprite.setName("cauldron");
     this.cauldronSprite.setDepth(DepthLayers.Ground);
 
+    // Calculate threshold line position (around 60% from the bottom of the cauldron)
     this.thresholdY = yPos + frame.height * 0.2;
 
     // Create threshold line graphic
     this.createThresholdLine(xPos, this.thresholdY, frame.width * 0.8);
 
-    // Create a sensor area inside the cauldron to detect junk pieces
-    // Size is slightly smaller than the cauldron sprite
-    const sensorWidth = frame.width * 0.8;
-    const sensorHeight = frame.height * 1.25;
+    // Create two separate sensor areas inside the cauldron
+    const sensorWidth = frame.width * 0.75;
 
-    // Position the sensor in the top part of the cauldron
-    const sensorX = xPos;
-    const sensorY = yPos + frame.height * 0.1;
+    // 1. Below threshold sensor - from bottom of cauldron to threshold line
+    const belowSensorHeight = frame.height * 0.6; // Adjust as needed
+    const belowSensorY = this.thresholdY + belowSensorHeight / 2;
 
-    this.cauldronSensor = this.scene.matter.add.rectangle(sensorX, sensorY, sensorWidth, sensorHeight, {
-      isSensor: true, // This makes it a trigger that detects collisions but doesn't resolve them physically
+    this.belowThresholdSensor = this.scene.matter.add.rectangle(xPos + 10, belowSensorY, sensorWidth, belowSensorHeight, {
+      isSensor: true,
       isStatic: true,
-      label: "cauldronSensor",
+      label: "belowThresholdSensor",
       collisionFilter: {
         category: CollisionCategories.ENVIRONMENT,
-        mask: CollisionMasks.JUNK, // Only detect junk pieces
+        mask: CollisionMasks.JUNK,
       },
     });
 
-    // Setup collision detection for the sensor
+    // 2. Above threshold sensor - from threshold line to top of cauldron
+    const aboveSensorHeight = frame.height * 0.4; // Adjust as needed
+    const aboveSensorY = this.thresholdY - aboveSensorHeight / 2;
+
+    this.aboveThresholdSensor = this.scene.matter.add.rectangle(xPos + 10, aboveSensorY, sensorWidth, aboveSensorHeight, {
+      isSensor: true,
+      isStatic: true,
+      label: "aboveThresholdSensor",
+      collisionFilter: {
+        category: CollisionCategories.ENVIRONMENT,
+        mask: CollisionMasks.JUNK,
+      },
+    });
+
+    // Setup collision detection for both sensors
     this.scene.matter.world.on("collisionstart", this.handleCollisionStart, this);
     this.scene.matter.world.on("collisionend", this.handleCollisionEnd, this);
 
-    // Set up update event to check junk positions
-    this.scene.events.on("update", this.checkJunkPositions, this);
+    // Update threshold line color initially
+    this.updateThresholdLineColor();
   }
 
   /**
@@ -79,7 +99,7 @@ export class CauldronManager {
    */
   private createThresholdLine(x: number, y: number, width: number): void {
     this.thresholdLine = this.scene.add.graphics();
-    this.thresholdLine.lineStyle(5, 0x454359, 0.8); // Increased stroke width from 3 to 5
+    this.thresholdLine.lineStyle(5, 0xff0000, 0.8); // Increased stroke width from 3 to 5
     this.thresholdLine.beginPath();
     this.thresholdLine.moveTo(x - width / 2, y);
     this.thresholdLine.lineTo(x + width / 2, y);
@@ -88,45 +108,11 @@ export class CauldronManager {
   }
 
   /**
-   * Checks positions of all junk pieces in the cauldron relative to the threshold line
-   */
-  private checkJunkPositions(): void {
-    // Clear the current list of junk pieces above threshold
-    this.junkPiecesAboveThreshold.clear();
-
-    // Check each junk piece inside the cauldron
-    for (const junkItem of this.junkPiecesInside) {
-      const junkId = junkItem.uniqueId;
-
-      // Find the matching game object
-      const junkItems = this.scene.children.list.filter(
-        (obj) => obj instanceof Phaser.Physics.Matter.Sprite || obj instanceof Phaser.Physics.Matter.Image
-      ) as Array<Phaser.Physics.Matter.Sprite | Phaser.Physics.Matter.Image>;
-
-      const matchingJunkObject = junkItems.find(
-        // @ts-ignore
-        (item) => item.body?.label === junkId || item.body?.parent?.label === junkId
-      );
-
-      if (matchingJunkObject) {
-        // Check if the junk piece is above the threshold line
-        if (matchingJunkObject.y < this.thresholdY) {
-          this.junkPiecesAboveThreshold.add(junkId);
-          console.log(`Junk piece ${junkId} is above the threshold line.`, this.junkPiecesAboveThreshold);
-        }
-      }
-    }
-
-    // Update the threshold line color based on junk pieces above threshold
-    this.updateThresholdLineColor();
-  }
-
-  /**
    * Updates the threshold line color based on whether there are enough junk pieces above it
    */
   private updateThresholdLineColor(): void {
     // Color changes to BDB9DD when there are enough junk pieces
-    const lineColor = this.hasEnoughJunkForCrafting() ? 0xbdb9dd : 0x454359;
+    const lineColor = this.hasEnoughJunkForCrafting() ? 0xbdb9dd : 0xff0000;
 
     // Clear the existing line
     this.thresholdLine.clear();
@@ -144,7 +130,7 @@ export class CauldronManager {
   }
 
   /**
-   * Handles collision start events for the cauldron sensor
+   * Handles collision start events for the cauldron sensors
    */
   private handleCollisionStart(event: Phaser.Physics.Matter.Events.CollisionStartEvent): void {
     const pairs = event.pairs;
@@ -153,10 +139,17 @@ export class CauldronManager {
       const bodyA = pairs[i].bodyA;
       const bodyB = pairs[i].bodyB;
 
-      // Check if one of the bodies is our cauldron sensor
-      if (bodyA.label === "cauldronSensor" || bodyB.label === "cauldronSensor") {
-        // The other body is what entered our sensor
-        const junkBody = bodyA.label === "cauldronSensor" ? bodyB : bodyA;
+      // Check if one of the bodies is one of our sensors
+      const isSensorA = bodyA.label === "belowThresholdSensor" || bodyA.label === "aboveThresholdSensor";
+      const isSensorB = bodyB.label === "belowThresholdSensor" || bodyB.label === "aboveThresholdSensor";
+
+      if (isSensorA || isSensorB) {
+        // Get sensor and junk body
+        const sensorBody = isSensorA ? bodyA : bodyB;
+        const junkBody = isSensorA ? bodyB : bodyA;
+
+        // Determine which sensor was triggered
+        const isAboveThreshold = sensorBody.label === "aboveThresholdSensor";
 
         // Find the junk item in the scene
         const junkItems = this.scene.children.list.filter(
@@ -173,13 +166,28 @@ export class CauldronManager {
           const junkPile = (this.scene.registry.get("junkPileManager") as JunkPileManager)?.getJunkPile() || [];
           const junkPileItem = junkPile.find((item) => item.uniqueId === uniqueJunkId);
 
-          if (junkPileItem && !this.isJunkAlreadyInside(junkPileItem)) {
-            this.junkPiecesInside.push(junkPileItem);
-            console.log(`Junk piece ${junkPileItem.uniqueId} entered cauldron. Total pieces inside: ${this.junkPiecesInside.length}`);
-          } else if (junkPileItem) {
-            console.log(`Junk piece ${junkPileItem.uniqueId} is already inside the cauldron.`);
-          } else {
-            console.log(`Junk piece with ID ${uniqueJunkId} not found in the pile.`);
+          if (junkPileItem) {
+            // Add to the appropriate list based on which sensor was triggered
+            if (isAboveThreshold) {
+              if (!this.isJunkAlreadyInArea(junkPileItem, this.junkPiecesAboveThreshold)) {
+                this.junkPiecesAboveThreshold.push(junkPileItem);
+                console.log(`Junk piece ${junkPileItem.uniqueId} entered above threshold area. Total above: ${this.junkPiecesAboveThreshold.length}`);
+              }
+            } else {
+              if (!this.isJunkAlreadyInArea(junkPileItem, this.junkPiecesBelowThreshold)) {
+                this.junkPiecesBelowThreshold.push(junkPileItem);
+                console.log(`Junk piece ${junkPileItem.uniqueId} entered below threshold area. Total below: ${this.junkPiecesBelowThreshold.length}`);
+              }
+            }
+
+            // Add to overall junk inside if not already there
+            if (!this.isJunkAlreadyInside(junkPileItem)) {
+              this.junkPiecesInside.push(junkPileItem);
+              console.log(`Junk piece ${junkPileItem.uniqueId} entered cauldron. Total pieces inside: ${this.junkPiecesInside.length}`);
+            }
+
+            // Update threshold line color
+            this.updateThresholdLineColor();
           }
         }
       }
@@ -187,7 +195,7 @@ export class CauldronManager {
   }
 
   /**
-   * Handles collision end events for the cauldron sensor
+   * Handles collision end events for the cauldron sensors
    */
   private handleCollisionEnd(event: Phaser.Physics.Matter.Events.CollisionEndEvent): void {
     const pairs = event.pairs;
@@ -196,31 +204,52 @@ export class CauldronManager {
       const bodyA = pairs[i].bodyA;
       const bodyB = pairs[i].bodyB;
 
-      // Check if one of the bodies is our cauldron sensor
-      if (bodyA.label === "cauldronSensor" || bodyB.label === "cauldronSensor") {
-        // The other body is what left our sensor
-        const junkBody = bodyA.label === "cauldronSensor" ? bodyB : bodyA;
+      // Check if one of the bodies is one of our sensors
+      const isSensorA = bodyA.label === "belowThresholdSensor" || bodyA.label === "aboveThresholdSensor";
+      const isSensorB = bodyB.label === "belowThresholdSensor" || bodyB.label === "aboveThresholdSensor";
 
-        // Find the junk item in the scene
-        const junkItems = this.scene.children.list.filter(
-          (obj) => obj instanceof Phaser.Physics.Matter.Sprite || obj instanceof Phaser.Physics.Matter.Image
-        ) as Array<Phaser.Physics.Matter.Sprite | Phaser.Physics.Matter.Image>;
+      if (isSensorA || isSensorB) {
+        // Get sensor and junk body
+        const sensorBody = isSensorA ? bodyA : bodyB;
+        const junkBody = isSensorA ? bodyB : bodyA;
 
-        const matchingJunkItem = junkItems.find((item) => item.body === junkBody.parent);
+        // Determine which sensor was triggered
+        const isAboveThreshold = sensorBody.label === "aboveThresholdSensor";
 
-        if (matchingJunkItem) {
-          // Get the unique ID from the body's label (which we set in JunkPileManager)
-          const uniqueJunkId = junkBody.label || junkBody.parent?.label;
+        // Get the unique ID from the body's label
+        const uniqueJunkId = junkBody.label || junkBody.parent?.label;
 
-          if (uniqueJunkId) {
-            // Find the corresponding JunkPileItem by unique ID
-            const junkIndex = this.junkPiecesInside.findIndex((item) => item.uniqueId === uniqueJunkId);
+        if (uniqueJunkId) {
+          // Remove from the appropriate list based on which sensor was triggered
+          if (isAboveThreshold) {
+            const aboveIndex = this.junkPiecesAboveThreshold.findIndex((item) => item.uniqueId === uniqueJunkId);
+            if (aboveIndex !== -1) {
+              const removedJunk = this.junkPiecesAboveThreshold.splice(aboveIndex, 1);
+              console.log(`Junk piece ${removedJunk[0].uniqueId} left above threshold area. Remaining above: ${this.junkPiecesAboveThreshold.length}`);
+            }
+          } else {
+            const belowIndex = this.junkPiecesBelowThreshold.findIndex((item) => item.uniqueId === uniqueJunkId);
+            if (belowIndex !== -1) {
+              const removedJunk = this.junkPiecesBelowThreshold.splice(belowIndex, 1);
+              console.log(`Junk piece ${removedJunk[0].uniqueId} left below threshold area. Remaining below: ${this.junkPiecesBelowThreshold.length}`);
+            }
+          }
 
-            if (junkIndex !== -1) {
-              const removedJunk = this.junkPiecesInside.splice(junkIndex, 1);
+          // Check if junk is still in any zone before removing from overall list
+          const isStillInAbove = this.junkPiecesAboveThreshold.some((item) => item.uniqueId === uniqueJunkId);
+          const isStillInBelow = this.junkPiecesBelowThreshold.some((item) => item.uniqueId === uniqueJunkId);
+
+          if (!isStillInAbove && !isStillInBelow) {
+            // If not in any zone, remove from overall list
+            const insideIndex = this.junkPiecesInside.findIndex((item) => item.uniqueId === uniqueJunkId);
+            if (insideIndex !== -1) {
+              const removedJunk = this.junkPiecesInside.splice(insideIndex, 1);
               console.log(`Junk piece ${removedJunk[0].uniqueId} left cauldron. Remaining pieces: ${this.junkPiecesInside.length}`);
             }
           }
+
+          // Update threshold line color
+          this.updateThresholdLineColor();
         }
       }
     }
@@ -234,17 +263,66 @@ export class CauldronManager {
   }
 
   /**
+   * Checks if a junk piece is already registered in a specific area
+   */
+  private isJunkAlreadyInArea(junkItem: JunkPileItem, areaList: JunkPileItem[]): boolean {
+    return areaList.some((item) => item.uniqueId === junkItem.uniqueId);
+  }
+
+  /**
    * Checks if enough junk has crossed the threshold line for crafting
+   * Looks at junk pieces in junkPiecesBelowThreshold that have y position above thresholdY
    */
   public hasEnoughJunkForCrafting(): boolean {
-    return this.junkPiecesAboveThreshold.size >= 2;
+    // Check each piece in the below threshold area to see if any are actually above the line
+    let piecesAboveThresholdCount = 0;
+
+    for (const junkItem of this.junkPiecesBelowThreshold) {
+      const junkId = junkItem.uniqueId;
+
+      // Find the matching game object
+      const junkItems = this.scene.children.list.filter(
+        (obj) => obj instanceof Phaser.Physics.Matter.Sprite || obj instanceof Phaser.Physics.Matter.Image
+      ) as Array<Phaser.Physics.Matter.Sprite | Phaser.Physics.Matter.Image>;
+
+      // @ts-ignore
+      const matchingJunkObject = junkItems.find((item) => item.body?.label === junkId || item.body?.parent?.label === junkId);
+
+      if (matchingJunkObject) {
+        // Check if the junk piece is actually above the threshold line, despite being in the below sensor
+        if (matchingJunkObject.y < this.thresholdY) {
+          piecesAboveThresholdCount++;
+        }
+      }
+    }
+
+    return piecesAboveThresholdCount >= 2;
   }
 
   /**
    * Gets the count of junk pieces above the threshold line
+   * Counts only pieces from junkPiecesBelowThreshold that have y position above thresholdY
    */
   public getJunkPiecesAboveThresholdCount(): number {
-    return this.junkPiecesAboveThreshold.size;
+    let piecesAboveThresholdCount = 0;
+
+    for (const junkItem of this.junkPiecesBelowThreshold) {
+      const junkId = junkItem.uniqueId;
+
+      // Find the matching game object
+      const junkItems = this.scene.children.list.filter(
+        (obj) => obj instanceof Phaser.Physics.Matter.Sprite || obj instanceof Phaser.Physics.Matter.Image
+      ) as Array<Phaser.Physics.Matter.Sprite | Phaser.Physics.Matter.Image>;
+
+      // @ts-ignore
+      const matchingJunkObject = junkItems.find((item) => item.body?.label === junkId || item.body?.parent?.label === junkId);
+
+      if (matchingJunkObject && matchingJunkObject.y < this.thresholdY) {
+        piecesAboveThresholdCount++;
+      }
+    }
+
+    return piecesAboveThresholdCount;
   }
 
   /**
@@ -259,7 +337,10 @@ export class CauldronManager {
    */
   public clearJunkPieces(): void {
     this.junkPiecesInside = [];
-    this.junkPiecesAboveThreshold.clear();
+    this.junkPiecesAboveThreshold = [];
+    this.junkPiecesBelowThreshold = [];
+    // Update threshold line color after clearing
+    this.updateThresholdLineColor();
   }
 
   public getSprite(): Phaser.Physics.Matter.Sprite {
@@ -270,16 +351,19 @@ export class CauldronManager {
     // Remove collision and update listeners
     this.scene.matter.world?.off("collisionstart", this.handleCollisionStart, this);
     this.scene.matter.world?.off("collisionend", this.handleCollisionEnd, this);
-    this.scene.events.off("update", this.checkJunkPositions, this);
 
     // Destroy the threshold line
     if (this.thresholdLine) {
       this.thresholdLine.destroy();
     }
 
-    // Destroy the sensor
-    if (this.cauldronSensor) {
-      this.scene.matter.world?.remove(this.cauldronSensor);
+    // Destroy the sensors
+    if (this.belowThresholdSensor) {
+      this.scene.matter.world?.remove(this.belowThresholdSensor);
+    }
+
+    if (this.aboveThresholdSensor) {
+      this.scene.matter.world?.remove(this.aboveThresholdSensor);
     }
 
     // Destroy the sprite
@@ -289,7 +373,8 @@ export class CauldronManager {
 
     // Clear references
     this.junkPiecesInside = [];
-    this.junkPiecesAboveThreshold.clear();
+    this.junkPiecesAboveThreshold = [];
+    this.junkPiecesBelowThreshold = [];
     console.log("CauldronManager destroyed");
   }
 }
