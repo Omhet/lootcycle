@@ -2,6 +2,7 @@ import { ScreenContainer } from "../../components/ScreenContainer/ScreenContaine
 import { Stall } from "../../components/Stall/Stall";
 import { lootConfig } from "../../lib/craft/config";
 import { ItemCategoryId, LootItem, initialItemCategories, initialItemSubCategories } from "../../lib/craft/craftModel";
+import { useGameFlowStore } from "../../store/useGameFlowStore";
 import { useMoneyStore } from "../../store/useMoneyStore";
 import { useScreenStore } from "../../store/useScreenStore";
 import { useStallStore } from "../../store/useStallStore";
@@ -82,6 +83,7 @@ export const StallScreenContainer = () => {
   const closeScreen = useScreenStore((state) => state.closeScreen);
   const { craftedLootItems, clearCraftedLootItems } = useStallStore();
   const { addMoney, balance } = useMoneyStore();
+  const { endDay } = useGameFlowStore();
 
   // If no crafted items, use a fallback item for development
   const items = craftedLootItems || [];
@@ -100,8 +102,8 @@ export const StallScreenContainer = () => {
     // Clear the crafted items after selling
     clearCraftedLootItems();
 
-    // Close the screen
-    closeScreen();
+    // Move to day end state instead of just closing the screen
+    endDay();
   };
 
   const handleClose = () => {

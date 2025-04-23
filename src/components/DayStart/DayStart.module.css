@@ -1,0 +1,40 @@
+.dayStartContainer {
+  background-color: rgba(30, 30, 30, 0.9);
+  border-radius: 8px;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  width: 400px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.headerTitle {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #f8f8f8;
+}
+
+.button {
+  background-color: #4a934a;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 0.75rem 1.5rem;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  align-self: center;
+}
+
+.button:hover {
+  background-color: #3a7a3a;
+}

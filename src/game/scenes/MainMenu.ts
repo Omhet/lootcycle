@@ -34,7 +34,7 @@ export class MainMenu extends Scene {
   }
 
   startGame() {
-    this.scene.start("Game");
+    this.scene.start("Idle");
   }
 
   /**

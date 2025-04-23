@@ -1,6 +1,7 @@
 import { AUTO, Game } from "phaser";
 import { Boot } from "./scenes/Boot";
 import { Game as MainGame } from "./scenes/Game";
+import { Idle } from "./scenes/Idle";
 import { MainMenu } from "./scenes/MainMenu";
 import { Preloader } from "./scenes/Preloader";
 
@@ -25,7 +26,7 @@ const config: Phaser.Types.Core.GameConfig = {
       //   debug: true,
     },
   },
-  scene: [Boot, Preloader, MainMenu, MainGame],
+  scene: [Boot, Preloader, MainMenu, MainGame, Idle],
 };
 
 const StartGame = (parent: string) => {

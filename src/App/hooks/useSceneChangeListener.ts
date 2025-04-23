@@ -1,30 +1,25 @@
-import { useEffect, useState } from "react";
+import { RefObject, useEffect } from "react";
 import { EventBus } from "../../game/EventBus";
+import { IRefPhaserGame } from "../../game/PhaserGame";
 
 /**
- * Hook for handling scene management
- * @returns Current scene key and scene change callback
+ * Hook for handling scene changes from EventBus using the phaserRef
+ * @param phaserRef - Reference to the PhaserGame component
  */
-export const useSceneManager = () => {
-  const [currentSceneKey, setCurrentSceneKey] = useState<string | null>(null);
-
-  // Event handler for scene changes
-  const handleSceneChange = (scene: Phaser.Scene) => {
-    console.log("Current Scene: ", scene.scene.key);
-    setCurrentSceneKey(scene.scene.key);
-  };
-
+export const useSceneChangeListener = (phaserRef: RefObject<IRefPhaserGame | null>) => {
   useEffect(() => {
-    // Listen for changeScene events from the EventBus
+    // Handler for scene changes triggered by the EventBus
     const handleChangeScene = (sceneKey: string) => {
       console.log("Changing scene via EventBus:", sceneKey);
 
-      // If a Phaser game instance is available, start the requested scene
-      const game = (window as any).game;
+      // Get the game instance from the phaserRef
+      const game = phaserRef.current?.game;
+
       if (game && game.scene) {
         // Stop all currently active scenes except Boot and Preloader
         const activeScenes = game.scene.scenes.filter((scene: Phaser.Scene) => scene.scene.isActive() && !["Boot", "Preloader"].includes(scene.scene.key));
 
+        // Put active scenes to sleep
         activeScenes.forEach((scene: Phaser.Scene) => {
           game.scene.sleep(scene.scene.key);
         });
@@ -37,20 +32,17 @@ export const useSceneManager = () => {
         } else {
           console.warn(`Scene ${sceneKey} does not exist`);
         }
+      } else {
+        console.warn("Cannot change scene: Phaser game instance not available");
       }
     };
 
-    // Register the event listener
+    // Register event listener
     EventBus.on("changeScene", handleChangeScene);
 
-    // Cleanup function to remove the event listener
+    // Cleanup when component unmounts
     return () => {
       EventBus.off("changeScene", handleChangeScene);
     };
-  }, []);
-
-  return {
-    currentSceneKey,
-    handleSceneChange,
-  };
+  }, [phaserRef]);
 };
