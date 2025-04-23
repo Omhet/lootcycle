@@ -39,7 +39,7 @@ registerJunkPiece("green_fluff", {
 });
 
 registerJunkPiece("banana_peel", {
-  suitableForRecipeDetails: [],
+  suitableForRecipeDetails: [RecipeDetailType.Grip],
   name: "Banana Peel",
   rarity: Rarity.Common,
   durability: Durability.Low,
@@ -57,7 +57,7 @@ registerJunkPiece("log", {
 });
 
 registerJunkPiece("dead_fish", {
-  suitableForRecipeDetails: [],
+  suitableForRecipeDetails: [RecipeDetailType.Grip],
   name: "Dead Fish",
   rarity: Rarity.Common,
   durability: Durability.Low,
@@ -93,7 +93,7 @@ registerJunkPiece("golden_cup", {
 });
 
 registerJunkPiece("golden_necklace", {
-  suitableForRecipeDetails: [],
+  suitableForRecipeDetails: [RecipeDetailType.Grip],
   name: "Golden Necklace",
   rarity: Rarity.Rare,
   durability: Durability.Low,
@@ -111,7 +111,7 @@ registerJunkPiece("silver_cup", {
 });
 
 registerJunkPiece("silver_necklace", {
-  suitableForRecipeDetails: [],
+  suitableForRecipeDetails: [RecipeDetailType.Grip],
   name: "Silver Necklace",
   rarity: Rarity.Uncommon,
   durability: Durability.Low,
@@ -120,7 +120,7 @@ registerJunkPiece("silver_necklace", {
 });
 
 registerJunkPiece("lollipop", {
-  suitableForRecipeDetails: [],
+  suitableForRecipeDetails: [RecipeDetailType.Grip],
   name: "Lollipop",
   rarity: Rarity.Common,
   durability: Durability.Low,
@@ -165,7 +165,7 @@ registerJunkPiece("shell", {
 });
 
 registerJunkPiece("old_shoe", {
-  suitableForRecipeDetails: [],
+  suitableForRecipeDetails: [RecipeDetailType.Grip],
   name: "Old Shoe",
   rarity: Rarity.Common,
   durability: Durability.Low,
@@ -192,7 +192,7 @@ registerJunkPiece("silver_coin", {
 });
 
 registerJunkPiece("mushroom", {
-  suitableForRecipeDetails: [],
+  suitableForRecipeDetails: [RecipeDetailType.Grip],
   name: "Mushroom",
   rarity: Rarity.Common,
   durability: Durability.Low,
