@@ -1,18 +1,21 @@
 import { useEffect, useRef, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { StallScreenContainer } from "./containers/StallScreenContainer/StallScreenContainer";
 import { EventBus } from "./game/EventBus";
 import { IRefPhaserGame, PhaserGame } from "./game/PhaserGame";
 import { MainMenu } from "./game/scenes/MainMenu";
 import { CraftingFailureReason } from "./lib/craft/craftModel";
+import { ScreenId, useScreenStore } from "./store/useScreenStore";
 
 function App() {
-  // The sprite can only be moved in the MainMenu Scene
-
   // References to the PhaserGame component (game and scene are exposed)
   const phaserRef = useRef<IRefPhaserGame | null>(null);
   // State to hold the current scene key
   const [currentSceneKey, setCurrentSceneKey] = useState<string | null>(null);
+
+  // Get current opened screen from Zustand store
+  const currentOpenedScreenId = useScreenStore((state) => state.currentOpenedScreenId);
 
   // Event emitted from the PhaserGame component
   const currentScene = (scene: Phaser.Scene) => {
@@ -46,6 +49,29 @@ function App() {
     };
   }, []);
 
+  // Function to render the appropriate screen based on the current screen ID
+  const renderCurrentScreen = () => {
+    switch (currentOpenedScreenId) {
+      case ScreenId.Stall:
+        return <StallScreenContainer />;
+      case ScreenId.DayStart:
+        // Will be implemented later
+        return <div>Day Start Screen</div>;
+      case ScreenId.NewLootInfo:
+        // Will be implemented later
+        return <div>New Loot Info Screen</div>;
+      case ScreenId.DayEnd:
+        // Will be implemented later
+        return <div>Day End Screen</div>;
+      case ScreenId.Shop:
+        // Will be implemented later
+        return <div>Shop Screen</div>;
+      case ScreenId.None:
+      default:
+        return null;
+    }
+  };
+
   // Function to handle the Play button click
   const handlePlayClick = () => {
     if (phaserRef.current && phaserRef.current.scene) {
@@ -76,6 +102,24 @@ function App() {
     }
   };
 
+  // For testing purposes - open Stall screen
+  const openStallForTesting = useScreenStore((state) => state.openScreen);
+  useEffect(() => {
+    // Will be removed later when proper game flow is implemented
+    const testButton = document.createElement("button");
+    testButton.textContent = "Test Stall Screen";
+    testButton.style.position = "absolute";
+    testButton.style.left = "10px";
+    testButton.style.top = "10px";
+    testButton.style.zIndex = "1000";
+    testButton.onclick = () => openStallForTesting(ScreenId.Stall);
+    document.body.appendChild(testButton);
+
+    return () => {
+      document.body.removeChild(testButton);
+    };
+  }, [openStallForTesting]);
+
   return (
     <div id="app">
       <PhaserGame ref={phaserRef} currentActiveScene={currentScene} />
@@ -99,6 +143,9 @@ function App() {
             </div>
           </div>
         )}
+
+        {/* Render the current screen based on currentOpenedScreenId */}
+        {currentOpenedScreenId !== ScreenId.None && <div className="screenContainer">{renderCurrentScreen()}</div>}
       </div>
       {/* Add ToastContainer for notifications */}
       <ToastContainer />
