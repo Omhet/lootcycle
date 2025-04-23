@@ -1,6 +1,6 @@
 import { ScreenContainer } from "../../components/ScreenContainer/ScreenContainer";
 import { Stall } from "../../components/Stall/Stall";
-import { ItemCategoryId, LootItem } from "../../lib/craft/craftModel";
+import { ItemCategoryId, LootItem, initialItemCategories, initialItemSubCategories } from "../../lib/craft/craftModel";
 import { useScreenStore } from "../../store/useScreenStore";
 import { useStallStore } from "../../store/useStallStore";
 
@@ -12,8 +12,7 @@ const transformLootItemsToStallFormat = (lootItems: LootItem[]) => {
   const groupMap = new Map();
 
   lootItems.forEach((item) => {
-    // Extract category from recipeId or use a default
-    const categoryId = getCategoryFromRecipeId(item.recipeId);
+    const categoryId = item.category;
 
     // Create group if it doesn't exist
     if (!groupMap.has(categoryId)) {
@@ -27,7 +26,7 @@ const transformLootItemsToStallFormat = (lootItems: LootItem[]) => {
     groupMap.get(categoryId).items.push({
       id: item.id,
       name: item.name,
-      category: getSubCategoryName(item.recipeId),
+      category: getSubCategoryName(item.subCategory),
       // These are mocked for now, will be updated later
       imageUrl: `/assets/craftedLootItems/${item.id}.png`,
       price: item.sellPrice,
@@ -43,35 +42,19 @@ const transformLootItemsToStallFormat = (lootItems: LootItem[]) => {
 };
 
 /**
- * Helper function to get category from recipeId
- */
-const getCategoryFromRecipeId = (recipeId: string): ItemCategoryId => {
-  // For now just return Weapon as default
-  // This will be improved when we have proper mapping
-  return ItemCategoryId.Weapon;
-};
-
-/**
  * Helper function to get category name
  */
 const getCategoryName = (categoryId: ItemCategoryId): string => {
-  switch (categoryId) {
-    case ItemCategoryId.Weapon:
-      return "Weapons";
-    default:
-      return "Miscellaneous";
-  }
+  const category = initialItemCategories.find((cat) => cat.id === categoryId);
+  return category?.name || "Miscellaneous";
 };
 
 /**
- * Helper function to get subcategory name from recipeId
+ * Helper function to get subcategory name
  */
-const getSubCategoryName = (recipeId: string): string => {
-  // This is a placeholder - in the future we'll have a proper mapping
-  if (recipeId.includes("sword")) {
-    return "One-handed Blade";
-  }
-  return "Miscellaneous";
+const getSubCategoryName = (subCategoryId: string): string => {
+  const subCategory = initialItemSubCategories.find((subCat) => subCat.id === subCategoryId);
+  return subCategory?.name || "Miscellaneous";
 };
 
 export const StallScreenContainer = () => {

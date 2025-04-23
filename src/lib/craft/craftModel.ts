@@ -166,6 +166,9 @@ export type LootItem = {
   recipeId: RecipeItemId;
   name: string;
   details: LootDetailId[];
+  category: ItemCategoryId;
+  subCategory: ItemSubCategoryId;
+  type: RecipeItemType;
   rarity: Rarity;
   sellPrice: number;
   temperatureRange: TemperatureRange; // In Celsius

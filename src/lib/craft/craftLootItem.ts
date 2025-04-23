@@ -1,5 +1,6 @@
 import {
   CraftingFailureReason,
+  ItemCategoryId,
   JunkPiece,
   LootConfig,
   LootDetail,
@@ -10,6 +11,7 @@ import {
   RecipeItem,
   RecipeItemId,
   TemperatureRange,
+  initialItemSubCategories,
 } from "./craftModel";
 import { generateLootItemId } from "./craftUtils";
 
@@ -377,6 +379,14 @@ function findRecipeItem(recipeId: string, config: LootConfig): RecipeItem | unde
     .find((item) => item.id === recipeId);
 }
 
+/**
+ * Finds the category ID for a given subcategory ID
+ */
+function findCategoryForSubcategory(subCategoryId: string): string {
+  const subCategory = initialItemSubCategories.find((sc) => sc.id === subCategoryId);
+  return subCategory?.categoryId || "";
+}
+
 // ======= CRAFTING FUNCTION =======
 
 /**
@@ -476,6 +486,9 @@ export function craftLootItem(params: craftLootItemParams): CraftingResult {
   // Generate ID based on recipe and details
   const id = generateLootItemId(lootItemRecipeId, details);
 
+  // Find the category for this item's subcategory
+  const category: ItemCategoryId = findCategoryForSubcategory(recipe.subCategory) as ItemCategoryId;
+
   // Create the crafted item
   const craftedItem: LootItem = {
     id,
@@ -485,6 +498,9 @@ export function craftLootItem(params: craftLootItemParams): CraftingResult {
     rarity,
     sellPrice,
     temperatureRange,
+    category,
+    subCategory: recipe.subCategory,
+    type: recipe.type,
   };
 
   return {
