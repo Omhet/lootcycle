@@ -18,6 +18,7 @@ type StallLootItem = {
 type StallLootDetail = {
   lootDetailName: string;
   junkImageUrl: string;
+  junkPieceName?: string; // Name of the junk piece that was used to craft this detail
 };
 
 type StallProps = {

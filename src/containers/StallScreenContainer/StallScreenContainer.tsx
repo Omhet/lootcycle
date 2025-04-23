@@ -1,7 +1,7 @@
 import { ScreenContainer } from "../../components/ScreenContainer/ScreenContainer";
 import { Stall } from "../../components/Stall/Stall";
 import { lootConfig } from "../../lib/craft/config";
-import { ItemCategoryId, LootItem, initialItemCategories, initialItemSubCategories } from "../../lib/craft/craftModel";
+import { ItemCategoryId, JunkPieceId, LootItem, initialItemCategories, initialItemSubCategories } from "../../lib/craft/craftModel";
 import { useScreenStore } from "../../store/useScreenStore";
 import { useStallStore } from "../../store/useStallStore";
 
@@ -36,9 +36,21 @@ const transformLootItemsToStallFormat = (lootItems: LootItem[]) => {
         const detailArray = lootConfig.lootDetails[detailId] || [];
         const detail = detailArray.length > 0 ? detailArray[0] : null;
 
+        // Get junk piece name if available
+        let junkPieceName: string | undefined = undefined;
+        if (detail && detail.canBeCraftedFrom.length > 0) {
+          // Get the first junk piece that can be used to craft this detail
+          const junkPieceId = detail.canBeCraftedFrom[0];
+          const junkArray = lootConfig.junkPieces[junkPieceId as JunkPieceId] || [];
+          if (junkArray.length > 0) {
+            junkPieceName = junkArray[0].name;
+          }
+        }
+
         return {
           lootDetailName: detail ? detail.name : `Detail ${detailId}`,
           junkImageUrl: "/assets/game/details/junk-details-sprites.png",
+          junkPieceName,
         };
       }),
     });
