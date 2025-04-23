@@ -1,3 +1,4 @@
+import { ScreenContainer } from "../../components/ScreenContainer/ScreenContainer";
 import { Stall } from "../../components/Stall/Stall";
 import { useScreenStore } from "../../store/useScreenStore";
 
@@ -74,5 +75,9 @@ export const StallScreenContainer = () => {
     closeScreen();
   };
 
-  return <Stall groups={mockStallData.groups} onSellAndClose={handleSellAndClose} />;
+  return (
+    <ScreenContainer>
+      <Stall groups={mockStallData.groups} onSellAndClose={handleSellAndClose} />
+    </ScreenContainer>
+  );
 };
