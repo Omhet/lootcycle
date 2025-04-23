@@ -395,7 +395,7 @@ function findCategoryForSubcategory(subCategoryId: string): string {
  * Attempts to craft a LootItem from a recipe and junk items at a specific temperature.
  */
 export function craftLootItem(params: craftLootItemParams): CraftingResult {
-  const { lootItemRecipeId, junkPieces, temperature: _temperature, config } = params;
+  const { lootItemRecipeId, junkPieces, temperature, config } = params;
 
   // Find the recipe item
   const recipe = findRecipeItem(lootItemRecipeId, config);
@@ -448,27 +448,26 @@ export function craftLootItem(params: craftLootItemParams): CraftingResult {
   // Calculate temperature range
   const temperatureRange = calculateTemperatureRange(recipe, detailToJunk);
 
-  // TEMPORARY: Uncomment this when temperature is implemented
-  // Check if temperature is in range
-  //   if (temperature < temperatureRange.min) {
-  //     return {
-  //       success: false,
-  //       failure: {
-  //         reason: CraftingFailureReason.TooLowTemperature,
-  //         message: `Temperature too low: ${temperature}. Required minimum: ${temperatureRange.min}`,
-  //       },
-  //     };
-  //   }
+  //   Check if temperature is in range
+  if (temperature < temperatureRange.min) {
+    return {
+      success: false,
+      failure: {
+        reason: CraftingFailureReason.TooLowTemperature,
+        message: `Temperature too low: ${temperature}. Required minimum: ${temperatureRange.min}`,
+      },
+    };
+  }
 
-  //   if (temperature > temperatureRange.max) {
-  //     return {
-  //       success: false,
-  //       failure: {
-  //         reason: CraftingFailureReason.TooHighTemperature,
-  //         message: `Temperature too high: ${temperature}. Required maximum: ${temperatureRange.max}`,
-  //       },
-  //     };
-  //   }
+  if (temperature > temperatureRange.max) {
+    return {
+      success: false,
+      failure: {
+        reason: CraftingFailureReason.TooHighTemperature,
+        message: `Temperature too high: ${temperature}. Required maximum: ${temperatureRange.max}`,
+      },
+    };
+  }
 
   // Calculate sell price
   const sellPrice = calculateSellPrice(recipe, detailToJunk, requiredDetailTypes, config);
