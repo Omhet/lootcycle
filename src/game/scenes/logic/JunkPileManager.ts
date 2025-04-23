@@ -105,7 +105,7 @@ export class JunkPileManager {
       });
 
       // Make junk two times smaller
-      physicsBody.setScale(0.7);
+      //   physicsBody.setScale(0.7);
 
       // Set the unique ID as the label through body.parts[0] which is the main body part
       if (physicsBody.body && (physicsBody.body as any).parts && (physicsBody.body as any).parts.length > 0) {

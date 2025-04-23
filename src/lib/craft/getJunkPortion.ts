@@ -251,10 +251,4 @@ export function getJunkPortion(
   }
 
   return finalPortion;
-  //   return finalPortion.map((item) => {
-  //     return {
-  //       ...item,
-  //       id: "banana",
-  //     };
-  //   });
 }

@@ -11,7 +11,7 @@ registerJunkPiece("bone", {
 });
 
 // Fluff items
-registerJunkPiece("fluff-yellow", {
+registerJunkPiece("yellow_fluff", {
   suitableForRecipeDetails: [],
   name: "Yellow Fluff",
   rarity: Rarity.Common,
@@ -20,7 +20,7 @@ registerJunkPiece("fluff-yellow", {
   temperatureCoefficient: 1,
 });
 
-registerJunkPiece("fluff-blue", {
+registerJunkPiece("blue_fluff", {
   suitableForRecipeDetails: [],
   name: "Blue Fluff",
   rarity: Rarity.Common,
@@ -29,7 +29,7 @@ registerJunkPiece("fluff-blue", {
   temperatureCoefficient: 1,
 });
 
-registerJunkPiece("fluff-green", {
+registerJunkPiece("green_fluff", {
   suitableForRecipeDetails: [],
   name: "Green Fluff",
   rarity: Rarity.Common,
