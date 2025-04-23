@@ -23,11 +23,12 @@ type StallLootDetail = {
 
 type StallProps = {
   groups: StallGroup[];
+  moneyBalance: number;
   onSellAndClose: () => void;
   onClose: () => void;
 };
 
-export const Stall = ({ groups, onSellAndClose, onClose }: StallProps) => {
+export const Stall = ({ groups, moneyBalance, onSellAndClose, onClose }: StallProps) => {
   const hasItems = groups.length > 0 && groups.some((group) => group.items.length > 0);
 
   // Only set highlighted item if we have items
@@ -37,6 +38,10 @@ export const Stall = ({ groups, onSellAndClose, onClose }: StallProps) => {
 
   return (
     <div className={s.stallContainer}>
+      <div className={s.moneyBalance}>
+        <span className={s.moneyBalanceValue}>{moneyBalance}</span>
+        <span className={s.moneyBalanceLabel}>gold</span>
+      </div>
       <div className={s.stall}>
         <div className={s.stallHeader}>
           <span className={s.stallHeaderTitle}>Stall</span>

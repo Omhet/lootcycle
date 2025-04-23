@@ -2,6 +2,7 @@ import { ScreenContainer } from "../../components/ScreenContainer/ScreenContaine
 import { Stall } from "../../components/Stall/Stall";
 import { lootConfig } from "../../lib/craft/config";
 import { ItemCategoryId, LootItem, initialItemCategories, initialItemSubCategories } from "../../lib/craft/craftModel";
+import { useMoneyStore } from "../../store/useMoneyStore";
 import { useScreenStore } from "../../store/useScreenStore";
 import { useStallStore } from "../../store/useStallStore";
 
@@ -80,6 +81,7 @@ const getSubCategoryName = (subCategoryId: string): string => {
 export const StallScreenContainer = () => {
   const closeScreen = useScreenStore((state) => state.closeScreen);
   const { craftedLootItems, clearCraftedLootItems } = useStallStore();
+  const { addMoney, balance } = useMoneyStore();
 
   // If no crafted items, use a fallback item for development
   const items = craftedLootItems || [];
@@ -87,6 +89,14 @@ export const StallScreenContainer = () => {
   const stallGroups = transformLootItemsToStallFormat(items);
 
   const handleSellAndClose = () => {
+    // Calculate the total sell value of all items
+    const totalValue = items.reduce((sum, item) => sum + item.sellPrice, 0);
+
+    // Add money to player's balance
+    if (totalValue > 0) {
+      addMoney(totalValue);
+    }
+
     // Clear the crafted items after selling
     clearCraftedLootItems();
 
@@ -101,7 +111,7 @@ export const StallScreenContainer = () => {
 
   return (
     <ScreenContainer>
-      <Stall groups={stallGroups} onSellAndClose={handleSellAndClose} onClose={handleClose} />
+      <Stall groups={stallGroups} moneyBalance={balance} onSellAndClose={handleSellAndClose} onClose={handleClose} />
     </ScreenContainer>
   );
 };
