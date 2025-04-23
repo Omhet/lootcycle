@@ -145,6 +145,11 @@ export class Game extends Scene {
     EventBus.emit("current-scene-ready", this);
   }
 
+  changeScene(sceneName: string = "Idle") {
+    console.log(`Game: Changing scene to ${sceneName}`);
+    this.scene.start(sceneName);
+  }
+
   /**
    * Crafts a new item and tells the manager to display it
    */

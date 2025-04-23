@@ -171,12 +171,12 @@ export class CauldronManager {
 
   public destroy(): void {
     // Remove collision listeners
-    this.scene.matter.world.off("collisionstart", this.handleCollisionStart, this);
-    this.scene.matter.world.off("collisionend", this.handleCollisionEnd, this);
+    this.scene.matter.world?.off("collisionstart", this.handleCollisionStart, this);
+    this.scene.matter.world?.off("collisionend", this.handleCollisionEnd, this);
 
     // Destroy the sensor
     if (this.cauldronSensor) {
-      this.scene.matter.world.remove(this.cauldronSensor);
+      this.scene.matter.world?.remove(this.cauldronSensor);
     }
 
     // Destroy the sprite

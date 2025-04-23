@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { DayEndContainer } from "../containers/DayEndContainer/DayEndContainer";
@@ -6,33 +6,34 @@ import { DayStartContainer } from "../containers/DayStartContainer/DayStartConta
 import { ShopContainer } from "../containers/ShopContainer/ShopContainer";
 import { StallScreenContainer } from "../containers/StallScreenContainer/StallScreenContainer";
 import { IRefPhaserGame, PhaserGame } from "../game/PhaserGame";
-import { useGameFlowStore } from "../store/useGameFlowStore";
+import { GameState, useGameFlowStore } from "../store/useGameFlowStore";
 import { ScreenId } from "../store/useScreenStore";
 import { useGameControls } from "./hooks/useGameControls";
-import { useSceneChangeListener } from "./hooks/useSceneChangeListener";
-import { useSceneManager } from "./hooks/useSceneManager";
 import { useScreenEvents } from "./hooks/useScreenEvents";
 import { useTestControls } from "./hooks/useTestControls";
 import { useToastMessages } from "./hooks/useToastMessages";
 
 function App() {
+  const [currentSceneKey, setCurrentSceneKey] = useState<string | null>(null);
+
   // Reference to the PhaserGame component
   const phaserRef = useRef<IRefPhaserGame | null>(null);
 
   // Use custom hooks
-  const { currentSceneKey, handleSceneChange } = useSceneManager();
   const { currentOpenedScreenId } = useScreenEvents();
-  const { handlePlayClick, handleDownloadLootImagesClick, handleDownloadJunkImagesClick } = useGameControls(phaserRef);
-  const { startGame } = useGameFlowStore();
-
-  // Add scene change listener using phaserRef
-  useSceneChangeListener(phaserRef);
+  const { handleDownloadLootImagesClick, handleDownloadJunkImagesClick } = useGameControls(phaserRef);
+  const { startGame, currentState } = useGameFlowStore();
 
   // Add test button for development
   useTestControls();
 
   // Initialize toast messages handler
   useToastMessages();
+
+  const handleSceneChange = (scene: Phaser.Scene) => {
+    console.log("Current Scene: ", scene.scene.key);
+    setCurrentSceneKey(scene.scene.key);
+  };
 
   // Function to render the appropriate screen based on the current screen ID
   const renderCurrentScreen = () => {
@@ -57,8 +58,21 @@ function App() {
   // Modified play button handler to use our new game flow system
   const handlePlay = () => {
     startGame();
-    // handlePlayClick();
   };
+
+  useEffect(() => {
+    if (phaserRef.current && phaserRef.current.scene) {
+      const scene = phaserRef.current.scene;
+      if (typeof (scene as any).changeScene === "function") {
+        console.log(currentState);
+        if (currentState === GameState.DayInProgress) {
+          (scene as unknown as any).changeScene("Game");
+        } else {
+          (scene as unknown as any).changeScene("Idle");
+        }
+      }
+    }
+  }, [currentState]);
 
   return (
     <div id="app">

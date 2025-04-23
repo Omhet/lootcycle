@@ -33,8 +33,9 @@ export class MainMenu extends Scene {
     console.log({ lootConfig });
   }
 
-  startGame() {
-    this.scene.start("Idle");
+  changeScene(sceneName: string = "Idle") {
+    console.log(`MainMenu: Changing scene to ${sceneName}`);
+    this.scene.start(sceneName);
   }
 
   /**

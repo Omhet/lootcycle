@@ -426,7 +426,7 @@ export class ClawManager {
 
   public destroy(): void {
     // Clean up collision listener
-    this.scene.matter.world.off("collisionstart");
+    this.scene.matter.world?.off("collisionstart");
 
     // Clean up timer
     if (this.grabTimer) {
