@@ -53,7 +53,7 @@ export class CauldronManager {
     this.thresholdY = yPos + frame.height * 0.2;
 
     // Create threshold line graphic
-    this.createThresholdLine(xPos, this.thresholdY, frame.width * 0.8);
+    this.createThresholdLine(xPos + 10, this.thresholdY, frame.width * 0.7);
 
     // Create two separate sensor areas inside the cauldron
     const sensorWidth = frame.width * 0.75;
@@ -99,12 +99,12 @@ export class CauldronManager {
    */
   private createThresholdLine(x: number, y: number, width: number): void {
     this.thresholdLine = this.scene.add.graphics();
-    this.thresholdLine.lineStyle(5, 0x454359, 0.8); // Increased stroke width from 3 to 5
+    this.thresholdLine.lineStyle(5, 0x454359, 1); // Increased stroke width from 3 to 5
     this.thresholdLine.beginPath();
     this.thresholdLine.moveTo(x - width / 2, y);
     this.thresholdLine.lineTo(x + width / 2, y);
     this.thresholdLine.strokePath();
-    this.thresholdLine.setDepth(DepthLayers.Ground + 1); // Make sure it's visible above the cauldron
+    this.thresholdLine.setDepth(DepthLayers.Ground - 1); // Make sure it's below the cauldron
   }
 
   /**
@@ -119,10 +119,10 @@ export class CauldronManager {
 
     // Draw the new line with updated color
     const frame = this.scene.textures.get("cauldron").get();
-    const xPos = this.cauldronSprite.x;
-    const width = frame.width * 0.8;
+    const xPos = this.cauldronSprite.x + 10;
+    const width = frame.width * 0.75;
 
-    this.thresholdLine.lineStyle(5, lineColor, 0.8);
+    this.thresholdLine.lineStyle(5, lineColor, 1);
     this.thresholdLine.beginPath();
     this.thresholdLine.moveTo(xPos - width / 2, this.thresholdY);
     this.thresholdLine.lineTo(xPos + width / 2, this.thresholdY);
