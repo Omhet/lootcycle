@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { StallScreenContainer } from "./containers/StallScreenContainer/StallScreenContainer";
-import { EventBus } from "./game/EventBus";
-import { IRefPhaserGame, PhaserGame } from "./game/PhaserGame";
-import { MainMenu } from "./game/scenes/MainMenu";
-import { CraftingFailureReason } from "./lib/craft/craftModel";
-import { ScreenId, useScreenStore } from "./store/useScreenStore";
+import { StallScreenContainer } from "../containers/StallScreenContainer/StallScreenContainer";
+import { EventBus } from "../game/EventBus";
+import { IRefPhaserGame, PhaserGame } from "../game/PhaserGame";
+import { MainMenu } from "../game/scenes/MainMenu";
+import { CraftingFailureReason } from "../lib/craft/craftModel";
+import { ScreenId, useScreenStore } from "../store/useScreenStore";
 
 function App() {
   // References to the PhaserGame component (game and scene are exposed)
