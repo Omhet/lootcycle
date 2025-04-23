@@ -12,6 +12,9 @@ export class InputManager {
   private keyA: Phaser.Input.Keyboard.Key | undefined;
   private keyD: Phaser.Input.Keyboard.Key | undefined;
 
+  // Track crafting state
+  private isCraftingInProgress: boolean = false;
+
   constructor(scene: Scene) {
     this.scene = scene;
     this.cursors = this.scene.input.keyboard?.createCursorKeys() as Phaser.Types.Input.Keyboard.CursorKeys;
@@ -21,6 +24,24 @@ export class InputManager {
     this.keyD = this.scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.D);
 
     this.setupInputListeners();
+
+    // Listen for cooking events to track state
+    EventBus.on("cooking-started", this.handleCookingStarted, this);
+    EventBus.on("cooking-stopped", this.handleCookingStopped, this);
+  }
+
+  /**
+   * Handles cooking started event
+   */
+  private handleCookingStarted(): void {
+    this.isCraftingInProgress = true;
+  }
+
+  /**
+   * Handles cooking stopped event
+   */
+  private handleCookingStopped(): void {
+    this.isCraftingInProgress = false;
   }
 
   /**
@@ -29,13 +50,33 @@ export class InputManager {
   private setupInputListeners(): void {
     // Setup all key listeners
     this.addKeyListener("ENTER", () => {
+      // Get the cauldronManager from the scene registry
+      const cauldronManager = this.scene.registry.get("cauldronManager");
       // Get the junkPileManager from the scene registry
       const junkPileManager = this.scene.registry.get("junkPileManager");
-      if (junkPileManager) {
-        junkPileManager.generateNextPortion();
+
+      if (!cauldronManager) {
+        console.error("CauldronManager not found in registry");
+        return;
       }
-      // Emit event to notify scene to craft item
-      EventBus.emit("craft-item");
+
+      // Check if there's enough junk for crafting
+      if (!cauldronManager.hasEnoughJunkForCrafting()) {
+        // Not enough junk - notify player
+        EventBus.emit("crafting-failure", {
+          reason: "NotEnoughJunk",
+          message: "Not enough materials in cauldron",
+        });
+        return;
+      }
+
+      if (this.isCraftingInProgress) {
+        // ENTER pressed while crafting - finish crafting
+        this.finishCrafting(cauldronManager);
+      } else {
+        // ENTER pressed when not crafting - start crafting
+        this.startCrafting(cauldronManager, junkPileManager);
+      }
     });
 
     this.addKeyListener("SPACE", () => {
@@ -52,6 +93,44 @@ export class InputManager {
       // Emit event to close any open screen
       EventBus.emit("close-screen");
     });
+  }
+
+  /**
+   * Starts the crafting process
+   */
+  private startCrafting(cauldronManager: any, junkPileManager: any): void {
+    if (!cauldronManager || this.isCraftingInProgress) return;
+
+    // Get junk pieces currently in the cauldron
+    const junkItemsInCauldron = cauldronManager.getJunkPiecesInside();
+    const junkPieces = junkItemsInCauldron.map((item: any) => item.junkPiece);
+
+    // Emit event to calculate temperature range for junk pieces
+    EventBus.emit("calculate-temperature-range", junkPieces);
+
+    // Start cooking with temperature range (this will be set by Game.ts)
+    cauldronManager.startCooking();
+
+    // Generate next portion for when crafting is done
+    if (junkPileManager) {
+      junkPileManager.generateNextPortion();
+    }
+  }
+
+  /**
+   * Finishes the crafting process
+   */
+  private finishCrafting(cauldronManager: any): void {
+    if (!cauldronManager) return;
+
+    // Stop cooking and get final temperature
+    const finalTemperature = cauldronManager.stopCooking();
+
+    // Emit event to notify scene to craft item with final temperature
+    EventBus.emit("craft-item", finalTemperature);
+
+    // Destroy junk pieces in cauldron
+    cauldronManager.destroyJunkPieces();
   }
 
   /**
@@ -97,6 +176,10 @@ export class InputManager {
     this.keyListeners.forEach(({ key, callback }) => {
       this.scene.input.keyboard?.off(`keydown-${key}`, callback);
     });
+
+    // Remove event bus listeners
+    EventBus.off("cooking-started", this.handleCookingStarted, this);
+    EventBus.off("cooking-stopped", this.handleCookingStopped, this);
 
     // Remove A and D key objects
     this.keyA?.destroy();

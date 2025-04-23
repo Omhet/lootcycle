@@ -34,6 +34,13 @@ export type craftLootItemParams = {
   config: LootConfig;
 };
 
+// New params type for calculating temperature range
+export type calculateTemperatureRangeParams = {
+  recipeId: RecipeItemId;
+  junkPieces: JunkPiece[];
+  config: LootConfig;
+};
+
 // ======= HELPER FUNCTIONS =======
 
 /**
@@ -290,8 +297,9 @@ function calculateRarity(detailToJunk: Map<RecipeDetailType, { lootDetail: LootD
 
 /**
  * Calculates temperature range based on recipe and junk
+ * - Now exported for use in the crafting mini-game
  */
-function calculateTemperatureRange(
+export function calculateTemperatureRange(
   recipe: RecipeItem,
   detailToJunk: Map<RecipeDetailType, { lootDetail: LootDetail; junkPieces: JunkPiece[] }>
 ): TemperatureRange {
@@ -319,6 +327,34 @@ function calculateTemperatureRange(
     min: perfectTemp - adjustedOffset,
     max: perfectTemp + adjustedOffset,
   };
+}
+
+/**
+ * Utility function to get temperature range for a recipe and set of junk pieces
+ * This allows getting the range before actually crafting the item
+ */
+export function getTemperatureRangeForCrafting(params: calculateTemperatureRangeParams): TemperatureRange | undefined {
+  const { recipeId, junkPieces, config } = params;
+
+  // Find the recipe item
+  const recipe = findRecipeItem(recipeId, config);
+
+  // Check if recipe exists
+  if (!recipe) {
+    return undefined;
+  }
+
+  // Get all required detail types for this recipe
+  const requiredDetailTypes = getRequiredDetailTypes(recipe, config);
+
+  // Filter junk pieces suitable for this recipe
+  const suitableJunk = filterSuitableJunk(junkPieces, requiredDetailTypes);
+
+  // Create a map to hold our final selection of details and junk
+  const detailToJunk = distributeJunkToDetails(suitableJunk, requiredDetailTypes, config);
+
+  // Calculate and return temperature range
+  return calculateTemperatureRange(recipe, detailToJunk);
 }
 
 /**

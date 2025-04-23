@@ -1,10 +1,10 @@
 import { Scene } from "phaser";
-import { craftLootItem } from "../../lib/craft/craftLootItem";
+import { craftLootItem, getTemperatureRangeForCrafting } from "../../lib/craft/craftLootItem";
 import { EventBus } from "../EventBus";
 import { CollisionCategories, CollisionMasks } from "../physics/CollisionCategories";
 // Import all managers
 import { lootConfig } from "../../lib/craft/config";
-import { CraftingFailureReason } from "../../lib/craft/craftModel";
+import { CraftingFailureReason, TemperatureRange } from "../../lib/craft/craftModel";
 import { BackgroundManager } from "./logic/BackgroundManager";
 import { CauldronManager } from "./logic/CauldronManager";
 import { ClawManager } from "./logic/ClawManager";
@@ -50,6 +50,9 @@ export class Game extends Scene {
   private clawManager: ClawManager;
   private inputManager: InputManager; // Add InputManager
 
+  // Crafting state
+  private currentTemperatureRange: TemperatureRange | null = null;
+
   // Physics bodies (Scene specific)
   private groundHeight = 38;
   // @ts-ignore
@@ -77,8 +80,9 @@ export class Game extends Scene {
     this.clawManager = new ClawManager(this);
     this.inputManager = new InputManager(this); // Initialize InputManager
 
-    // Store junkPileManager in registry for easy access
+    // Store managers in registry for easy access
     this.registry.set("junkPileManager", this.junkPileManager);
+    this.registry.set("cauldronManager", this.cauldronManager);
 
     // Set up physics world (Remains in Scene)
     this.matter.world.setBounds(0, 0, this.cameras.main.width, this.cameras.main.height);
@@ -130,8 +134,11 @@ export class Game extends Scene {
     // Pass the pipe spawn point from PipeManager to JunkPileManager
     this.junkPileManager.setSpawnPoint(this.pipeManager.getSpawnPoint().x, this.pipeManager.getSpawnPoint().y);
 
-    // Setup event listeners for InputManager events
+    // Setup event listeners
     EventBus.on("craft-item", this.craftAndRenderItem, this);
+    EventBus.on("calculate-temperature-range", this.calculateTemperatureRange, this);
+    EventBus.on("cooking-started", this.handleCookingStarted, this);
+    EventBus.on("cooking-stopped", this.handleCookingStopped, this);
     EventBus.on("toggle-claw", () => this.clawManager.toggleClaw());
     EventBus.on("claw-move-horizontal", (moveFactor: number) => this.clawManager.moveHorizontal(moveFactor));
 
@@ -152,9 +159,46 @@ export class Game extends Scene {
   }
 
   /**
-   * Crafts a new item and tells the manager to display it
+   * Calculate temperature range for the current junk pieces in cauldron
    */
-  private craftAndRenderItem(): void {
+  private calculateTemperatureRange(junkPieces: any[]): void {
+    // Currently fixed to short_sword for demonstration
+    const tempRange = getTemperatureRangeForCrafting({
+      recipeId: "short_sword",
+      junkPieces,
+      config: lootConfig,
+    });
+
+    // Store the temperature range
+    this.currentTemperatureRange = tempRange || null;
+
+    // Update cauldron with temperature range
+    if (this.cauldronManager && tempRange) {
+      this.cauldronManager.startCooking(tempRange);
+    }
+
+    console.log("Temperature range calculated:", tempRange);
+  }
+
+  /**
+   * Handle cooking started event
+   */
+  private handleCookingStarted(): void {
+    console.log("Cooking started");
+  }
+
+  /**
+   * Handle cooking stopped event
+   */
+  private handleCookingStopped(finalTemperature: number): void {
+    console.log(`Cooking stopped at ${finalTemperature}°C`);
+  }
+
+  /**
+   * Crafts a new item and tells the manager to display it
+   * Now uses the provided temperature instead of fixed value
+   */
+  private craftAndRenderItem(temperature: number): void {
     this.craftedItemManager.clearDisplay();
 
     // Check if enough junk has crossed the threshold line
@@ -168,31 +212,28 @@ export class Game extends Scene {
     const junkItemsInCauldron = this.cauldronManager.getJunkPiecesInside();
     const junkPieces = junkItemsInCauldron.map((item) => item.junkPiece);
 
-    // Get current temperature from the furnace (or use default value)
-    // const temperature = this.furnaceManager.getCurrentTemperature() || 50;
-    const temperature = 50;
-
     console.log(`Crafting with ${this.cauldronManager.getJunkPiecesAboveThresholdCount()} junk pieces above threshold at ${temperature} temperature`);
 
     const craftResult = craftLootItem({
       lootItemRecipeId: "short_sword", // In the future, this could be determined by cauldron queue
       junkPieces: junkPieces,
-      temperature: temperature,
+      temperature: temperature, // Use the provided temperature from cauldron
       config: lootConfig,
     });
 
     if (craftResult.success && craftResult.item) {
       this.craftedItemManager.displayItem(craftResult.item);
 
-      // Clear the junk pieces from the cauldron tracking (they're consumed in crafting)
-      // Note: We're not physically removing the objects here, that would be a separate feature
-      // potentially with an animation showing them being consumed
+      // The junk pieces are already physically destroyed by InputManager
+      // Just make sure we clear the tracking arrays
       this.cauldronManager.clearJunkPieces();
 
-      // Emit an event with the crafted item that will be handled by React
-      // This replaces direct store manipulation
+      // Emit event with crafting result
       EventBus.emit("crafting-success", craftResult.item);
       EventBus.emit("add-crafted-item", craftResult.item);
+
+      // Reset temperature range now that crafting is done
+      this.currentTemperatureRange = null;
     } else if (craftResult.failure) {
       // Emit an event when crafting fails
       EventBus.emit("crafting-failure", craftResult.failure);
@@ -213,6 +254,9 @@ export class Game extends Scene {
 
     // Remove event listeners
     EventBus.off("craft-item", this.craftAndRenderItem, this);
+    EventBus.off("calculate-temperature-range", this.calculateTemperatureRange, this);
+    EventBus.off("cooking-started", this.handleCookingStarted, this);
+    EventBus.off("cooking-stopped", this.handleCookingStopped, this);
     EventBus.off("toggle-claw");
     EventBus.off("claw-move-horizontal");
 
@@ -225,6 +269,9 @@ export class Game extends Scene {
     this.intakeManager?.destroy();
     this.furnaceManager?.destroy();
     this.clawManager?.destroy();
-    this.inputManager?.destroy(); // Destroy InputManager
+    this.inputManager?.destroy();
+
+    // Reset state
+    this.currentTemperatureRange = null;
   }
 }
