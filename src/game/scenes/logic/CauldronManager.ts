@@ -9,6 +9,11 @@ export class CauldronManager {
   private cauldronSensor: MatterJS.BodyType;
   private junkPiecesInside: JunkPileItem[] = [];
 
+  // New properties for threshold line
+  private thresholdLine: Phaser.GameObjects.Graphics;
+  private thresholdY: number;
+  private junkPiecesAboveThreshold: Set<string> = new Set();
+
   constructor(scene: Scene) {
     this.scene = scene;
     this.createCauldron();
@@ -37,6 +42,11 @@ export class CauldronManager {
     this.cauldronSprite.setName("cauldron");
     this.cauldronSprite.setDepth(DepthLayers.Ground);
 
+    this.thresholdY = yPos + frame.height * 0.2;
+
+    // Create threshold line graphic
+    this.createThresholdLine(xPos, this.thresholdY, frame.width * 0.8);
+
     // Create a sensor area inside the cauldron to detect junk pieces
     // Size is slightly smaller than the cauldron sprite
     const sensorWidth = frame.width * 0.8;
@@ -59,6 +69,78 @@ export class CauldronManager {
     // Setup collision detection for the sensor
     this.scene.matter.world.on("collisionstart", this.handleCollisionStart, this);
     this.scene.matter.world.on("collisionend", this.handleCollisionEnd, this);
+
+    // Set up update event to check junk positions
+    this.scene.events.on("update", this.checkJunkPositions, this);
+  }
+
+  /**
+   * Creates a visual threshold line in the cauldron
+   */
+  private createThresholdLine(x: number, y: number, width: number): void {
+    this.thresholdLine = this.scene.add.graphics();
+    this.thresholdLine.lineStyle(5, 0x454359, 0.8); // Increased stroke width from 3 to 5
+    this.thresholdLine.beginPath();
+    this.thresholdLine.moveTo(x - width / 2, y);
+    this.thresholdLine.lineTo(x + width / 2, y);
+    this.thresholdLine.strokePath();
+    this.thresholdLine.setDepth(DepthLayers.Ground + 1); // Make sure it's visible above the cauldron
+  }
+
+  /**
+   * Checks positions of all junk pieces in the cauldron relative to the threshold line
+   */
+  private checkJunkPositions(): void {
+    // Clear the current list of junk pieces above threshold
+    this.junkPiecesAboveThreshold.clear();
+
+    // Check each junk piece inside the cauldron
+    for (const junkItem of this.junkPiecesInside) {
+      const junkId = junkItem.uniqueId;
+
+      // Find the matching game object
+      const junkItems = this.scene.children.list.filter(
+        (obj) => obj instanceof Phaser.Physics.Matter.Sprite || obj instanceof Phaser.Physics.Matter.Image
+      ) as Array<Phaser.Physics.Matter.Sprite | Phaser.Physics.Matter.Image>;
+
+      const matchingJunkObject = junkItems.find(
+        // @ts-ignore
+        (item) => item.body?.label === junkId || item.body?.parent?.label === junkId
+      );
+
+      if (matchingJunkObject) {
+        // Check if the junk piece is above the threshold line
+        if (matchingJunkObject.y < this.thresholdY) {
+          this.junkPiecesAboveThreshold.add(junkId);
+          console.log(`Junk piece ${junkId} is above the threshold line.`, this.junkPiecesAboveThreshold);
+        }
+      }
+    }
+
+    // Update the threshold line color based on junk pieces above threshold
+    this.updateThresholdLineColor();
+  }
+
+  /**
+   * Updates the threshold line color based on whether there are enough junk pieces above it
+   */
+  private updateThresholdLineColor(): void {
+    // Color changes to BDB9DD when there are enough junk pieces
+    const lineColor = this.hasEnoughJunkForCrafting() ? 0xbdb9dd : 0x454359;
+
+    // Clear the existing line
+    this.thresholdLine.clear();
+
+    // Draw the new line with updated color
+    const frame = this.scene.textures.get("cauldron").get();
+    const xPos = this.cauldronSprite.x;
+    const width = frame.width * 0.8;
+
+    this.thresholdLine.lineStyle(5, lineColor, 0.8);
+    this.thresholdLine.beginPath();
+    this.thresholdLine.moveTo(xPos - width / 2, this.thresholdY);
+    this.thresholdLine.lineTo(xPos + width / 2, this.thresholdY);
+    this.thresholdLine.strokePath();
   }
 
   /**
@@ -152,6 +234,20 @@ export class CauldronManager {
   }
 
   /**
+   * Checks if enough junk has crossed the threshold line for crafting
+   */
+  public hasEnoughJunkForCrafting(): boolean {
+    return this.junkPiecesAboveThreshold.size >= 2;
+  }
+
+  /**
+   * Gets the count of junk pieces above the threshold line
+   */
+  public getJunkPiecesAboveThresholdCount(): number {
+    return this.junkPiecesAboveThreshold.size;
+  }
+
+  /**
    * Returns all junk pieces currently inside the cauldron
    */
   public getJunkPiecesInside(): JunkPileItem[] {
@@ -163,6 +259,7 @@ export class CauldronManager {
    */
   public clearJunkPieces(): void {
     this.junkPiecesInside = [];
+    this.junkPiecesAboveThreshold.clear();
   }
 
   public getSprite(): Phaser.Physics.Matter.Sprite {
@@ -170,9 +267,15 @@ export class CauldronManager {
   }
 
   public destroy(): void {
-    // Remove collision listeners
+    // Remove collision and update listeners
     this.scene.matter.world?.off("collisionstart", this.handleCollisionStart, this);
     this.scene.matter.world?.off("collisionend", this.handleCollisionEnd, this);
+    this.scene.events.off("update", this.checkJunkPositions, this);
+
+    // Destroy the threshold line
+    if (this.thresholdLine) {
+      this.thresholdLine.destroy();
+    }
 
     // Destroy the sensor
     if (this.cauldronSensor) {
@@ -186,6 +289,7 @@ export class CauldronManager {
 
     // Clear references
     this.junkPiecesInside = [];
+    this.junkPiecesAboveThreshold.clear();
     console.log("CauldronManager destroyed");
   }
 }

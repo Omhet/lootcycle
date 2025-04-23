@@ -4,6 +4,7 @@ import { EventBus } from "../EventBus";
 import { CollisionCategories, CollisionMasks } from "../physics/CollisionCategories";
 // Import all managers
 import { lootConfig } from "../../lib/craft/config";
+import { CraftingFailureReason } from "../../lib/craft/craftModel";
 import { BackgroundManager } from "./logic/BackgroundManager";
 import { CauldronManager } from "./logic/CauldronManager";
 import { ClawManager } from "./logic/ClawManager";
@@ -156,6 +157,13 @@ export class Game extends Scene {
   private craftAndRenderItem(): void {
     this.craftedItemManager.clearDisplay();
 
+    // Check if enough junk has crossed the threshold line
+    if (!this.cauldronManager.hasEnoughJunkForCrafting()) {
+      console.log("Not enough junk pieces above the threshold line - cannot craft item");
+      EventBus.emit("crafting-failure", { reason: CraftingFailureReason.NotEnoughJunk, message: "Not enough materials in cauldron" });
+      return;
+    }
+
     // Get junk pieces currently in the cauldron
     const junkItemsInCauldron = this.cauldronManager.getJunkPiecesInside();
     const junkPieces = junkItemsInCauldron.map((item) => item.junkPiece);
@@ -164,14 +172,7 @@ export class Game extends Scene {
     // const temperature = this.furnaceManager.getCurrentTemperature() || 50;
     const temperature = 50;
 
-    // Check if we have junk pieces to craft with
-    if (junkPieces.length === 0) {
-      console.log("No junk pieces found in cauldron - cannot craft item");
-      EventBus.emit("crafting-failure", { reason: "No materials in cauldron" });
-      return;
-    }
-
-    console.log(`Attempting to craft with ${junkPieces.length} junk pieces at ${temperature} temperature`);
+    console.log(`Crafting with ${this.cauldronManager.getJunkPiecesAboveThresholdCount()} junk pieces above threshold at ${temperature} temperature`);
 
     const craftResult = craftLootItem({
       lootItemRecipeId: "short_sword", // In the future, this could be determined by cauldron queue
