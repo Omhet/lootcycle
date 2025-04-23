@@ -99,7 +99,7 @@ export class CauldronManager {
    */
   private createThresholdLine(x: number, y: number, width: number): void {
     this.thresholdLine = this.scene.add.graphics();
-    this.thresholdLine.lineStyle(5, 0xff0000, 0.8); // Increased stroke width from 3 to 5
+    this.thresholdLine.lineStyle(5, 0x454359, 0.8); // Increased stroke width from 3 to 5
     this.thresholdLine.beginPath();
     this.thresholdLine.moveTo(x - width / 2, y);
     this.thresholdLine.lineTo(x + width / 2, y);
@@ -112,7 +112,7 @@ export class CauldronManager {
    */
   private updateThresholdLineColor(): void {
     // Color changes to BDB9DD when there are enough junk pieces
-    const lineColor = this.hasEnoughJunkForCrafting() ? 0xbdb9dd : 0xff0000;
+    const lineColor = this.hasEnoughJunkForCrafting() ? 0xbdb9dd : 0x454359;
 
     // Clear the existing line
     this.thresholdLine.clear();
@@ -171,19 +171,19 @@ export class CauldronManager {
             if (isAboveThreshold) {
               if (!this.isJunkAlreadyInArea(junkPileItem, this.junkPiecesAboveThreshold)) {
                 this.junkPiecesAboveThreshold.push(junkPileItem);
-                console.log(`Junk piece ${junkPileItem.uniqueId} entered above threshold area. Total above: ${this.junkPiecesAboveThreshold.length}`);
+                // console.log(`Junk piece ${junkPileItem.uniqueId} entered above threshold area. Total above: ${this.junkPiecesAboveThreshold.length}`);
               }
             } else {
               if (!this.isJunkAlreadyInArea(junkPileItem, this.junkPiecesBelowThreshold)) {
                 this.junkPiecesBelowThreshold.push(junkPileItem);
-                console.log(`Junk piece ${junkPileItem.uniqueId} entered below threshold area. Total below: ${this.junkPiecesBelowThreshold.length}`);
+                // console.log(`Junk piece ${junkPileItem.uniqueId} entered below threshold area. Total below: ${this.junkPiecesBelowThreshold.length}`);
               }
             }
 
             // Add to overall junk inside if not already there
             if (!this.isJunkAlreadyInside(junkPileItem)) {
               this.junkPiecesInside.push(junkPileItem);
-              console.log(`Junk piece ${junkPileItem.uniqueId} entered cauldron. Total pieces inside: ${this.junkPiecesInside.length}`);
+              //   console.log(`Junk piece ${junkPileItem.uniqueId} entered cauldron. Total pieces inside: ${this.junkPiecesInside.length}`);
             }
 
             // Update threshold line color
@@ -225,13 +225,13 @@ export class CauldronManager {
             const aboveIndex = this.junkPiecesAboveThreshold.findIndex((item) => item.uniqueId === uniqueJunkId);
             if (aboveIndex !== -1) {
               const removedJunk = this.junkPiecesAboveThreshold.splice(aboveIndex, 1);
-              console.log(`Junk piece ${removedJunk[0].uniqueId} left above threshold area. Remaining above: ${this.junkPiecesAboveThreshold.length}`);
+              //   console.log(`Junk piece ${removedJunk[0].uniqueId} left above threshold area. Remaining above: ${this.junkPiecesAboveThreshold.length}`);
             }
           } else {
             const belowIndex = this.junkPiecesBelowThreshold.findIndex((item) => item.uniqueId === uniqueJunkId);
             if (belowIndex !== -1) {
               const removedJunk = this.junkPiecesBelowThreshold.splice(belowIndex, 1);
-              console.log(`Junk piece ${removedJunk[0].uniqueId} left below threshold area. Remaining below: ${this.junkPiecesBelowThreshold.length}`);
+              //   console.log(`Junk piece ${removedJunk[0].uniqueId} left below threshold area. Remaining below: ${this.junkPiecesBelowThreshold.length}`);
             }
           }
 
@@ -244,7 +244,7 @@ export class CauldronManager {
             const insideIndex = this.junkPiecesInside.findIndex((item) => item.uniqueId === uniqueJunkId);
             if (insideIndex !== -1) {
               const removedJunk = this.junkPiecesInside.splice(insideIndex, 1);
-              console.log(`Junk piece ${removedJunk[0].uniqueId} left cauldron. Remaining pieces: ${this.junkPiecesInside.length}`);
+              //   console.log(`Junk piece ${removedJunk[0].uniqueId} left cauldron. Remaining pieces: ${this.junkPiecesInside.length}`);
             }
           }
 
@@ -375,6 +375,6 @@ export class CauldronManager {
     this.junkPiecesInside = [];
     this.junkPiecesAboveThreshold = [];
     this.junkPiecesBelowThreshold = [];
-    console.log("CauldronManager destroyed");
+    // console.log("CauldronManager destroyed");
   }
 }
