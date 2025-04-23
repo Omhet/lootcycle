@@ -29,8 +29,21 @@ export const useGameControls = (phaserRef: MutableRefObject<IRefPhaserGame | nul
     }
   };
 
+  // Handle Download Junk Images button click
+  const handleDownloadJunkImagesClick = () => {
+    if (phaserRef.current && phaserRef.current.scene) {
+      const scene = phaserRef.current.scene;
+      if (scene.scene.key === "MainMenu" && typeof (scene as any).downloadJunkImages === "function") {
+        (scene as unknown as MainMenu).downloadJunkImages();
+      } else {
+        console.warn("Download junk images function not available on the current scene or scene is not MainMenu.");
+      }
+    }
+  };
+
   return {
     handlePlayClick,
     handleDownloadLootImagesClick,
+    handleDownloadJunkImagesClick,
   };
 };

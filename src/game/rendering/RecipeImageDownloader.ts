@@ -2,33 +2,26 @@ import { Scene } from "phaser";
 import { lootConfig } from "../../lib/craft/config";
 import { LootDetail, LootDetailId, LootItem, Rarity, RecipeDetailType, RecipeItem, RecipePart, RecipePartType } from "../../lib/craft/craftModel";
 import { generateLootItemId } from "../../lib/craft/craftUtils";
+import { ImageDownloader } from "./base/ImageDownloader";
 import { CraftedItemRenderer } from "./CraftedItemRenderer";
 
 /**
  * Service responsible for generating and downloading images of all recipe combinations.
- * This separates the download functionality from the MainMenu scene.
  */
-export class RecipeImageDownloader {
-  private scene: Scene;
-  private itemRenderer: CraftedItemRenderer;
-
+export class RecipeImageDownloader extends ImageDownloader<CraftedItemRenderer> {
   constructor(scene: Scene) {
-    this.scene = scene;
-    this.itemRenderer = new CraftedItemRenderer(scene);
+    super(scene, new CraftedItemRenderer(scene));
   }
 
   /**
    * Downloads images of all recipe combinations.
    * @returns A promise that resolves when all downloads are complete.
    */
-  public async downloadRecipeImages(): Promise<void> {
+  public async downloadImages(): Promise<void> {
     console.log("Starting recipe image generation for all combinations...");
     const allRecipes = Object.values(lootConfig.recipeItems).flat();
     const tempRTWidth = 720;
     const tempRTHeight = 720;
-
-    // Helper function to add delay between downloads
-    const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
     for (const recipe of allRecipes) {
       console.log(`Processing recipe: ${recipe.id}`);
@@ -67,60 +60,15 @@ export class RecipeImageDownloader {
         try {
           console.log(`Rendering recipe ${recipe.id} LootDetail combination ${combinationIndex} with ID: ${itemId}`);
 
-          this.itemRenderer.renderItemToTexture(tempLootItem, tempRT);
+          this.renderer.renderToTexture(tempLootItem, tempRT);
           console.log(`Rendered to RenderTexture for ID: ${itemId}`);
 
           console.log(`Snapshotting RenderTexture for ID: ${itemId}`);
-          const imageDataUrl: string = await new Promise((resolve) => {
-            tempRT.snapshot((image: HTMLImageElement | Phaser.Display.Color) => {
-              if (!(image instanceof HTMLImageElement)) {
-                console.error("Received Color instead of Image");
-                resolve("");
-                return;
-              }
-              console.log(`Snapshot captured for ${itemId} (as Image)`);
-              if (image.width === 0 || image.height === 0) {
-                console.warn(`Snapshot image for ${itemId} has zero dimensions.`);
-                resolve("");
-                return;
-              }
-              const tempCanvas = document.createElement("canvas");
-              tempCanvas.width = image.width;
-              tempCanvas.height = image.height;
-              const ctx = tempCanvas.getContext("2d");
-              if (ctx) {
-                ctx.drawImage(image, 0, 0);
-                resolve(tempCanvas.toDataURL("image/png"));
-              } else {
-                console.error(`Could not get 2D context for temp canvas (${itemId})`);
-                resolve("");
-              }
-            });
-          });
+          const imageDataUrl = await this.snapshotToDataUrl(tempRT);
           console.log(`snapshot dataURL length for ${itemId}: ${imageDataUrl.length}`);
 
-          if (imageDataUrl && imageDataUrl.length > 0) {
-            const filename = `${itemId}.png`;
-            console.log(`Downloading image for ${itemId} as ${filename}`);
-
-            // Create download link
-            const link = document.createElement("a");
-            link.href = imageDataUrl;
-            link.download = filename;
-            document.body.appendChild(link);
-
-            // Trigger download
-            link.click();
-
-            // Wait for a brief delay before removing the link and continuing
-            await delay(300);
-
-            // Clean up the link element
-            document.body.removeChild(link);
-          } else {
-            console.warn(`No imageDataUrl for ID: ${itemId}`);
-            console.warn(`Failed to get image data for ${recipe.id} combination ${combinationIndex}`);
-          }
+          const filename = `${itemId}.png`;
+          await this.downloadImage(imageDataUrl, filename);
         } catch (error) {
           console.error(`Error processing ${recipe.id} combination ${combinationIndex}:`, error);
         } finally {
@@ -133,7 +81,7 @@ export class RecipeImageDownloader {
       console.log(`Finished rendering ${combinationIndex} images for ${recipe.id}.`);
     }
 
-    console.log("All images downloaded.");
+    console.log("All recipe images downloaded.");
   }
 
   /**

@@ -2,6 +2,7 @@ import { GameObjects, Scene } from "phaser";
 
 import { lootConfig } from "../../lib/craft/config";
 import { EventBus } from "../EventBus";
+import { JunkImageDownloader } from "../rendering/JunkImageDownloader";
 import { RecipeImageDownloader } from "../rendering/RecipeImageDownloader";
 
 export class MainMenu extends Scene {
@@ -10,6 +11,7 @@ export class MainMenu extends Scene {
   logo: GameObjects.Image;
   title: GameObjects.Text;
   private recipeImageDownloader: RecipeImageDownloader;
+  private junkImageDownloader: JunkImageDownloader;
 
   constructor() {
     super("MainMenu");
@@ -21,6 +23,7 @@ export class MainMenu extends Scene {
 
     this.container = this.add.container(centerX, centerY);
     this.recipeImageDownloader = new RecipeImageDownloader(this);
+    this.junkImageDownloader = new JunkImageDownloader(this);
 
     EventBus.emit("current-scene-ready", this);
 
@@ -39,7 +42,15 @@ export class MainMenu extends Scene {
    * Delegates to the dedicated RecipeImageDownloader service
    */
   public async downloadRecipeImages(): Promise<void> {
-    await this.recipeImageDownloader.downloadRecipeImages();
+    await this.recipeImageDownloader.downloadImages();
+  }
+
+  /**
+   * Public method to trigger junk image downloads
+   * Delegates to the dedicated JunkImageDownloader service
+   */
+  public async downloadJunkImages(): Promise<void> {
+    await this.junkImageDownloader.downloadImages();
   }
 
   // --- Scene Shutdown ---

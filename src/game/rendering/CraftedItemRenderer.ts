@@ -1,6 +1,7 @@
 import { GameObjects, Scene } from "phaser";
 import { lootConfig } from "../../lib/craft/config";
 import { LootDetail, LootDetailId, LootItem, RecipeItem, RecipePart, RecipePartType } from "../../lib/craft/craftModel";
+import { ImageRenderer } from "./base/ImageRenderer";
 
 interface RenderedDetailInfo {
   sprite: Phaser.GameObjects.Sprite;
@@ -14,12 +15,11 @@ interface RenderedDetailInfo {
  * It uses direct positioning based on pinpoint coordinates for simplified
  * layout and zIndex for proper layering.
  */
-export class CraftedItemRenderer {
-  private scene: Scene;
+export class CraftedItemRenderer extends ImageRenderer {
   private lootDetailMapCache: Map<LootDetailId, LootDetail> | null = null;
 
   constructor(scene: Scene) {
-    this.scene = scene;
+    super(scene);
   }
 
   /**
@@ -28,7 +28,7 @@ export class CraftedItemRenderer {
    * @param targetRT The RenderTexture to draw onto.
    * @param clearTexture Should the texture be cleared before drawing? Defaults to true.
    */
-  public renderItemToTexture(item: LootItem, targetRT: GameObjects.RenderTexture, clearTexture: boolean = true): void {
+  public renderToTexture(item: LootItem, targetRT: GameObjects.RenderTexture, clearTexture: boolean = true): void {
     const recipeItem = this.findRecipeItem(item.recipeId);
     if (!recipeItem) {
       console.error(`RecipeItem not found for id: ${item.recipeId}`);
@@ -44,11 +44,8 @@ export class CraftedItemRenderer {
     // Prepare details for drawing - gather all sprites with their positions and zIndices
     const detailsToDraw = this.prepareDetailsForDrawing(item, recipeItem, lootDetailMap);
 
-    // Clear the texture if needed
-    if (clearTexture) {
-      targetRT.clear();
-      targetRT.fill(0x000000, 0); // Use transparent fill
-    }
+    // Prepare the render texture
+    this.prepareRenderTexture(targetRT, clearTexture);
 
     // Sort by zIndex before drawing
     detailsToDraw.sort((a, b) => a.zIndex - b.zIndex);
@@ -167,7 +164,7 @@ export class CraftedItemRenderer {
    * Cleans up any internal state. Call this if the renderer instance is long-lived
    * and you want to reset state between unrelated render batches.
    */
-  public cleanup(): void {
+  public override cleanup(): void {
     this.lootDetailMapCache = null;
   }
 }

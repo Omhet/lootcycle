@@ -17,7 +17,7 @@ function App() {
   // Use custom hooks
   const { currentSceneKey, handleSceneChange } = useSceneManager();
   const { currentOpenedScreenId } = useScreenEvents();
-  const { handlePlayClick, handleDownloadLootImagesClick } = useGameControls(phaserRef);
+  const { handlePlayClick, handleDownloadLootImagesClick, handleDownloadJunkImagesClick } = useGameControls(phaserRef);
 
   // Add test button for development
   useTestControls();
@@ -62,6 +62,9 @@ function App() {
               </button>
               <button className="button" onClick={handleDownloadLootImagesClick}>
                 Download Loot Images
+              </button>
+              <button className="button" onClick={handleDownloadJunkImagesClick}>
+                Download Junk Images
               </button>
             </div>
           </div>
