@@ -16,6 +16,8 @@ function App() {
 
   // Get current opened screen from Zustand store
   const currentOpenedScreenId = useScreenStore((state) => state.currentOpenedScreenId);
+  const openScreen = useScreenStore((state) => state.openScreen);
+  const closeScreen = useScreenStore((state) => state.closeScreen);
 
   // Event emitted from the PhaserGame component
   const currentScene = (scene: Phaser.Scene) => {
@@ -23,7 +25,7 @@ function App() {
     setCurrentSceneKey(scene.scene.key); // Update state with scene key
   };
 
-  // Set up event listeners for crafting failures
+  // Set up event listeners for crafting failures and screen management
   useEffect(() => {
     const handleCraftingFailure = (failure: { reason: CraftingFailureReason; message?: string }) => {
       // Create user-friendly messages based on failure reasons
@@ -40,14 +42,86 @@ function App() {
       });
     };
 
-    // Subscribe to the crafting-failure event
-    EventBus.on("crafting-failure", handleCraftingFailure);
+    // Handle open screen requests from the game
+    const handleOpenScreen = (screenId: string) => {
+      console.log(`Opening screen: ${screenId}`);
+      // Map the string screen ID to our enum
+      switch (screenId.toLowerCase()) {
+        case "stall":
+          openScreen(ScreenId.Stall);
+          break;
+        case "daystart":
+          openScreen(ScreenId.DayStart);
+          break;
+        case "newlootinfo":
+          openScreen(ScreenId.NewLootInfo);
+          break;
+        case "dayend":
+          openScreen(ScreenId.DayEnd);
+          break;
+        case "shop":
+          openScreen(ScreenId.Shop);
+          break;
+        default:
+          console.warn(`Unknown screen ID: ${screenId}`);
+      }
+    };
 
-    // Clean up the event listener when component unmounts
+    // Handle toggle screen requests from the game
+    const handleToggleScreen = (screenId: string) => {
+      console.log(`Toggling screen: ${screenId}`);
+
+      // Convert string to enum
+      let targetScreenId: ScreenId;
+      switch (screenId.toLowerCase()) {
+        case "stall":
+          targetScreenId = ScreenId.Stall;
+          break;
+        case "daystart":
+          targetScreenId = ScreenId.DayStart;
+          break;
+        case "newlootinfo":
+          targetScreenId = ScreenId.NewLootInfo;
+          break;
+        case "dayend":
+          targetScreenId = ScreenId.DayEnd;
+          break;
+        case "shop":
+          targetScreenId = ScreenId.Shop;
+          break;
+        default:
+          console.warn(`Unknown screen ID: ${screenId}`);
+          return;
+      }
+
+      // If the screen is already open, close it; otherwise open it
+      if (currentOpenedScreenId === targetScreenId) {
+        closeScreen();
+      } else {
+        openScreen(targetScreenId);
+      }
+    };
+
+    // Handle close screen requests (from ESC key)
+    const handleCloseScreen = () => {
+      console.log("Closing current screen");
+      closeScreen();
+    };
+
+    // Subscribe to the events
+    EventBus.on("crafting-failure", handleCraftingFailure);
+    EventBus.on("open-screen", handleOpenScreen);
+    EventBus.on("toggle-screen", handleToggleScreen);
+    EventBus.on("close-screen", handleCloseScreen);
+
+    // Clean up the event listeners when component unmounts
     return () => {
       EventBus.off("crafting-failure", handleCraftingFailure);
+      EventBus.off("open-screen", handleOpenScreen);
+      EventBus.off("toggle-screen", handleToggleScreen);
+      EventBus.off("close-screen", handleCloseScreen);
     };
-  }, []);
+  }, [openScreen, closeScreen, currentOpenedScreenId]);
 
   // Function to render the appropriate screen based on the current screen ID
   const renderCurrentScreen = () => {

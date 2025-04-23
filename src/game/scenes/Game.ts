@@ -139,6 +139,18 @@ export class Game extends Scene {
       this.clawManager.toggleClaw();
     });
 
+    // Add the I key for toggling the Stall screen
+    this.input.keyboard?.on("keydown-I", () => {
+      // Emit event to toggle the Stall screen
+      EventBus.emit("toggle-screen", "stall");
+    });
+
+    // Add the ESC key for closing any open screen
+    this.input.keyboard?.on("keydown-ESC", () => {
+      // Emit event to close any open screen
+      EventBus.emit("close-screen");
+    });
+
     // Generate the initial junk portion
     this.junkPileManager.generateJunkPortion();
 
@@ -229,5 +241,7 @@ export class Game extends Scene {
     // Remove specific listeners
     this.input.keyboard?.off("keydown-ENTER");
     this.input.keyboard?.off("keydown-SPACE"); // Remove space key listener
+    this.input.keyboard?.off("keydown-I"); // Remove I key listener
+    this.input.keyboard?.off("keydown-ESC"); // Remove ESC key listener
   }
 }
