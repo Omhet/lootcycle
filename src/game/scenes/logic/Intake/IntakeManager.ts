@@ -1,6 +1,6 @@
 import { Scene } from "phaser";
-import { CollisionCategories, CollisionMasks } from "../../physics/CollisionCategories";
-import { DepthLayers } from "../Game";
+import { CollisionCategories, CollisionMasks } from "../../../physics/CollisionCategories";
+import { DepthLayers } from "../../Game";
 
 export class IntakeManager {
   private scene: Scene;
