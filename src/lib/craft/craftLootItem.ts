@@ -25,7 +25,7 @@ export type craftLootItemParams = {
 
 // New params type for calculating temperature range
 export type calculateTemperatureRangeParams = {
-  recipeId: RecipeItemId;
+  recipeItemId: RecipeItemId;
   junkPieces: JunkPiece[];
   config: LootConfig;
 };
@@ -323,7 +323,7 @@ export function calculateTemperatureRange(
  * This allows getting the range before actually crafting the item
  */
 export function getTemperatureRangeForCrafting(params: calculateTemperatureRangeParams): TemperatureRange {
-  const { recipeId, junkPieces, config } = params;
+  const { recipeItemId: recipeId, junkPieces, config } = params;
 
   // Find the recipe item
   const recipe = findRecipeItem(recipeId, config);

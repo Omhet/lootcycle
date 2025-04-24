@@ -113,7 +113,7 @@ export class CauldronManager {
 
     // Currently fixed to short_sword for demonstration
     const temperatureRange = getTemperatureRangeForCrafting({
-      recipeId: "short_sword",
+      recipeItemId: "axe",
       junkPieces: this.getJunkPiecesInside(),
       config: lootConfig,
     });
@@ -159,7 +159,7 @@ export class CauldronManager {
     const junkPieces = this.getJunkPiecesInside();
 
     const craftedLootItem = craftLootItem({
-      lootItemRecipeId: "short_sword", // In the future, this could be determined by cauldron queue
+      recipeItemId: "axe", // In the future, this could be determined by cauldron queue
       junkPieces,
       config: lootConfig,
     });
