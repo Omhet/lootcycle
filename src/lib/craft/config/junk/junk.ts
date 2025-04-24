@@ -2,7 +2,7 @@ import { Durability, Rarity, RecipeDetailType } from "../../craftModel";
 import { registerJunkPiece } from "../registry";
 
 registerJunkPiece("bone", {
-  suitableForRecipeDetails: [RecipeDetailType.Grip, RecipeDetailType.Pommel],
+  suitableForRecipeDetails: [RecipeDetailType.AxeHandle],
   name: "Bone",
   rarity: Rarity.Common,
   durability: Durability.Medium,
@@ -38,17 +38,24 @@ registerJunkPiece("green_fluff", {
   temperatureCoefficient: 1,
 });
 
-registerJunkPiece("banana_peel", {
-  suitableForRecipeDetails: [RecipeDetailType.Grip],
-  name: "Banana Peel",
-  rarity: Rarity.Common,
-  durability: Durability.Low,
-  sellPriceCoefficient: 1,
-  temperatureCoefficient: 1,
-});
+// registerJunkPiece("banana_peel", {
+//   suitableForRecipeDetails: [],
+//   name: "Banana Peel",
+//   rarity: Rarity.Common,
+//   durability: Durability.Low,
+//   sellPriceCoefficient: 1,
+//   temperatureCoefficient: 1,
+// });
 
 registerJunkPiece("log", {
-  suitableForRecipeDetails: [RecipeDetailType.Grip],
+  suitableForRecipeDetails: [
+    RecipeDetailType.Grip,
+    RecipeDetailType.Guard,
+    RecipeDetailType.Pommel,
+    RecipeDetailType.ShortSwordBlade,
+    RecipeDetailType.AxeHandle,
+    RecipeDetailType.AxeHead,
+  ],
   name: "Log",
   rarity: Rarity.Common,
   durability: Durability.Medium,
@@ -56,14 +63,14 @@ registerJunkPiece("log", {
   temperatureCoefficient: 0.5,
 });
 
-registerJunkPiece("dead_fish", {
-  suitableForRecipeDetails: [RecipeDetailType.Grip],
-  name: "Dead Fish",
-  rarity: Rarity.Common,
-  durability: Durability.Low,
-  sellPriceCoefficient: 0.5,
-  temperatureCoefficient: 0.3,
-});
+// registerJunkPiece("dead_fish", {
+//   suitableForRecipeDetails: [],
+//   name: "Dead Fish",
+//   rarity: Rarity.Common,
+//   durability: Durability.Low,
+//   sellPriceCoefficient: 0.5,
+//   temperatureCoefficient: 0.3,
+// });
 
 registerJunkPiece("horse_shoe", {
   suitableForRecipeDetails: [RecipeDetailType.Guard],
@@ -84,7 +91,13 @@ registerJunkPiece("golden_ring", {
 });
 
 registerJunkPiece("golden_cup", {
-  suitableForRecipeDetails: [RecipeDetailType.Pommel],
+  suitableForRecipeDetails: [
+    RecipeDetailType.Grip,
+    RecipeDetailType.Guard,
+    RecipeDetailType.ShortSwordBlade,
+    RecipeDetailType.AxeHandle,
+    RecipeDetailType.AxeHead,
+  ],
   name: "Golden Cup",
   rarity: Rarity.Rare,
   durability: Durability.Medium,
@@ -93,7 +106,13 @@ registerJunkPiece("golden_cup", {
 });
 
 registerJunkPiece("golden_necklace", {
-  suitableForRecipeDetails: [RecipeDetailType.Grip],
+  suitableForRecipeDetails: [
+    RecipeDetailType.Grip,
+    RecipeDetailType.Guard,
+    RecipeDetailType.ShortSwordBlade,
+    RecipeDetailType.AxeHandle,
+    RecipeDetailType.AxeHead,
+  ],
   name: "Golden Necklace",
   rarity: Rarity.Rare,
   durability: Durability.Low,
@@ -102,7 +121,13 @@ registerJunkPiece("golden_necklace", {
 });
 
 registerJunkPiece("silver_cup", {
-  suitableForRecipeDetails: [RecipeDetailType.Pommel],
+  suitableForRecipeDetails: [
+    RecipeDetailType.Grip,
+    RecipeDetailType.Guard,
+    RecipeDetailType.ShortSwordBlade,
+    RecipeDetailType.AxeHandle,
+    RecipeDetailType.AxeHead,
+  ],
   name: "Silver Cup",
   rarity: Rarity.Uncommon,
   durability: Durability.Medium,
@@ -111,7 +136,13 @@ registerJunkPiece("silver_cup", {
 });
 
 registerJunkPiece("silver_necklace", {
-  suitableForRecipeDetails: [RecipeDetailType.Grip],
+  suitableForRecipeDetails: [
+    RecipeDetailType.Grip,
+    RecipeDetailType.Guard,
+    RecipeDetailType.ShortSwordBlade,
+    RecipeDetailType.AxeHandle,
+    RecipeDetailType.AxeHead,
+  ],
   name: "Silver Necklace",
   rarity: Rarity.Uncommon,
   durability: Durability.Low,
@@ -120,7 +151,7 @@ registerJunkPiece("silver_necklace", {
 });
 
 registerJunkPiece("lollipop", {
-  suitableForRecipeDetails: [RecipeDetailType.Grip],
+  suitableForRecipeDetails: [RecipeDetailType.Pommel],
   name: "Lollipop",
   rarity: Rarity.Common,
   durability: Durability.Low,
@@ -129,7 +160,7 @@ registerJunkPiece("lollipop", {
 });
 
 registerJunkPiece("rope", {
-  suitableForRecipeDetails: [RecipeDetailType.Grip],
+  suitableForRecipeDetails: [RecipeDetailType.Grip, RecipeDetailType.AxeHandle],
   name: "Rope",
   rarity: Rarity.Common,
   durability: Durability.Medium,
@@ -146,17 +177,17 @@ registerJunkPiece("saw", {
   temperatureCoefficient: 1.2,
 });
 
-registerJunkPiece("bolt", {
-  suitableForRecipeDetails: [RecipeDetailType.Pommel],
-  name: "Bolt",
-  rarity: Rarity.Common,
-  durability: Durability.High,
-  sellPriceCoefficient: 0.7,
-  temperatureCoefficient: 1.2,
-});
+// registerJunkPiece("bolt", {
+//   suitableForRecipeDetails: [],
+//   name: "Bolt",
+//   rarity: Rarity.Common,
+//   durability: Durability.High,
+//   sellPriceCoefficient: 0.7,
+//   temperatureCoefficient: 1.2,
+// });
 
 registerJunkPiece("shell", {
-  suitableForRecipeDetails: [RecipeDetailType.Guard],
+  suitableForRecipeDetails: [RecipeDetailType.Pommel, RecipeDetailType.AxeHead],
   name: "Shell",
   rarity: Rarity.Uncommon,
   durability: Durability.Medium,
@@ -164,17 +195,23 @@ registerJunkPiece("shell", {
   temperatureCoefficient: 0.6,
 });
 
-registerJunkPiece("old_shoe", {
-  suitableForRecipeDetails: [RecipeDetailType.Grip],
-  name: "Old Shoe",
-  rarity: Rarity.Common,
-  durability: Durability.Low,
-  sellPriceCoefficient: 0.3,
-  temperatureCoefficient: 0.4,
-});
+// registerJunkPiece("old_shoe", {
+//   suitableForRecipeDetails: [],
+//   name: "Old Shoe",
+//   rarity: Rarity.Common,
+//   durability: Durability.Low,
+//   sellPriceCoefficient: 0.3,
+//   temperatureCoefficient: 0.4,
+// });
 
 registerJunkPiece("golden_coin", {
-  suitableForRecipeDetails: [RecipeDetailType.Pommel],
+  suitableForRecipeDetails: [
+    RecipeDetailType.Grip,
+    RecipeDetailType.Guard,
+    RecipeDetailType.ShortSwordBlade,
+    RecipeDetailType.AxeHandle,
+    RecipeDetailType.AxeHead,
+  ],
   name: "Golden Coin",
   rarity: Rarity.Rare,
   durability: Durability.Medium,
@@ -183,7 +220,13 @@ registerJunkPiece("golden_coin", {
 });
 
 registerJunkPiece("silver_coin", {
-  suitableForRecipeDetails: [RecipeDetailType.Pommel],
+  suitableForRecipeDetails: [
+    RecipeDetailType.Grip,
+    RecipeDetailType.Guard,
+    RecipeDetailType.ShortSwordBlade,
+    RecipeDetailType.AxeHandle,
+    RecipeDetailType.AxeHead,
+  ],
   name: "Silver Coin",
   rarity: Rarity.Uncommon,
   durability: Durability.Medium,
@@ -191,14 +234,14 @@ registerJunkPiece("silver_coin", {
   temperatureCoefficient: 1.2,
 });
 
-registerJunkPiece("mushroom", {
-  suitableForRecipeDetails: [RecipeDetailType.Grip],
-  name: "Mushroom",
-  rarity: Rarity.Common,
-  durability: Durability.Low,
-  sellPriceCoefficient: 0.6,
-  temperatureCoefficient: 0.3,
-});
+// registerJunkPiece("mushroom", {
+//   suitableForRecipeDetails: [],
+//   name: "Mushroom",
+//   rarity: Rarity.Common,
+//   durability: Durability.Low,
+//   sellPriceCoefficient: 0.6,
+//   temperatureCoefficient: 0.3,
+// });
 
 registerJunkPiece("button", {
   suitableForRecipeDetails: [RecipeDetailType.Pommel],
@@ -210,7 +253,7 @@ registerJunkPiece("button", {
 });
 
 registerJunkPiece("robo_hand", {
-  suitableForRecipeDetails: [RecipeDetailType.Grip],
+  suitableForRecipeDetails: [RecipeDetailType.AxeHandle],
   name: "Robo Hand",
   rarity: Rarity.Rare,
   durability: Durability.High,
@@ -237,7 +280,7 @@ registerJunkPiece("silver_ring", {
 });
 
 registerJunkPiece("deer_hoof", {
-  suitableForRecipeDetails: [RecipeDetailType.Pommel],
+  suitableForRecipeDetails: [RecipeDetailType.AxeHandle],
   name: "Deer Hoof",
   rarity: Rarity.Uncommon,
   durability: Durability.Medium,
@@ -245,11 +288,11 @@ registerJunkPiece("deer_hoof", {
   temperatureCoefficient: 0.7,
 });
 
-registerJunkPiece("empty_bottle", {
-  suitableForRecipeDetails: [RecipeDetailType.Grip],
-  name: "Empty Bottle",
-  rarity: Rarity.Common,
-  durability: Durability.Low,
-  sellPriceCoefficient: 0.5,
-  temperatureCoefficient: 0.8,
-});
+// registerJunkPiece("empty_bottle", {
+//   suitableForRecipeDetails: [],
+//   name: "Empty Bottle",
+//   rarity: Rarity.Common,
+//   durability: Durability.Low,
+//   sellPriceCoefficient: 0.5,
+//   temperatureCoefficient: 0.8,
+// });

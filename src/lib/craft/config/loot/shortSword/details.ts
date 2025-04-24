@@ -10,7 +10,7 @@ registerLootDetail("tree_blade", {
 
 registerLootDetail("silver_blade", {
   type: RecipeDetailType.ShortSwordBlade,
-  canBeCraftedFrom: ["silver_coin", "silver_cup", "silver_ring", "silver_necklace"],
+  canBeCraftedFrom: ["silver_coin", "silver_cup", "silver_necklace"],
   name: "Silver Short Sword Blade",
 });
 
@@ -22,7 +22,7 @@ registerLootDetail("basic_blade", {
 
 registerLootDetail("golden_blade", {
   type: RecipeDetailType.ShortSwordBlade,
-  canBeCraftedFrom: ["golden_coin", "golden_cup", "golden_ring", "golden_necklace"],
+  canBeCraftedFrom: ["golden_coin", "golden_cup", "golden_necklace"],
   name: "Golden Short Sword Blade",
 });
 
@@ -47,13 +47,13 @@ registerLootDetail("tree_guard", {
 
 registerLootDetail("golden_guard", {
   type: RecipeDetailType.Guard,
-  canBeCraftedFrom: ["golden_coin", "golden_cup", "golden_ring", "golden_necklace"],
+  canBeCraftedFrom: ["golden_coin", "golden_cup", "golden_necklace"],
   name: "Golden Short Sword Guard",
 });
 
 registerLootDetail("silver_guard", {
   type: RecipeDetailType.Guard,
-  canBeCraftedFrom: ["silver_coin", "silver_cup", "silver_ring", "silver_necklace"],
+  canBeCraftedFrom: ["silver_coin", "silver_cup", "silver_necklace"],
   name: "Silver Short Sword Guard",
 });
 
@@ -78,13 +78,13 @@ registerLootDetail("rope_grip", {
 
 registerLootDetail("golden_grip", {
   type: RecipeDetailType.Grip,
-  canBeCraftedFrom: ["golden_necklace"],
+  canBeCraftedFrom: ["golden_coin", "golden_cup", "golden_necklace"],
   name: "Golden Short Sword Grip",
 });
 
 registerLootDetail("silver_grip", {
   type: RecipeDetailType.Grip,
-  canBeCraftedFrom: ["silver_necklace"],
+  canBeCraftedFrom: ["silver_coin", "silver_cup", "silver_necklace"],
   name: "Silver Short Sword Grip",
 });
 
@@ -103,13 +103,13 @@ registerLootDetail("shell_pommel", {
 
 registerLootDetail("golden_pommel", {
   type: RecipeDetailType.Pommel,
-  canBeCraftedFrom: ["golden_ring", "golden_cup", "golden_coin"],
+  canBeCraftedFrom: ["golden_ring"],
   name: "Golden Short Sword Pommel",
 });
 
 registerLootDetail("silver_pommel", {
   type: RecipeDetailType.Pommel,
-  canBeCraftedFrom: ["silver_cup", "silver_coin", "silver_ring"],
+  canBeCraftedFrom: ["silver_ring"],
   name: "Silver Short Sword Pommel",
 });
 
