@@ -23,7 +23,7 @@ function determineQuality(sellPriceCoefficient: number): Quality {
 function calculatePortionSize(portionNumber: number, firstPortionSize: number): number {
   let size = firstPortionSize;
   for (let i = 1; i < portionNumber; i++) {
-    size = Math.floor(size * 0.8);
+    size = Math.floor(size * 0.3);
   }
   return size;
 }
@@ -107,7 +107,7 @@ export function getJunkPortion(
   const recipeSpecificJunk = alljunkPieces.filter((junk) => junk.suitableForRecipeDetails.length > 0);
 
   // Calculate how many of each type to include
-  const genericJunkCount = Math.round(portionSize * 0.85);
+  const genericJunkCount = Math.round(portionSize * 0.95);
   const recipeSpecificJunkCount = portionSize - genericJunkCount;
 
   const finalPortion: JunkPiece[] = [];
