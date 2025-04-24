@@ -62,13 +62,13 @@ export class CauldronCraftingManager {
       frame: ["smoke_1.png", "smoke_2.png", "smoke_3.png"],
       lifespan: { min: 2000, max: 3000 },
       speed: { min: 20, max: 40 },
-      scale: { start: 0.3, end: 0.6 },
+      scale: { start: 0.3, end: 1.5 },
       quantity: 1,
       frequency: 500, // Emit a particle every 500ms
-      alpha: { start: 0.5, end: 0 },
+      alpha: { start: 1, end: 0 },
       angle: { min: 250, max: 290 },
       rotate: { min: -10, max: 10 },
-      tint: 0xdddddd,
+      tint: 0xffffff,
     });
 
     this.smokeParticles.setDepth(DepthLayers.Foreground + 1);
@@ -208,7 +208,7 @@ export class CauldronCraftingManager {
       const margin = (this.temperatureRange.max - this.temperatureRange.min) / 4;
 
       // Smoke appears when we're near the middle of the ideal range
-      if (this.currentTemperature >= midPoint - margin && this.currentTemperature <= midPoint + margin) {
+      if (this.currentTemperature >= midPoint - margin) {
         this.startSmokeEmission();
       } else {
         this.stopSmokeEmission();
