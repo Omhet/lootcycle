@@ -49,7 +49,7 @@ export class CauldronManager {
     const xPos = this.scene.cameras.main.width / 2 - 180;
     const yPos = this.scene.cameras.main.height - frame.height / 2 - 250;
 
-    this.cauldronSprite = this.scene.matter.add.sprite(xPos, yPos, "cauldron", undefined, {
+    this.cauldronSprite = this.scene.matter.add.sprite(xPos, yPos, "cauldron_filled", undefined, {
       shape: cauldronPhysics.cauldron,
       collisionFilter: {
         category: CollisionCategories.ENVIRONMENT,

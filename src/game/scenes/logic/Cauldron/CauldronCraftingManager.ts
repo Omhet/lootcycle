@@ -33,6 +33,9 @@ export class CauldronCraftingManager {
     this.scene = scene;
     this.cauldronSprite = cauldronSprite;
     this.createTemperatureBar();
+    this.setupSmokeParticles();
+
+    this.scene.events.on("update", this.updateTemperature, this);
   }
 
   /**
@@ -52,7 +55,9 @@ export class CauldronCraftingManager {
     this.temperatureText.setDepth(DepthLayers.UI);
 
     // Update the temperature bar initially
+    this.isCrafting = true; // Set to true to show the bar even if not crafting
     this.updateTemperatureBar();
+    this.temperatureRange = { min: 50, max: this.defaultMaxTemperature }; // Set a default range for the bar
   }
 
   /**
@@ -61,16 +66,15 @@ export class CauldronCraftingManager {
   private setupSmokeParticles(): void {
     // Position above the cauldron
     const emitterX = this.cauldronSprite.x + 10;
-    const emitterY = this.cauldronSprite.y - 50;
+    const emitterY = this.cauldronSprite.y - 150;
 
-    // Create smoke emitter using the Phaser 3.87.0 API
     this.smokeParticles = this.scene.add.particles(emitterX, emitterY, "smoke", {
       frame: ["smoke_1.png", "smoke_2.png", "smoke_3.png"],
-      lifespan: { min: 2000, max: 3000 },
+      lifespan: { min: 2000, max: 4000 },
       speed: { min: 20, max: 40 },
       scale: { start: 0.3, end: 1.5 },
       quantity: 1,
-      frequency: 500, // Emit a particle every 500ms
+      frequency: -1, // explode mode
       alpha: { start: 1, end: 0 },
       angle: { min: 250, max: 290 },
       rotate: { min: -10, max: 10 },
@@ -80,24 +84,22 @@ export class CauldronCraftingManager {
     this.smokeParticles.setDepth(DepthLayers.Foreground + 1);
   }
 
-  /**
-   * Starts emitting smoke particles from the cauldron
-   */
-  private startSmokeEmission(): void {
-    if (this.smokeParticles) {
-      this.smokeParticles.start();
-      return;
-    }
-    this.setupSmokeParticles();
-  }
+  private changeSmokeEmission(intensity: number = 1): void {
+    const scale = Phaser.Math.Linear(0.3, 5, intensity);
 
-  /**
-   * Stops emitting smoke particles
-   */
-  private stopSmokeEmission(): void {
-    if (this.smokeParticles) {
-      this.smokeParticles.stop();
-    }
+    // Tint: Go from white (0xffffff) to dark gray/black (0x333333) as intensity increases
+    // Using RGB interpolation for smooth transition
+    const tintColor = Phaser.Display.Color.Interpolate.ColorWithColor(
+      Phaser.Display.Color.ValueToColor(0xffffff),
+      Phaser.Display.Color.ValueToColor(0x333333),
+      100,
+      Math.floor(intensity * 100)
+    );
+    const finalTint = Phaser.Display.Color.GetColor(tintColor.r, tintColor.g, tintColor.b);
+
+    // Apply all changes to the particle emitter
+    this.smokeParticles!.setParticleScale(scale);
+    this.smokeParticles!.setParticleTint(finalTint);
   }
 
   /**
@@ -194,8 +196,6 @@ export class CauldronCraftingManager {
     // Stop update loop
     this.scene.events.off("update", this.updateTemperature, this);
 
-    // Stop smoke
-    this.stopSmokeEmission();
     this.updateTemperatureBar();
 
     return finalTemperature;
@@ -223,17 +223,30 @@ export class CauldronCraftingManager {
         return;
       }
 
-      const midPoint = (this.temperatureRange.min + this.temperatureRange.max) / 2;
-      const margin = (this.temperatureRange.max - this.temperatureRange.min) / 4;
-
-      // Smoke appears when we're near the middle of the ideal range
-      if (this.currentTemperature >= midPoint - margin) {
-        this.startSmokeEmission();
-      } else {
-        this.stopSmokeEmission();
+      if (this.currentTemperature >= this.temperatureRange.min) {
+        const intensity = this.calculateSmokeIntensity();
+        this.changeSmokeEmission(intensity);
+        this.smokeParticles!.explode();
       }
     }
   };
+
+  /**
+   * Calculates the smoke intensity based on how close the temperature is to the maximum range
+   * Returns a value between 0 (min temperature) and 1 (max temperature)
+   */
+  private calculateSmokeIntensity(): number {
+    if (!this.temperatureRange) return 0;
+
+    // Calculate how far we are in the range from min to max
+    const rangeSize = this.temperatureRange.max - this.temperatureRange.min;
+    const progressInRange = this.currentTemperature - this.temperatureRange.min;
+
+    // Normalize to get a value between 0 and 1
+    const normalizedIntensity = Math.min(Math.max(progressInRange / rangeSize, 0), 1);
+
+    return normalizedIntensity;
+  }
 
   /**
    * Returns whether crafting is currently in progress
