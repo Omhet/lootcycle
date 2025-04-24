@@ -1,5 +1,4 @@
 import {
-  CraftingFailureReason,
   ItemCategoryId,
   JunkPiece,
   JunkPieceId,
@@ -18,19 +17,9 @@ import { generateLootItemId } from "./craftUtils";
 
 // ======= CRAFTING FUNCTION TYPES =======
 
-export interface CraftingResult {
-  success: boolean;
-  item?: LootItem;
-  failure?: {
-    reason: CraftingFailureReason;
-    message?: string;
-  };
-}
-
 export type craftLootItemParams = {
   lootItemRecipeId: RecipeItemId;
   junkPieces: JunkPiece[];
-  temperature: number;
   config: LootConfig;
 };
 
@@ -333,7 +322,7 @@ export function calculateTemperatureRange(
  * Utility function to get temperature range for a recipe and set of junk pieces
  * This allows getting the range before actually crafting the item
  */
-export function getTemperatureRangeForCrafting(params: calculateTemperatureRangeParams): TemperatureRange | undefined {
+export function getTemperatureRangeForCrafting(params: calculateTemperatureRangeParams): TemperatureRange {
   const { recipeId, junkPieces, config } = params;
 
   // Find the recipe item
@@ -341,7 +330,7 @@ export function getTemperatureRangeForCrafting(params: calculateTemperatureRange
 
   // Check if recipe exists
   if (!recipe) {
-    return undefined;
+    throw new Error(`Recipe with ID ${recipeId} not found`);
   }
 
   // Get all required detail types for this recipe
@@ -430,8 +419,8 @@ function findCategoryForSubcategory(subCategoryId: string): string {
 /**
  * Attempts to craft a LootItem from a recipe and junk items at a specific temperature.
  */
-export function craftLootItem(params: craftLootItemParams): CraftingResult {
-  const { lootItemRecipeId, junkPieces, temperature, config } = params;
+export function craftLootItem(params: craftLootItemParams): LootItem {
+  const { lootItemRecipeId, junkPieces, config } = params;
 
   // Find the recipe item
   const recipe = findRecipeItem(lootItemRecipeId, config);
@@ -443,17 +432,6 @@ export function craftLootItem(params: craftLootItemParams): CraftingResult {
 
   // Get all required detail types for this recipe
   const requiredDetailTypes = getRequiredDetailTypes(recipe, config);
-
-  // Check if we have enough junk
-  if (junkPieces.length < requiredDetailTypes.length) {
-    return {
-      success: false,
-      failure: {
-        reason: CraftingFailureReason.NotEnoughJunk,
-        message: `Not enough junk pieces. Need at least ${requiredDetailTypes.length}, but got ${junkPieces.length}`,
-      },
-    };
-  }
 
   // Filter junk pieces suitable for this recipe
   const suitableJunk = filterSuitableJunk(junkPieces, requiredDetailTypes);
@@ -483,27 +461,6 @@ export function craftLootItem(params: craftLootItemParams): CraftingResult {
 
   // Calculate temperature range
   const temperatureRange = calculateTemperatureRange(recipe, detailToJunk);
-
-  //   Check if temperature is in range
-  if (temperature < temperatureRange.min) {
-    return {
-      success: false,
-      failure: {
-        reason: CraftingFailureReason.TooLowTemperature,
-        message: `Temperature too low: ${temperature}. Required minimum: ${temperatureRange.min}`,
-      },
-    };
-  }
-
-  if (temperature > temperatureRange.max) {
-    return {
-      success: false,
-      failure: {
-        reason: CraftingFailureReason.TooHighTemperature,
-        message: `Temperature too high: ${temperature}. Required maximum: ${temperatureRange.max}`,
-      },
-    };
-  }
 
   // Calculate sell price
   const sellPrice = calculateSellPrice(recipe, detailToJunk, requiredDetailTypes, config);
@@ -559,8 +516,5 @@ export function craftLootItem(params: craftLootItemParams): CraftingResult {
     detailToJunkMap,
   };
 
-  return {
-    success: true,
-    item: craftedItem,
-  };
+  return craftedItem;
 }

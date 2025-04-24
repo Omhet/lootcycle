@@ -1,9 +1,7 @@
 import { Scene } from "phaser";
-import { craftLootItem, getTemperatureRangeForCrafting } from "../../lib/craft/craftLootItem";
 import { EventBus } from "../EventBus";
 import { CollisionCategories, CollisionMasks } from "../physics/CollisionCategories";
 // Import all managers
-import { lootConfig } from "../../lib/craft/config";
 import { CraftingFailureReason } from "../../lib/craft/craftModel";
 import { BackgroundManager } from "./logic/BackgroundManager";
 import { CauldronManager } from "./logic/Cauldron/CauldronManager";
@@ -133,8 +131,7 @@ export class Game extends Scene {
     this.junkPileManager.setSpawnPoint(this.pipeManager.getSpawnPoint().x, this.pipeManager.getSpawnPoint().y);
 
     // Setup event listeners
-    EventBus.on("craft-item", this.craftAndRenderItem, this);
-    EventBus.on("start-crafting", this.startCrafting, this);
+    EventBus.on("toggle-crafting", this.toggleCrafting, this);
     EventBus.on("toggle-claw", () => this.clawManager.toggleClaw());
     EventBus.on("claw-move-horizontal", (moveFactor: number) => this.clawManager.moveHorizontal(moveFactor));
 
@@ -154,32 +151,15 @@ export class Game extends Scene {
     this.scene.start(sceneName);
   }
 
-  /**
-   * Calculate temperature range for the current junk pieces in cauldron
-   */
-  private startCrafting(junkPieces: any[]): void {
-    // Currently fixed to short_sword for demonstration
-    const tempRange = getTemperatureRangeForCrafting({
-      recipeId: "short_sword",
-      junkPieces,
-      config: lootConfig,
-    });
-
-    // Update cauldron with temperature range
-    if (this.cauldronManager && tempRange) {
-      this.cauldronManager.startCrafting(tempRange);
+  private toggleCrafting(): void {
+    if (this.cauldronManager.isCraftingInProgress()) {
+      this.stopCrafting();
+    } else {
+      this.startCrafting();
     }
-
-    console.log("Temperature range calculated:", tempRange);
   }
 
-  /**
-   * Crafts a new item and tells the manager to display it
-   * Now uses the provided temperature instead of fixed value
-   */
-  private craftAndRenderItem(temperature: number): void {
-    this.craftedItemManager.clearDisplay();
-
+  private startCrafting(): void {
     // Check if enough junk has crossed the threshold line
     if (!this.cauldronManager.hasEnoughJunkForCrafting()) {
       console.log("Not enough junk pieces above the threshold line - cannot craft item");
@@ -187,39 +167,31 @@ export class Game extends Scene {
       return;
     }
 
-    // Get junk pieces currently in the cauldron
-    const junkItemsInCauldron = this.cauldronManager.getJunkPiecesInside();
-    const junkPieces = junkItemsInCauldron.map((item) => item.junkPiece);
+    this.cauldronManager?.startCrafting();
+  }
 
-    console.log(`Crafting with ${this.cauldronManager.getJunkPiecesAboveThresholdCount()} junk pieces above threshold at ${temperature} temperature`);
+  private stopCrafting(): void {
+    this.craftedItemManager.clearDisplay();
 
-    const craftResult = craftLootItem({
-      lootItemRecipeId: "short_sword", // In the future, this could be determined by cauldron queue
-      junkPieces: junkPieces,
-      temperature: temperature, // Use the provided temperature from cauldron
-      config: lootConfig,
-    });
+    const result = this.cauldronManager?.stopCrafting();
 
-    if (craftResult.success && craftResult.item) {
-      this.craftedItemManager.displayItem(craftResult.item);
-
-      // The junk pieces are already physically destroyed by InputManager
-      // Just make sure we clear the tracking arrays
-      this.cauldronManager.clearJunkPieces();
-
-      // Emit event with crafting result
-      EventBus.emit("crafting-success", craftResult.item);
-      EventBus.emit("add-crafted-item", craftResult.item);
-    } else if (craftResult.failure) {
-      // Emit an event when crafting fails
-      EventBus.emit("crafting-failure", craftResult.failure);
+    if (!result.item && result.failure) {
+      EventBus.emit("crafting-failure", { reason: result.failure.reason, message: result.failure.message });
+      return;
     }
+
+    const craftedLootItem = result.item!;
+    this.craftedItemManager.displayItem(craftedLootItem);
+
+    // Emit event with crafting result
+    EventBus.emit("crafting-success", craftedLootItem); // TODO: Will be used for new loot screen
+    EventBus.emit("add-crafted-item", craftedLootItem); // Is used to add crafted loot item in stall store
   }
 
   update() {
     // Update managers that need per-frame updates
     this.clawManager.update();
-    this.inputManager.update(); // Update InputManager to handle input
+    this.inputManager.update();
   }
 
   /**
@@ -229,8 +201,7 @@ export class Game extends Scene {
     console.log("Game scene shutting down...");
 
     // Remove event listeners
-    EventBus.off("craft-item", this.craftAndRenderItem, this);
-    EventBus.off("start-crafting", this.startCrafting, this);
+    EventBus.off("toggle-crafting", this.toggleCrafting, this);
     EventBus.off("toggle-claw");
     EventBus.off("claw-move-horizontal");
 

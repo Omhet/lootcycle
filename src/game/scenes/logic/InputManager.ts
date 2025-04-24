@@ -12,9 +12,6 @@ export class InputManager {
   private keyA: Phaser.Input.Keyboard.Key | undefined;
   private keyD: Phaser.Input.Keyboard.Key | undefined;
 
-  // Track crafting state
-  private isCraftingInProgress: boolean = false;
-
   constructor(scene: Scene) {
     this.scene = scene;
     this.cursors = this.scene.input.keyboard?.createCursorKeys() as Phaser.Types.Input.Keyboard.CursorKeys;
@@ -32,13 +29,7 @@ export class InputManager {
   private setupInputListeners(): void {
     // Setup all key listeners
     this.addKeyListener("ENTER", () => {
-      if (this.isCraftingInProgress) {
-        // ENTER pressed while crafting - finish crafting
-        this.stopCrafting();
-      } else {
-        // ENTER pressed when not crafting - start crafting
-        this.startCrafting();
-      }
+      this.toggleCrafting();
     });
 
     this.addKeyListener("SPACE", () => {
@@ -58,21 +49,10 @@ export class InputManager {
   }
 
   /**
-   * Starts the crafting process
+   * Toggles the crafting process
    */
-  private startCrafting(): void {
-    if (this.isCraftingInProgress) return;
-    EventBus.emit("start-crafting");
-    this.isCraftingInProgress = true;
-  }
-
-  /**
-   * Finishes the crafting process
-   */
-  private stopCrafting(): void {
-    if (!this.isCraftingInProgress) return;
-    EventBus.emit("stop-crafting");
-    this.isCraftingInProgress = false;
+  private toggleCrafting(): void {
+    EventBus.emit("toggle-crafting");
   }
 
   /**

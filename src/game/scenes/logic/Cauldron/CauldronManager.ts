@@ -1,10 +1,20 @@
 import { Scene } from "phaser";
-import { TemperatureRange } from "../../../../lib/craft/craftModel";
+import { lootConfig } from "../../../../lib/craft/config";
+import { craftLootItem, getTemperatureRangeForCrafting } from "../../../../lib/craft/craftLootItem";
+import { CraftingFailureReason, JunkPiece, LootItem, TemperatureRange } from "../../../../lib/craft/craftModel";
 import { CollisionCategories, CollisionMasks } from "../../../physics/CollisionCategories";
 import { DepthLayers } from "../../Game";
-import { JunkPileItem } from "../JunkPileManager";
 import { CauldronCraftingManager } from "./CauldronCraftingManager";
 import { CauldronJunkDetector } from "./CauldronJunkDetector";
+
+export interface CraftingResult {
+  success: boolean;
+  item?: LootItem;
+  failure?: {
+    reason: CraftingFailureReason;
+    message?: string;
+  };
+}
 
 /**
  * Manages the cauldron, combining crafting and junk detection functionality
@@ -17,6 +27,7 @@ export class CauldronManager {
   // Component managers
   private junkDetector: CauldronJunkDetector;
   private craftingManager: CauldronCraftingManager;
+  craftedItemTemperatureRange: TemperatureRange;
 
   constructor(scene: Scene) {
     this.scene = scene;
@@ -73,8 +84,8 @@ export class CauldronManager {
   /**
    * Returns all junk pieces currently inside the cauldron
    */
-  public getJunkPiecesInside(): JunkPileItem[] {
-    return this.junkDetector.getJunkPiecesInside();
+  public getJunkPiecesInside(): JunkPiece[] {
+    return this.junkDetector.getJunkPiecesInside().map((item) => item.junkPiece);
   }
 
   /**
@@ -96,15 +107,62 @@ export class CauldronManager {
   /**
    * Starts the crafting process, increasing temperature over time
    */
-  public startCrafting(tempRange: TemperatureRange | null = null): void {
-    this.craftingManager.startCrafting(tempRange);
+  public startCrafting(): void {
+    // Currently fixed to short_sword for demonstration
+    const temperatureRange = getTemperatureRangeForCrafting({
+      recipeId: "short_sword",
+      junkPieces: this.getJunkPiecesInside(),
+      config: lootConfig,
+    });
+
+    this.craftedItemTemperatureRange = temperatureRange;
+
+    this.craftingManager.startCrafting(temperatureRange);
   }
 
   /**
    * Stops the crafting process
    */
-  public stopCrafting(): number {
-    return this.craftingManager.stopCrafting();
+  public stopCrafting(): CraftingResult {
+    const temperature = this.craftingManager.stopCrafting();
+
+    // Not successful crafting cases first
+    if (temperature < this.craftedItemTemperatureRange.min) {
+      return {
+        success: false,
+        failure: {
+          reason: CraftingFailureReason.TooLowTemperature,
+          message: "Temperature too low for crafting",
+        },
+      };
+    } else if (temperature > this.craftedItemTemperatureRange.max) {
+      this.destroyJunkPieces();
+
+      return {
+        success: false,
+        failure: {
+          reason: CraftingFailureReason.TooHighTemperature,
+          message: "Temperature too high for crafting",
+        },
+      };
+    }
+
+    // Successful crafting
+
+    const junkPieces = this.getJunkPiecesInside();
+
+    const craftedLootItem = craftLootItem({
+      lootItemRecipeId: "short_sword", // In the future, this could be determined by cauldron queue
+      junkPieces,
+      config: lootConfig,
+    });
+
+    this.destroyJunkPieces();
+
+    return {
+      success: true,
+      item: craftedLootItem,
+    };
   }
 
   /**

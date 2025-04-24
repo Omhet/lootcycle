@@ -160,11 +160,11 @@ export class CauldronCraftingManager {
   /**
    * Starts the crafting process, increasing temperature over time
    */
-  public startCrafting(tempRange: TemperatureRange | null = null): void {
+  public startCrafting(temperatureRange: TemperatureRange): void {
     if (this.isCrafting) return;
 
     this.isCrafting = true;
-    this.temperatureRange = tempRange;
+    this.temperatureRange = temperatureRange;
 
     // Reset temperature to starting point
     this.currentTemperature = 0;
