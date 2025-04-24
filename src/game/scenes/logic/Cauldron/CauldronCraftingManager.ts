@@ -181,13 +181,17 @@ export class CauldronCraftingManager {
 
     this.isCrafting = false;
 
+    const finalTemperature = this.currentTemperature;
+    this.currentTemperature = 0; // Reset temperature for next crafting session
+
     // Stop update loop
     this.scene.events.off("update", this.updateTemperature, this);
 
     // Stop smoke
     this.stopSmokeEmission();
+    this.updateTemperatureBar();
 
-    return this.currentTemperature;
+    return finalTemperature;
   }
 
   /**
