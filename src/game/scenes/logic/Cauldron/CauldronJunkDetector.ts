@@ -48,6 +48,7 @@ export class CauldronJunkDetector {
       padding: { x: 5, y: 3 },
     });
     this.debugText.setDepth(DepthLayers.UI);
+    this.debugText.setVisible(false); // Set to true if need to debug
 
     // Update the debug text periodically
     this.scene.time.addEvent({
