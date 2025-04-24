@@ -18,7 +18,7 @@ import { generateLootItemId } from "./craftUtils";
 // ======= CRAFTING FUNCTION TYPES =======
 
 export type craftLootItemParams = {
-  lootItemRecipeId: RecipeItemId;
+  recipeItemId: RecipeItemId;
   junkPieces: JunkPiece[];
   config: LootConfig;
 };
@@ -420,7 +420,9 @@ function findCategoryForSubcategory(subCategoryId: string): string {
  * Attempts to craft a LootItem from a recipe and junk items at a specific temperature.
  */
 export function craftLootItem(params: craftLootItemParams): LootItem {
-  const { lootItemRecipeId, junkPieces, config } = params;
+  const { recipeItemId: lootItemRecipeId, junkPieces, config } = params;
+
+  console.log("Crafting loot item with recipe ID:", lootItemRecipeId);
 
   // Find the recipe item
   const recipe = findRecipeItem(lootItemRecipeId, config);
@@ -432,17 +434,23 @@ export function craftLootItem(params: craftLootItemParams): LootItem {
 
   // Get all required detail types for this recipe
   const requiredDetailTypes = getRequiredDetailTypes(recipe, config);
+  console.log("Required detail types:", requiredDetailTypes);
 
   // Filter junk pieces suitable for this recipe
   const suitableJunk = filterSuitableJunk(junkPieces, requiredDetailTypes);
+  console.log("Input junk pieces:", junkPieces);
+  console.log("Suitable junk pieces:", suitableJunk);
 
   // Create a map to hold our final selection of details and junk
   // First, try to distribute the suitable junk we have
   const detailToJunk = distributeJunkToDetails(suitableJunk, requiredDetailTypes, config);
+  console.log("Distributed junk to details:", detailToJunk);
 
   // For any missing detail types, use basic loot details
   const detailTypesCovered = new Set(detailToJunk.keys());
+  console.log("Detail types covered:", detailTypesCovered);
   const missingDetailTypes = requiredDetailTypes.filter((type) => !detailTypesCovered.has(type));
+  console.log("Missing detail types:", missingDetailTypes);
 
   if (missingDetailTypes.length > 0) {
     // Find basic details for each missing detail type
@@ -457,25 +465,27 @@ export function craftLootItem(params: craftLootItemParams): LootItem {
         });
       }
     }
+    console.log("Added basic details for missing types:", detailToJunk);
   }
-
-  // Calculate temperature range
-  const temperatureRange = calculateTemperatureRange(recipe, detailToJunk);
 
   // Calculate sell price
   const sellPrice = calculateSellPrice(recipe, detailToJunk, requiredDetailTypes, config);
+  console.log("Calculated sell price:", sellPrice);
 
   // Calculate rarity
   const rarity = calculateRarity(detailToJunk);
+  console.log("Calculated rarity:", rarity);
 
   // Generate name
   const name = generateItemName(recipe, detailToJunk);
+  console.log("Generated item name:", name);
 
   // Collect the loot details
   const details: LootDetailId[] = [];
   detailToJunk.forEach(({ lootDetail }) => {
     details.push(lootDetail.id);
   });
+  console.log("Loot details:", details);
 
   // Collect all unique junk piece IDs used in crafting
   const usedJunkPieces: JunkPieceId[] = [];
@@ -486,6 +496,7 @@ export function craftLootItem(params: craftLootItemParams): LootItem {
       }
     });
   });
+  console.log("Used junk pieces:", usedJunkPieces);
 
   // Create map from detail ID to junk piece ID
   const detailToJunkMap: Record<LootDetailId, JunkPieceId | undefined> = {};
@@ -493,12 +504,15 @@ export function craftLootItem(params: craftLootItemParams): LootItem {
     // Use the first junk piece for this detail, if any
     detailToJunkMap[lootDetail.id] = junkPieces.length > 0 ? junkPieces[0].id : undefined;
   });
+  console.log("Detail to junk map:", detailToJunkMap);
 
   // Generate ID based on recipe and details
   const id = generateLootItemId(lootItemRecipeId, details);
+  console.log("Generated item ID:", id);
 
   // Find the category for this item's subcategory
   const category: ItemCategoryId = findCategoryForSubcategory(recipe.subCategory) as ItemCategoryId;
+  console.log("Item category:", category);
 
   // Create the crafted item
   const craftedItem: LootItem = {
@@ -508,13 +522,14 @@ export function craftLootItem(params: craftLootItemParams): LootItem {
     details,
     rarity,
     sellPrice,
-    temperatureRange,
+    temperatureRange: { min: 0, max: 100 }, // Placeholder, will be set in the game
     category,
     subCategory: recipe.subCategory,
     type: recipe.type,
     junkPieces: usedJunkPieces,
     detailToJunkMap,
   };
+  console.log("Crafted item:", craftedItem);
 
   return craftedItem;
 }

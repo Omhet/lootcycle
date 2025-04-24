@@ -83,6 +83,7 @@ export type RecipeDetailId = string;
 
 export enum RecipeItemType {
   BladeWeapon = "blade_weapon",
+  Axe = "axe",
 }
 
 // Loot item template
@@ -106,6 +107,8 @@ export type RecipePartSocket = {
 export enum RecipePartType {
   BladeWeaponHilt = "hilt",
   ShortSwordBlade = "short_sword_blade",
+  AxeHandle = "axe_handle",
+  AxeHead = "axe_head",
 }
 
 export type RecipePart = {
@@ -125,6 +128,8 @@ export enum RecipeDetailType {
   Grip = "grip",
   Guard = "guard",
   ShortSwordBlade = "short_sword_blade",
+  AxeHandle = "axe_handle",
+  AxeHead = "axe_head",
 }
 
 export type RecipeDetail = {
