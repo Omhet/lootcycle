@@ -6,7 +6,7 @@ import { CollisionCategories, CollisionMasks } from "../physics/CollisionCategor
 import { lootConfig } from "../../lib/craft/config";
 import { CraftingFailureReason, TemperatureRange } from "../../lib/craft/craftModel";
 import { BackgroundManager } from "./logic/BackgroundManager";
-import { CauldronManager } from "./logic/CauldronManager";
+import { CauldronManager } from "./logic/Cauldron/CauldronManager";
 import { ClawManager } from "./logic/ClawManager";
 import { ContainerManager } from "./logic/ContainerManager";
 import { CraftedItemManager } from "./logic/CraftedItemManager";
