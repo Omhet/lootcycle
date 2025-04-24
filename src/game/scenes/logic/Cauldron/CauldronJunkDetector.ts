@@ -98,6 +98,14 @@ export class CauldronJunkDetector {
     this.thresholdLine = this.scene.add.graphics();
     this.thresholdLine.setDepth(DepthLayers.Foreground - 1); // Make sure it's below the cauldron
     this.drawThresholdLine(0x454359);
+
+    // Update the line periodically
+    this.scene.time.addEvent({
+      delay: 100, // Update 10 times per second
+      callback: this.updateThresholdLineColor,
+      callbackScope: this,
+      loop: true,
+    });
   }
 
   /**
