@@ -133,7 +133,7 @@ export class Game extends Scene {
     // Setup event listeners
     EventBus.on("toggle-crafting", this.toggleCrafting, this);
     EventBus.on("toggle-claw", () => this.clawManager.toggleClaw());
-    EventBus.on("claw-move-horizontal", (moveFactor: number) => this.clawManager.moveHorizontal(moveFactor));
+    EventBus.on("claw-move-horizontal", this.moveClaw, this);
     EventBus.on("crafting-success-inspect-finish", this.craftingSuccessInspectFinish, this);
     // Generate the initial junk portion
     this.junkPileManager.generateJunkPortion();
@@ -149,6 +149,12 @@ export class Game extends Scene {
   changeScene(sceneName: string = "Idle") {
     console.log(`Game: Changing scene to ${sceneName}`);
     this.scene.start(sceneName);
+  }
+
+  private moveClaw(moveFactor: number): void {
+    if (!this.cauldronManager.isCraftingInProgress()) {
+      this.clawManager.moveHorizontal(moveFactor);
+    }
   }
 
   private toggleCrafting(): void {
@@ -216,7 +222,7 @@ export class Game extends Scene {
     // Remove event listeners
     EventBus.off("toggle-crafting", this.toggleCrafting, this);
     EventBus.off("toggle-claw");
-    EventBus.off("claw-move-horizontal");
+    EventBus.off("claw-move-horizontal", this.moveClaw, this);
 
     // Clean up managers
     this.backgroundManager?.destroy();
