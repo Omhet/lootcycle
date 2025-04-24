@@ -28,6 +28,7 @@ export class CauldronManager {
   private junkDetector: CauldronJunkDetector;
   private craftingManager: CauldronCraftingManager;
   craftedItemTemperatureRange: TemperatureRange;
+  private currentRecipeItemId: string;
 
   constructor(scene: Scene) {
     this.scene = scene;
@@ -111,9 +112,12 @@ export class CauldronManager {
     // Change cauldron sprite to filled version
     this.cauldronSprite.setTexture("cauldron_filled");
 
-    // Currently fixed to short_sword for demonstration
+    // Determine which item to craft based on probability (60% short_sword, 40% axe)
+    const randomValue = Math.random();
+    this.currentRecipeItemId = randomValue < 0.6 ? "short_sword" : "axe";
+
     const temperatureRange = getTemperatureRangeForCrafting({
-      recipeItemId: "axe",
+      recipeItemId: this.currentRecipeItemId,
       junkPieces: this.getJunkPiecesInside(),
       config: lootConfig,
     });
@@ -155,11 +159,10 @@ export class CauldronManager {
     }
 
     // Successful crafting
-
     const junkPieces = this.getJunkPiecesInside();
 
     const craftedLootItem = craftLootItem({
-      recipeItemId: "axe", // In the future, this could be determined by cauldron queue
+      recipeItemId: this.currentRecipeItemId,
       junkPieces,
       config: lootConfig,
     });
