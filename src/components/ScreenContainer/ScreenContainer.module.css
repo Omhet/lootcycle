@@ -12,5 +12,4 @@
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 1000; /* Ensure it appears above other content */
-  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
 }

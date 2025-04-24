@@ -74,7 +74,7 @@ export class Game extends Scene {
     this.intakeManager = new IntakeManager(this);
     this.craftedItemManager = new CraftedItemManager(this);
     this.clawManager = new ClawManager(this);
-    this.inputManager = new InputManager(this); // Initialize InputManager
+    this.inputManager = new InputManager(this);
 
     // Store managers in registry for easy access
     this.registry.set("junkPileManager", this.junkPileManager);
@@ -134,7 +134,7 @@ export class Game extends Scene {
     EventBus.on("toggle-crafting", this.toggleCrafting, this);
     EventBus.on("toggle-claw", () => this.clawManager.toggleClaw());
     EventBus.on("claw-move-horizontal", (moveFactor: number) => this.clawManager.moveHorizontal(moveFactor));
-
+    EventBus.on("crafting-success-inspect-finish", this.craftingSuccessInspectFinish, this);
     // Generate the initial junk portion
     this.junkPileManager.generateJunkPortion();
 
@@ -183,9 +183,14 @@ export class Game extends Scene {
       this.craftedItemManager.displayItem(craftedLootItem);
 
       // Emit event with crafting result
-      EventBus.emit("crafting-success", craftedLootItem); // TODO: Will be used for new loot screen
-      EventBus.emit("add-crafted-item", craftedLootItem); // Is used to add crafted loot item in stall store
+      EventBus.emit("crafting-success", craftedLootItem);
+      EventBus.emit("add-crafted-item", craftedLootItem);
     }
+  }
+
+  craftingSuccessInspectFinish() {
+    this.craftedItemManager.clearDisplay();
+    this.junkPileManager.generateNextPortion();
   }
 
   update() {

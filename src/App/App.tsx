@@ -3,6 +3,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { DayEndContainer } from "../containers/DayEndContainer/DayEndContainer";
 import { DayStartContainer } from "../containers/DayStartContainer/DayStartContainer";
+import { NewLootInfoContainer } from "../containers/NewLootInfoContainer/NewLootInfoContainer";
 import { ShopContainer } from "../containers/ShopContainer/ShopContainer";
 import { StallScreenContainer } from "../containers/StallScreenContainer/StallScreenContainer";
 import { IRefPhaserGame, PhaserGame } from "../game/PhaserGame";
@@ -47,8 +48,7 @@ function App() {
       case ScreenId.Shop:
         return <ShopContainer />;
       case ScreenId.NewLootInfo:
-        // Will be implemented later
-        return <div>New Loot Info Screen</div>;
+        return <NewLootInfoContainer />;
       case ScreenId.None:
       default:
         return null;
