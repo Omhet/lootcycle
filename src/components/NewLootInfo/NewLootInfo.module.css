@@ -1,21 +1,23 @@
 .newLootInfo {
-  width: 30%;
-  height: 100%;
-  margin-right: auto;
-  padding: 4vmin;
+  margin-top: auto;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: center;
+  align-items: center;
   gap: 4.5vmin;
-  background-color: #7b6e65;
   color: #ebe6e1;
   font-size: 2vmin;
+}
+.name {
+  font-size: 4vmin;
+  text-transform: capitalize;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
 }
 .button {
   width: 100%;
   padding: 1vmin 2vmin;
   border: none;
-  background-color: #ada39a;
+  background-color: #ebbf2d;
   color: #2b201c;
   font-size: 2.5vmin;
   cursor: pointer;
