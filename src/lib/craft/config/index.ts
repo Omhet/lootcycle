@@ -20,6 +20,7 @@ import "./recipe/axe/recipe";
 import "./junk/junk";
 
 // Loot Details
+import "./loot/axe/details";
 import "./loot/shortSword/details";
 
 // Validate the configuration
