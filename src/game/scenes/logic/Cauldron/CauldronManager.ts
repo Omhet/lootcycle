@@ -117,7 +117,8 @@ export class CauldronManager {
 
     this.craftedItemTemperatureRange = temperatureRange;
 
-    this.craftingManager.startCrafting(temperatureRange);
+    // Pass the temperature exceeded handler to the crafting manager
+    this.craftingManager.startCrafting(temperatureRange, this.handleTemperatureExceeded.bind(this));
   }
 
   /**
@@ -163,6 +164,22 @@ export class CauldronManager {
       success: true,
       item: craftedLootItem,
     };
+  }
+
+  /**
+   * Handles when temperature exceeds the maximum allowed
+   */
+  private handleTemperatureExceeded(): void {
+    // Stop the crafting process
+    this.craftingManager.stopCrafting();
+
+    // Destroy junk pieces
+    this.destroyJunkPieces();
+
+    // You could add effects, sounds, or other feedback here
+    console.log("Cauldron overheated! Junk pieces destroyed.");
+
+    // TODO: Create explosion effect
   }
 
   /**

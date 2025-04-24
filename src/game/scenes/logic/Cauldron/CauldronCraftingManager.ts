@@ -3,6 +3,11 @@ import { TemperatureRange } from "../../../../lib/craft/craftModel";
 import { DepthLayers } from "../../Game";
 
 /**
+ * Callback type for temperature exceeded events
+ */
+export type OnTemperatureExceededCallback = () => void;
+
+/**
  * Handles the crafting process, temperature management and related UI/effects
  */
 export class CauldronCraftingManager {
@@ -15,6 +20,7 @@ export class CauldronCraftingManager {
   private temperatureIncreaseRate: number = 0.5;
   private isCrafting: boolean = false;
   private temperatureRange: TemperatureRange | null = null;
+  private onTemperatureExceeded: OnTemperatureExceededCallback | null = null;
 
   // Temperature display
   private temperatureBar: Phaser.GameObjects.Graphics;
@@ -160,11 +166,12 @@ export class CauldronCraftingManager {
   /**
    * Starts the crafting process, increasing temperature over time
    */
-  public startCrafting(temperatureRange: TemperatureRange): void {
+  public startCrafting(temperatureRange: TemperatureRange, onTemperatureExceeded?: OnTemperatureExceededCallback): void {
     if (this.isCrafting) return;
 
     this.isCrafting = true;
     this.temperatureRange = temperatureRange;
+    this.onTemperatureExceeded = onTemperatureExceeded || null;
 
     // Reset temperature to starting point
     this.currentTemperature = 0;
@@ -208,6 +215,14 @@ export class CauldronCraftingManager {
 
     // Check if in ideal temperature range for smoke
     if (this.temperatureRange) {
+      if (this.currentTemperature > this.temperatureRange.max) {
+        // Notify the parent manager that temperature exceeded maximum
+        if (this.onTemperatureExceeded) {
+          this.onTemperatureExceeded();
+        }
+        return;
+      }
+
       const midPoint = (this.temperatureRange.min + this.temperatureRange.max) / 2;
       const margin = (this.temperatureRange.max - this.temperatureRange.min) / 4;
 

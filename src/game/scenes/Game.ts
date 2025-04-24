@@ -182,12 +182,14 @@ export class Game extends Scene {
       return;
     }
 
-    const craftedLootItem = result.item!;
-    this.craftedItemManager.displayItem(craftedLootItem);
+    if (result.item) {
+      const craftedLootItem = result.item;
+      this.craftedItemManager.displayItem(craftedLootItem);
 
-    // Emit event with crafting result
-    EventBus.emit("crafting-success", craftedLootItem); // TODO: Will be used for new loot screen
-    EventBus.emit("add-crafted-item", craftedLootItem); // Is used to add crafted loot item in stall store
+      // Emit event with crafting result
+      EventBus.emit("crafting-success", craftedLootItem); // TODO: Will be used for new loot screen
+      EventBus.emit("add-crafted-item", craftedLootItem); // Is used to add crafted loot item in stall store
+    }
   }
 
   update() {
