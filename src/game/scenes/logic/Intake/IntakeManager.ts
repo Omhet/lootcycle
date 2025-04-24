@@ -1,14 +1,20 @@
 import { Scene } from "phaser";
 import { CollisionCategories, CollisionMasks } from "../../../physics/CollisionCategories";
 import { DepthLayers } from "../../Game";
+import { JunkPileItem } from "../JunkPileManager";
+import { IntakeJunkDetector } from "./IntakeJunkDetector";
 
 export class IntakeManager {
   private scene: Scene;
   private intakeSprite: Phaser.Physics.Matter.Sprite;
+  private junkDetector: IntakeJunkDetector;
 
   constructor(scene: Scene) {
     this.scene = scene;
     this.createIntake();
+
+    // Initialize the junk detector
+    this.junkDetector = new IntakeJunkDetector(scene, this.intakeSprite);
   }
 
   /**
@@ -35,11 +41,48 @@ export class IntakeManager {
     this.intakeSprite.setDepth(DepthLayers.Foreground);
   }
 
+  /**
+   * Gets the count of junk pieces currently in the intake
+   */
+  public getJunkPiecesCount(): number {
+    return this.junkDetector.getJunkPiecesCount();
+  }
+
+  /**
+   * Returns all junk pieces currently inside the intake
+   */
+  public getJunkPiecesInside(): JunkPileItem[] {
+    return this.junkDetector.getJunkPiecesInside();
+  }
+
+  /**
+   * Clears all junk pieces from the intake tracking (doesn't physically remove them)
+   */
+  public clearJunkPieces(): void {
+    this.junkDetector.clearJunkPieces();
+  }
+
+  /**
+   * Destroys junk pieces physically after processing
+   */
+  public destroyJunkPieces(): void {
+    this.junkDetector.destroyJunkPieces();
+  }
+
+  /**
+   * Gets the intake sprite
+   */
   public getSprite(): Phaser.Physics.Matter.Sprite {
     return this.intakeSprite;
   }
 
+  /**
+   * Cleanup resources when destroying this object
+   */
   public destroy(): void {
+    // Destroy the junk detector
+    this.junkDetector.destroy();
+
     if (this.intakeSprite) {
       this.intakeSprite.destroy();
     }
