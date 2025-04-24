@@ -117,7 +117,7 @@ export class CauldronJunkDetector {
     const width = frame.width * 0.75;
 
     this.thresholdLine.clear();
-    this.thresholdLine.lineStyle(thickness, color, 0.8);
+    this.thresholdLine.lineStyle(thickness, color, 1);
 
     // Create a dashed line by drawing multiple short line segments
     const dashSize = 10;
@@ -140,8 +140,7 @@ export class CauldronJunkDetector {
    * Updates the threshold line color based on whether there are enough junk pieces above it
    */
   public updateThresholdLineColor(): void {
-    // Color changes to BDB9DD when there are enough junk pieces
-    const lineColor = this.hasEnoughJunkForCrafting() ? 0xbdb9dd : 0x454359;
+    const lineColor = this.hasEnoughJunkForCrafting() ? 0x00ff00 : 0x454359;
     this.drawThresholdLine(lineColor);
   }
 
