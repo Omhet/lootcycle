@@ -25,9 +25,8 @@ export class IntakeJunkDetector {
     this.scene = scene;
     this.intakeSprite = intakeSprite;
 
-    // Calculate threshold line position (around 40% from the top of the intake)
     const frame = this.scene.textures.get("intake").get();
-    this.thresholdY = this.intakeSprite.y - frame.height * 0.1;
+    this.thresholdY = this.intakeSprite.y - frame.height * 0.2;
 
     this.createSensor();
     this.createThresholdLine();
@@ -96,8 +95,8 @@ export class IntakeJunkDetector {
    */
   private drawThresholdLine(color: number, thickness: number = 5): void {
     const frame = this.scene.textures.get("intake").get();
-    const xPos = this.intakeSprite.x;
-    const width = frame.width * 0.75;
+    const xPos = this.intakeSprite.x - 20;
+    const width = frame.width * 0.5;
 
     this.thresholdLine.clear();
     this.thresholdLine.lineStyle(thickness, color, 1);
@@ -132,9 +131,9 @@ export class IntakeJunkDetector {
    */
   private createSensor(): void {
     const frame = this.scene.textures.get("intake").get();
-    const xPos = this.intakeSprite.x;
-    const yPos = this.intakeSprite.y;
-    const sensorWidth = frame.width * 0.75;
+    const xPos = this.intakeSprite.x - 30;
+    const yPos = this.intakeSprite.y - 75;
+    const sensorWidth = frame.width * 0.65;
     const sensorHeight = frame.height * 0.75; // Cover most of the intake
 
     this.intakeSensor = this.scene.matter.add.rectangle(xPos, yPos, sensorWidth, sensorHeight, {
