@@ -4,7 +4,7 @@ import { EventBus } from "../EventBus";
 import { CollisionCategories, CollisionMasks } from "../physics/CollisionCategories";
 // Import all managers
 import { lootConfig } from "../../lib/craft/config";
-import { CraftingFailureReason, TemperatureRange } from "../../lib/craft/craftModel";
+import { CraftingFailureReason } from "../../lib/craft/craftModel";
 import { BackgroundManager } from "./logic/BackgroundManager";
 import { CauldronManager } from "./logic/Cauldron/CauldronManager";
 import { ClawManager } from "./logic/ClawManager";
@@ -50,9 +50,6 @@ export class Game extends Scene {
   private furnaceManager: FurnaceManager;
   private clawManager: ClawManager;
   private inputManager: InputManager; // Add InputManager
-
-  // Crafting state
-  private currentTemperatureRange: TemperatureRange | null = null;
 
   // Physics bodies (Scene specific)
   private groundHeight = 38;
@@ -138,8 +135,6 @@ export class Game extends Scene {
     // Setup event listeners
     EventBus.on("craft-item", this.craftAndRenderItem, this);
     EventBus.on("calculate-temperature-range", this.calculateTemperatureRange, this);
-    EventBus.on("cooking-started", this.handleCookingStarted, this);
-    EventBus.on("cooking-stopped", this.handleCookingStopped, this);
     EventBus.on("toggle-claw", () => this.clawManager.toggleClaw());
     EventBus.on("claw-move-horizontal", (moveFactor: number) => this.clawManager.moveHorizontal(moveFactor));
 
@@ -170,29 +165,12 @@ export class Game extends Scene {
       config: lootConfig,
     });
 
-    // Store the temperature range
-    this.currentTemperatureRange = tempRange || null;
-
     // Update cauldron with temperature range
     if (this.cauldronManager && tempRange) {
       this.cauldronManager.startCooking(tempRange);
     }
 
     console.log("Temperature range calculated:", tempRange);
-  }
-
-  /**
-   * Handle cooking started event
-   */
-  private handleCookingStarted(): void {
-    console.log("Cooking started");
-  }
-
-  /**
-   * Handle cooking stopped event
-   */
-  private handleCookingStopped(finalTemperature: number): void {
-    console.log(`Cooking stopped at ${finalTemperature}°C`);
   }
 
   /**
@@ -232,9 +210,6 @@ export class Game extends Scene {
       // Emit event with crafting result
       EventBus.emit("crafting-success", craftResult.item);
       EventBus.emit("add-crafted-item", craftResult.item);
-
-      // Reset temperature range now that crafting is done
-      this.currentTemperatureRange = null;
     } else if (craftResult.failure) {
       // Emit an event when crafting fails
       EventBus.emit("crafting-failure", craftResult.failure);
@@ -256,8 +231,6 @@ export class Game extends Scene {
     // Remove event listeners
     EventBus.off("craft-item", this.craftAndRenderItem, this);
     EventBus.off("calculate-temperature-range", this.calculateTemperatureRange, this);
-    EventBus.off("cooking-started", this.handleCookingStarted, this);
-    EventBus.off("cooking-stopped", this.handleCookingStopped, this);
     EventBus.off("toggle-claw");
     EventBus.off("claw-move-horizontal");
 
@@ -271,8 +244,5 @@ export class Game extends Scene {
     this.furnaceManager?.destroy();
     this.clawManager?.destroy();
     this.inputManager?.destroy();
-
-    // Reset state
-    this.currentTemperatureRange = null;
   }
 }
