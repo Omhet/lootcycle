@@ -66,7 +66,7 @@ export class CauldronCraftingManager {
   private setupSmokeParticles(): void {
     // Position above the cauldron
     const emitterX = this.cauldronSprite.x + 10;
-    const emitterY = this.cauldronSprite.y - 150;
+    const emitterY = this.cauldronSprite.y - 130;
 
     this.smokeParticles = this.scene.add.particles(emitterX, emitterY, "smoke", {
       frame: ["smoke_1.png", "smoke_2.png", "smoke_3.png"],
@@ -226,7 +226,7 @@ export class CauldronCraftingManager {
       if (this.currentTemperature >= this.temperatureRange.min) {
         const intensity = this.calculateSmokeIntensity();
         this.changeSmokeEmission(intensity);
-        this.smokeParticles!.explode();
+        this.smokeParticles!.explode(1, Phaser.Math.Between(-50, 50));
       }
     }
   };
