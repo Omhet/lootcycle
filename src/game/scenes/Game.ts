@@ -160,6 +160,8 @@ export class Game extends Scene {
   }
 
   private startCrafting(): void {
+    this.craftedItemManager.clearDisplay();
+
     // Check if enough junk has crossed the threshold line
     if (!this.cauldronManager.hasEnoughJunkForCrafting()) {
       console.log("Not enough junk pieces above the threshold line - cannot craft item");
