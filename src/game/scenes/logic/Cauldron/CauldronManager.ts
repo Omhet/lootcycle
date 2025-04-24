@@ -108,6 +108,9 @@ export class CauldronManager {
    * Starts the crafting process, increasing temperature over time
    */
   public startCrafting(): void {
+    // Change cauldron sprite to filled version
+    this.cauldronSprite.setTexture("cauldron_filled");
+
     // Currently fixed to short_sword for demonstration
     const temperatureRange = getTemperatureRangeForCrafting({
       recipeId: "short_sword",
@@ -125,6 +128,9 @@ export class CauldronManager {
    * Stops the crafting process
    */
   public stopCrafting(): CraftingResult {
+    // Change cauldron sprite back to empty version
+    this.cauldronSprite.setTexture("cauldron");
+
     const temperature = this.craftingManager.stopCrafting();
 
     // Not successful crafting cases first
@@ -170,6 +176,9 @@ export class CauldronManager {
    * Handles when temperature exceeds the maximum allowed
    */
   private handleTemperatureExceeded(): void {
+    // Change cauldron sprite back to empty version
+    this.cauldronSprite.setTexture("cauldron");
+
     // Stop the crafting process
     this.craftingManager.stopCrafting();
 
