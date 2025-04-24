@@ -12,58 +12,78 @@ export class CauldronJunkDetector {
   private thresholdY: number;
   private thresholdLine: Phaser.GameObjects.Graphics;
 
-  // Sensors for detecting junk in different areas
-  private belowThresholdSensor: MatterJS.BodyType;
-  private aboveThresholdSensor: MatterJS.BodyType;
+  // Single sensor for detecting junk in the cauldron
+  private cauldronSensor: MatterJS.BodyType;
 
-  // Track junk pieces in different areas of the cauldron
-  private junkPiecesBelowThreshold: JunkPileItem[] = [];
-  private junkPiecesAboveThreshold: JunkPileItem[] = [];
+  // Track all junk pieces inside the cauldron
   private junkPiecesInside: JunkPileItem[] = [];
+
+  // Debug text to display count
+  private debugText: Phaser.GameObjects.Text;
 
   constructor(scene: Scene, cauldronSprite: Phaser.Physics.Matter.Sprite, thresholdY: number) {
     this.scene = scene;
     this.cauldronSprite = cauldronSprite;
     this.thresholdY = thresholdY;
 
-    this.createSensors();
+    this.createSensor();
     this.createThresholdLine();
+    this.createDebugText();
 
-    // Setup collision detection for both sensors
+    // Setup collision detection
     this.scene.matter.world.on("collisionstart", this.handleCollisionStart, this);
     this.scene.matter.world.on("collisionend", this.handleCollisionEnd, this);
   }
 
   /**
-   * Creates sensors for detecting junk in different areas of the cauldron
+   * Creates a debug text display to show the count of junk above threshold
    */
-  private createSensors(): void {
+  private createDebugText(): void {
+    this.debugText = this.scene.add.text(this.cauldronSprite.x - 80, this.thresholdY - 50, "Junk above threshold: 0", {
+      fontSize: "16px",
+      color: "#FFFFFF",
+      strokeThickness: 2,
+      stroke: "#000000",
+      backgroundColor: "#00000080",
+      padding: { x: 5, y: 3 },
+    });
+    this.debugText.setDepth(DepthLayers.UI);
+
+    // Update the debug text periodically
+    this.scene.time.addEvent({
+      delay: 100, // Update 10 times per second
+      callback: this.updateDebugText,
+      callbackScope: this,
+      loop: true,
+    });
+  }
+
+  /**
+   * Updates the debug text with current junk count
+   */
+  private updateDebugText(): void {
+    const count = this.getJunkPiecesAboveThresholdCount();
+    this.debugText.setText(`Junk above threshold: ${count}`);
+
+    // Color the text based on whether there's enough junk for crafting
+    const hasEnough = this.hasEnoughJunkForCrafting();
+    this.debugText.setColor(hasEnough ? "#00FF00" : "#FFFFFF");
+  }
+
+  /**
+   * Creates a sensor for detecting all junk in the cauldron
+   */
+  private createSensor(): void {
     const frame = this.scene.textures.get("cauldron").get();
     const xPos = this.cauldronSprite.x;
     const sensorWidth = frame.width * 0.75;
+    const sensorHeight = frame.height * 0.8; // Cover most of the cauldron
+    const sensorY = this.cauldronSprite.y;
 
-    // 1. Below threshold sensor - from bottom of cauldron to threshold line
-    const belowSensorHeight = frame.height * 0.6;
-    const belowSensorY = this.thresholdY + belowSensorHeight / 2;
-
-    this.belowThresholdSensor = this.scene.matter.add.rectangle(xPos + 10, belowSensorY, sensorWidth, belowSensorHeight, {
+    this.cauldronSensor = this.scene.matter.add.rectangle(xPos + 10, sensorY, sensorWidth, sensorHeight, {
       isSensor: true,
       isStatic: true,
-      label: "belowThresholdSensor",
-      collisionFilter: {
-        category: CollisionCategories.ENVIRONMENT,
-        mask: CollisionMasks.JUNK,
-      },
-    });
-
-    // 2. Above threshold sensor - from threshold line to top of cauldron
-    const aboveSensorHeight = frame.height * 0.4;
-    const aboveSensorY = this.thresholdY - aboveSensorHeight / 2;
-
-    this.aboveThresholdSensor = this.scene.matter.add.rectangle(xPos + 10, aboveSensorY, sensorWidth, aboveSensorHeight, {
-      isSensor: true,
-      isStatic: true,
-      label: "aboveThresholdSensor",
+      label: "cauldronSensor",
       collisionFilter: {
         category: CollisionCategories.ENVIRONMENT,
         mask: CollisionMasks.JUNK,
@@ -128,16 +148,12 @@ export class CauldronJunkDetector {
       const bodyB = pairs[i].bodyB;
 
       // Check if one of the bodies is one of our sensors
-      const isSensorA = bodyA.label === "belowThresholdSensor" || bodyA.label === "aboveThresholdSensor";
-      const isSensorB = bodyB.label === "belowThresholdSensor" || bodyB.label === "aboveThresholdSensor";
+      const isSensorA = bodyA.label === "cauldronSensor";
+      const isSensorB = bodyB.label === "cauldronSensor";
 
       if (isSensorA || isSensorB) {
         // Get sensor and junk body
-        const sensorBody = isSensorA ? bodyA : bodyB;
         const junkBody = isSensorA ? bodyB : bodyA;
-
-        // Determine which sensor was triggered
-        const isAboveThreshold = sensorBody.label === "aboveThresholdSensor";
 
         // Find the junk item in the scene
         const junkItems = this.scene.children.list.filter(
@@ -155,17 +171,6 @@ export class CauldronJunkDetector {
           const junkPileItem = junkPile.find((item) => item.uniqueId === uniqueJunkId);
 
           if (junkPileItem) {
-            // Add to the appropriate list based on which sensor was triggered
-            if (isAboveThreshold) {
-              if (!this.isJunkAlreadyInArea(junkPileItem, this.junkPiecesAboveThreshold)) {
-                this.junkPiecesAboveThreshold.push(junkPileItem);
-              }
-            } else {
-              if (!this.isJunkAlreadyInArea(junkPileItem, this.junkPiecesBelowThreshold)) {
-                this.junkPiecesBelowThreshold.push(junkPileItem);
-              }
-            }
-
             // Add to overall junk inside if not already there
             if (!this.isJunkAlreadyInside(junkPileItem)) {
               this.junkPiecesInside.push(junkPileItem);
@@ -190,44 +195,21 @@ export class CauldronJunkDetector {
       const bodyB = pairs[i].bodyB;
 
       // Check if one of the bodies is one of our sensors
-      const isSensorA = bodyA.label === "belowThresholdSensor" || bodyA.label === "aboveThresholdSensor";
-      const isSensorB = bodyB.label === "belowThresholdSensor" || bodyB.label === "aboveThresholdSensor";
+      const isSensorA = bodyA.label === "cauldronSensor";
+      const isSensorB = bodyB.label === "cauldronSensor";
 
       if (isSensorA || isSensorB) {
         // Get sensor and junk body
-        const sensorBody = isSensorA ? bodyA : bodyB;
         const junkBody = isSensorA ? bodyB : bodyA;
-
-        // Determine which sensor was triggered
-        const isAboveThreshold = sensorBody.label === "aboveThresholdSensor";
 
         // Get the unique ID from the body's label
         const uniqueJunkId = junkBody.label || junkBody.parent?.label;
 
         if (uniqueJunkId) {
-          // Remove from the appropriate list based on which sensor was triggered
-          if (isAboveThreshold) {
-            const aboveIndex = this.junkPiecesAboveThreshold.findIndex((item) => item.uniqueId === uniqueJunkId);
-            if (aboveIndex !== -1) {
-              this.junkPiecesAboveThreshold.splice(aboveIndex, 1);
-            }
-          } else {
-            const belowIndex = this.junkPiecesBelowThreshold.findIndex((item) => item.uniqueId === uniqueJunkId);
-            if (belowIndex !== -1) {
-              this.junkPiecesBelowThreshold.splice(belowIndex, 1);
-            }
-          }
-
-          // Check if junk is still in any zone before removing from overall list
-          const isStillInAbove = this.junkPiecesAboveThreshold.some((item) => item.uniqueId === uniqueJunkId);
-          const isStillInBelow = this.junkPiecesBelowThreshold.some((item) => item.uniqueId === uniqueJunkId);
-
-          if (!isStillInAbove && !isStillInBelow) {
-            // If not in any zone, remove from overall list
-            const insideIndex = this.junkPiecesInside.findIndex((item) => item.uniqueId === uniqueJunkId);
-            if (insideIndex !== -1) {
-              this.junkPiecesInside.splice(insideIndex, 1);
-            }
+          // Remove from overall list
+          const insideIndex = this.junkPiecesInside.findIndex((item) => item.uniqueId === uniqueJunkId);
+          if (insideIndex !== -1) {
+            this.junkPiecesInside.splice(insideIndex, 1);
           }
 
           // Update threshold line color
@@ -245,17 +227,11 @@ export class CauldronJunkDetector {
   }
 
   /**
-   * Checks if a junk piece is already registered in a specific area
-   */
-  private isJunkAlreadyInArea(junkItem: JunkPileItem, areaList: JunkPileItem[]): boolean {
-    return areaList.some((item) => item.uniqueId === junkItem.uniqueId);
-  }
-
-  /**
    * Checks if enough junk has crossed the threshold line for crafting
    */
   public hasEnoughJunkForCrafting(): boolean {
-    return this.getJunkPiecesAboveThresholdCount() >= 2;
+    const MIN_JUNK_COUNT = 2;
+    return this.getJunkPiecesAboveThresholdCount() >= MIN_JUNK_COUNT;
   }
 
   /**
@@ -264,19 +240,31 @@ export class CauldronJunkDetector {
   public getJunkPiecesAboveThresholdCount(): number {
     let piecesAboveThresholdCount = 0;
 
-    for (const junkItem of this.junkPiecesBelowThreshold) {
+    // Get all junk game objects in the scene
+    const junkItems = this.scene.children.list.filter(
+      (obj) => (obj instanceof Phaser.Physics.Matter.Sprite || obj instanceof Phaser.Physics.Matter.Image) && obj.active // Only consider active objects
+    ) as Array<Phaser.Physics.Matter.Sprite | Phaser.Physics.Matter.Image>;
+
+    // Check each junk piece in the cauldron
+    for (const junkItem of this.junkPiecesInside) {
       const junkId = junkItem.uniqueId;
 
       // Find the matching game object
-      const junkItems = this.scene.children.list.filter(
-        (obj) => obj instanceof Phaser.Physics.Matter.Sprite || obj instanceof Phaser.Physics.Matter.Image
-      ) as Array<Phaser.Physics.Matter.Sprite | Phaser.Physics.Matter.Image>;
+      const matchingJunkObject = junkItems.find((item) => {
+        const itemBody = item.body as MatterJS.BodyType;
+        return itemBody?.label === junkId || itemBody?.parent?.label === junkId;
+      });
 
-      // @ts-ignore
-      const matchingJunkObject = junkItems.find((item) => item.body?.label === junkId || item.body?.parent?.label === junkId);
+      // Check if the junk object exists and is above the threshold line
+      if (matchingJunkObject && matchingJunkObject.body) {
+        // Check if it's settled (low velocity) and above the threshold line
+        const velocity = matchingJunkObject.body.velocity;
+        const isSettled = Math.abs(velocity.x) < 0.5 && Math.abs(velocity.y) < 0.5;
+        const isAboveThreshold = matchingJunkObject.y < this.thresholdY;
 
-      if (matchingJunkObject && matchingJunkObject.y < this.thresholdY) {
-        piecesAboveThresholdCount++;
+        if (isSettled && isAboveThreshold) {
+          piecesAboveThresholdCount++;
+        }
       }
     }
 
@@ -295,8 +283,6 @@ export class CauldronJunkDetector {
    */
   public clearJunkPieces(): void {
     this.junkPiecesInside = [];
-    this.junkPiecesAboveThreshold = [];
-    this.junkPiecesBelowThreshold = [];
     // Update threshold line color after clearing
     this.updateThresholdLineColor();
   }
@@ -343,18 +329,17 @@ export class CauldronJunkDetector {
       this.thresholdLine.destroy();
     }
 
-    // Destroy the sensors
-    if (this.belowThresholdSensor) {
-      this.scene.matter.world?.remove(this.belowThresholdSensor);
+    // Destroy debug text
+    if (this.debugText) {
+      this.debugText.destroy();
     }
 
-    if (this.aboveThresholdSensor) {
-      this.scene.matter.world?.remove(this.aboveThresholdSensor);
+    // Destroy the sensor
+    if (this.cauldronSensor) {
+      this.scene.matter.world?.remove(this.cauldronSensor);
     }
 
     // Clear references
     this.junkPiecesInside = [];
-    this.junkPiecesAboveThreshold = [];
-    this.junkPiecesBelowThreshold = [];
   }
 }
