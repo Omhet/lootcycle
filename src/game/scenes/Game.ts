@@ -172,13 +172,14 @@ export class Game extends Scene {
       return;
     }
 
+    this.intakeManager?.startCrafting();
     this.cauldronManager?.startCrafting();
   }
 
   private stopCrafting(): void {
-    this.intakeManager.destroyJunkPieces();
+    this.intakeManager.stopCrafting();
 
-    const result = this.cauldronManager?.stopCrafting();
+    const result = this.cauldronManager.stopCrafting();
 
     if (!result.item && result.failure) {
       EventBus.emit("crafting-failure", { reason: result.failure.reason, message: result.failure.message });

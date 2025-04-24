@@ -41,6 +41,15 @@ export class IntakeManager {
     this.intakeSprite.setDepth(DepthLayers.Foreground);
   }
 
+  public startCrafting(): void {
+    this.intakeSprite.setTexture("intake_filled");
+  }
+
+  public stopCrafting(): void {
+    this.intakeSprite.setTexture("intake");
+    this.destroyJunkPieces();
+  }
+
   public hasEnoughJunkForCrafting(): boolean {
     return this.junkDetector.hasEnoughJunk();
   }
