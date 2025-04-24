@@ -19,7 +19,9 @@ export class RecipeImageDownloader extends ImageDownloader<CraftedItemRenderer> 
    */
   public async downloadImages(): Promise<void> {
     console.log("Starting recipe image generation for all combinations...");
-    const allRecipes = Object.values(lootConfig.recipeItems).flat();
+    const allRecipes = Object.values(lootConfig.recipeItems)
+      .flat()
+      .filter((recipe) => recipe.id === "axe");
     const tempRTWidth = 720;
     const tempRTHeight = 720;
 
