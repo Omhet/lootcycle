@@ -32,7 +32,7 @@ export class IntakeManager {
 
     this.intakeSprite.setStatic(true);
     this.intakeSprite.setName("intake");
-    this.intakeSprite.setDepth(DepthLayers.Ground);
+    this.intakeSprite.setDepth(DepthLayers.Foreground);
   }
 
   public getSprite(): Phaser.Physics.Matter.Sprite {

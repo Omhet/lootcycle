@@ -72,7 +72,7 @@ export class CauldronCookingManager {
       tint: 0xdddddd,
     });
 
-    this.smokeParticles.setDepth(DepthLayers.Ground + 1);
+    this.smokeParticles.setDepth(DepthLayers.Foreground + 1);
   }
 
   /**

@@ -76,7 +76,7 @@ export class CauldronJunkDetector {
    */
   private createThresholdLine(): void {
     this.thresholdLine = this.scene.add.graphics();
-    this.thresholdLine.setDepth(DepthLayers.Ground - 1); // Make sure it's below the cauldron
+    this.thresholdLine.setDepth(DepthLayers.Foreground - 1); // Make sure it's below the cauldron
     this.drawThresholdLine(0x454359);
   }
 

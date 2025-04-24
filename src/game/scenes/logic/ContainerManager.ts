@@ -33,7 +33,7 @@ export class ContainerManager {
 
     this.containerSprite.setStatic(true);
     this.containerSprite.setName("container");
-    this.containerSprite.setDepth(DepthLayers.Ground);
+    this.containerSprite.setDepth(DepthLayers.Foreground);
   }
 
   public getSprite(): Phaser.Physics.Matter.Sprite {
