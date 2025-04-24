@@ -10,7 +10,7 @@ import { ContainerManager } from "./logic/ContainerManager";
 import { CraftedItemManager } from "./logic/CraftedItemManager";
 import { FurnaceManager } from "./logic/FurnaceManager";
 import { InputManager } from "./logic/InputManager";
-import { IntakeManager } from "./logic/IntakeManager";
+import { IntakeManager } from "./logic/Intake/IntakeManager";
 import { JunkPileManager } from "./logic/JunkPileManager";
 import { PipeManager } from "./logic/PipeManager";
 
