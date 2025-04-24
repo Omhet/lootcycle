@@ -41,6 +41,10 @@ export class IntakeManager {
     this.intakeSprite.setDepth(DepthLayers.Foreground);
   }
 
+  public hasEnoughJunkForCrafting(): boolean {
+    return this.junkDetector.hasEnoughJunk();
+  }
+
   /**
    * Gets the count of junk pieces currently in the intake
    */

@@ -160,10 +160,15 @@ export class Game extends Scene {
   }
 
   private startCrafting(): void {
-    // Check if enough junk has crossed the threshold line
     if (!this.cauldronManager.hasEnoughJunkForCrafting()) {
-      console.log("Not enough junk pieces above the threshold line - cannot craft item");
+      console.log("Not enough junk pieces in cauldron above the threshold line - cannot craft item");
       EventBus.emit("crafting-failure", { reason: CraftingFailureReason.NotEnoughJunk, message: "Not enough materials in cauldron" });
+      return;
+    }
+
+    if (!this.intakeManager.hasEnoughJunkForCrafting()) {
+      console.log("Not enough junk pieces in intake above the threshold line - cannot craft item");
+      EventBus.emit("crafting-failure", { reason: CraftingFailureReason.NotEnoughJunk, message: "Not enough materials in intake" });
       return;
     }
 
@@ -171,6 +176,8 @@ export class Game extends Scene {
   }
 
   private stopCrafting(): void {
+    this.intakeManager.destroyJunkPieces();
+
     const result = this.cauldronManager?.stopCrafting();
 
     if (!result.item && result.failure) {

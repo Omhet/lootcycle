@@ -53,7 +53,6 @@ export class CauldronCraftingManager {
     this.temperatureText.setDepth(DepthLayers.UI);
 
     // Update the temperature bar initially
-    this.isCrafting = true; // Set to true to show the bar even if not crafting
     this.updateTemperatureBar();
     this.temperatureRange = { min: 50, max: this.defaultMaxTemperature }; // Set a default range for the bar
   }
