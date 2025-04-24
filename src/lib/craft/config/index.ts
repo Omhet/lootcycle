@@ -14,6 +14,8 @@ import "./recipe/bladeWeapon/parts";
 import "./recipe/bladeWeapon/shortSword/parts";
 import "./recipe/bladeWeapon/shortSword/recipe";
 
+import "./recipe/axe/recipe";
+
 // Junk
 import "./junk/junk";
 
