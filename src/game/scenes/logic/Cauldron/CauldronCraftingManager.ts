@@ -34,8 +34,6 @@ export class CauldronCraftingManager {
     this.cauldronSprite = cauldronSprite;
     this.createTemperatureBar();
     this.setupSmokeParticles();
-
-    this.scene.events.on("update", this.updateTemperature, this);
   }
 
   /**
