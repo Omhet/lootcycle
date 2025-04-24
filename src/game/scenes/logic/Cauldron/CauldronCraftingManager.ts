@@ -1,12 +1,11 @@
 import { Scene } from "phaser";
 import { TemperatureRange } from "../../../../lib/craft/craftModel";
-import { EventBus } from "../../../EventBus";
 import { DepthLayers } from "../../Game";
 
 /**
- * Handles the cooking process, temperature management and related UI/effects
+ * Handles the crafting process, temperature management and related UI/effects
  */
-export class CauldronCookingManager {
+export class CauldronCraftingManager {
   private scene: Scene;
   private cauldronSprite: Phaser.Physics.Matter.Sprite;
 
@@ -14,7 +13,7 @@ export class CauldronCookingManager {
   private currentTemperature: number = 0;
   private defaultMaxTemperature: number = 200;
   private temperatureIncreaseRate: number = 0.5;
-  private isCooking: boolean = false;
+  private isCrafting: boolean = false;
   private temperatureRange: TemperatureRange | null = null;
 
   // Temperature display
@@ -159,31 +158,28 @@ export class CauldronCookingManager {
   }
 
   /**
-   * Starts the cooking process, increasing temperature over time
+   * Starts the crafting process, increasing temperature over time
    */
-  public startCooking(tempRange: TemperatureRange | null = null): void {
-    if (this.isCooking) return;
+  public startCrafting(tempRange: TemperatureRange | null = null): void {
+    if (this.isCrafting) return;
 
-    this.isCooking = true;
+    this.isCrafting = true;
     this.temperatureRange = tempRange;
 
     // Reset temperature to starting point
-    this.currentTemperature = 20;
+    this.currentTemperature = 0;
 
     // Start update loop
     this.scene.events.on("update", this.updateTemperature, this);
-
-    // Emit event that cooking has started
-    EventBus.emit("cooking-started");
   }
 
   /**
-   * Stops the cooking process
+   * Stops the crafting process
    */
-  public stopCooking(): number {
-    if (!this.isCooking) return this.currentTemperature;
+  public stopCrafting(): number {
+    if (!this.isCrafting) return this.currentTemperature;
 
-    this.isCooking = false;
+    this.isCrafting = false;
 
     // Stop update loop
     this.scene.events.off("update", this.updateTemperature, this);
@@ -191,17 +187,14 @@ export class CauldronCookingManager {
     // Stop smoke
     this.stopSmokeEmission();
 
-    // Emit event that cooking has stopped with final temperature
-    EventBus.emit("cooking-stopped", this.currentTemperature);
-
     return this.currentTemperature;
   }
 
   /**
-   * Updates temperature during cooking
+   * Updates temperature during crafting
    */
   private updateTemperature = (): void => {
-    if (!this.isCooking) return;
+    if (!this.isCrafting) return;
 
     // Increase temperature
     this.currentTemperature += this.temperatureIncreaseRate;
@@ -224,10 +217,10 @@ export class CauldronCookingManager {
   };
 
   /**
-   * Returns whether cooking is currently in progress
+   * Returns whether crafting is currently in progress
    */
-  public isCookingInProgress(): boolean {
-    return this.isCooking;
+  public isCraftingInProgress(): boolean {
+    return this.isCrafting;
   }
 
   /**

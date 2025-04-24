@@ -134,7 +134,7 @@ export class Game extends Scene {
 
     // Setup event listeners
     EventBus.on("craft-item", this.craftAndRenderItem, this);
-    EventBus.on("calculate-temperature-range", this.calculateTemperatureRange, this);
+    EventBus.on("start-crafting", this.startCrafting, this);
     EventBus.on("toggle-claw", () => this.clawManager.toggleClaw());
     EventBus.on("claw-move-horizontal", (moveFactor: number) => this.clawManager.moveHorizontal(moveFactor));
 
@@ -157,7 +157,7 @@ export class Game extends Scene {
   /**
    * Calculate temperature range for the current junk pieces in cauldron
    */
-  private calculateTemperatureRange(junkPieces: any[]): void {
+  private startCrafting(junkPieces: any[]): void {
     // Currently fixed to short_sword for demonstration
     const tempRange = getTemperatureRangeForCrafting({
       recipeId: "short_sword",
@@ -167,7 +167,7 @@ export class Game extends Scene {
 
     // Update cauldron with temperature range
     if (this.cauldronManager && tempRange) {
-      this.cauldronManager.startCooking(tempRange);
+      this.cauldronManager.startCrafting(tempRange);
     }
 
     console.log("Temperature range calculated:", tempRange);
@@ -230,7 +230,7 @@ export class Game extends Scene {
 
     // Remove event listeners
     EventBus.off("craft-item", this.craftAndRenderItem, this);
-    EventBus.off("calculate-temperature-range", this.calculateTemperatureRange, this);
+    EventBus.off("start-crafting", this.startCrafting, this);
     EventBus.off("toggle-claw");
     EventBus.off("claw-move-horizontal");
 

@@ -3,11 +3,11 @@ import { TemperatureRange } from "../../../../lib/craft/craftModel";
 import { CollisionCategories, CollisionMasks } from "../../../physics/CollisionCategories";
 import { DepthLayers } from "../../Game";
 import { JunkPileItem } from "../JunkPileManager";
-import { CauldronCookingManager } from "./CauldronCookingManager";
+import { CauldronCraftingManager } from "./CauldronCraftingManager";
 import { CauldronJunkDetector } from "./CauldronJunkDetector";
 
 /**
- * Manages the cauldron, combining cooking and junk detection functionality
+ * Manages the cauldron, combining crafting and junk detection functionality
  */
 export class CauldronManager {
   private scene: Scene;
@@ -16,7 +16,7 @@ export class CauldronManager {
 
   // Component managers
   private junkDetector: CauldronJunkDetector;
-  private cookingManager: CauldronCookingManager;
+  private craftingManager: CauldronCraftingManager;
 
   constructor(scene: Scene) {
     this.scene = scene;
@@ -24,7 +24,7 @@ export class CauldronManager {
 
     // Initialize component managers
     this.junkDetector = new CauldronJunkDetector(scene, this.cauldronSprite, this.thresholdY);
-    this.cookingManager = new CauldronCookingManager(scene, this.cauldronSprite);
+    this.craftingManager = new CauldronCraftingManager(scene, this.cauldronSprite);
   }
 
   /**
@@ -91,41 +91,41 @@ export class CauldronManager {
     this.junkDetector.destroyJunkPieces();
   }
 
-  // === Delegated CookingManager methods ===
+  // === Delegated craftingManager methods ===
 
   /**
-   * Starts the cooking process, increasing temperature over time
+   * Starts the crafting process, increasing temperature over time
    */
-  public startCooking(tempRange: TemperatureRange | null = null): void {
-    this.cookingManager.startCooking(tempRange);
+  public startCrafting(tempRange: TemperatureRange | null = null): void {
+    this.craftingManager.startCrafting(tempRange);
   }
 
   /**
-   * Stops the cooking process
+   * Stops the crafting process
    */
-  public stopCooking(): number {
-    return this.cookingManager.stopCooking();
+  public stopCrafting(): number {
+    return this.craftingManager.stopCrafting();
   }
 
   /**
-   * Returns whether cooking is currently in progress
+   * Returns whether crafting is currently in progress
    */
-  public isCookingInProgress(): boolean {
-    return this.cookingManager.isCookingInProgress();
+  public isCraftingInProgress(): boolean {
+    return this.craftingManager.isCraftingInProgress();
   }
 
   /**
    * Gets the current temperature
    */
   public getCurrentTemperature(): number {
-    return this.cookingManager.getCurrentTemperature();
+    return this.craftingManager.getCurrentTemperature();
   }
 
   /**
    * Gets the current temperature range for crafting
    */
   public getTemperatureRange(): TemperatureRange | null {
-    return this.cookingManager.getTemperatureRange();
+    return this.craftingManager.getTemperatureRange();
   }
 
   /**
@@ -141,7 +141,7 @@ export class CauldronManager {
   public destroy(): void {
     // Destroy component managers
     this.junkDetector.destroy();
-    this.cookingManager.destroy();
+    this.craftingManager.destroy();
 
     // Destroy the sprite
     if (this.cauldronSprite) {
