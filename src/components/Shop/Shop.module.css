@@ -1,44 +1,61 @@
 .shopContainer {
   width: 100%;
   height: 100%;
-  padding: 4vmin;
+  padding: 2vmin;
   display: flex;
   flex-direction: column;
   gap: 2vmin;
-  background-color: #7b6e65;
-  color: #ebe6e1;
+  background-color: #e4d3c4;
+  color: #2b201c;
   font-size: 2vmin;
-  overflow: hidden;
+  position: relative;
 }
 .shopHeader {
   width: 100%;
   display: flex;
-  gap: 1vmin;
   justify-content: space-between;
-  align-items: top;
+  gap: 2.5vmin;
 }
 .shopHeaderTitle {
   font-size: 4vmin;
   text-transform: capitalize;
 }
+.moneyBalance {
+  height: fit-content;
+  padding: 0.5vmin 1vmin;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.coinImage {
+  width: 3vmin;
+  height: 3vmin;
+  object-fit: none;
+}
+.moneyBalanceValue {
+  font-size: 2.5vmin;
+}
 .tabs {
+  flex-shrink: 0;
   width: 100%;
+  height: fit-content;
   display: flex;
   align-items: top;
+  border-radius: 8px;
+  outline: 2px solid #574436;
+  overflow: hidden;
 }
 .tab {
   width: 100%;
   padding: 1vmin 2vmin;
+  background-color: #e4d3c4;
   border: none;
-  background-color: #ada39a;
-  color: #2b201c;
   outline: 2px solid #574436;
   font-size: 2.5vmin;
   cursor: pointer;
 }
 .tab:hover {
-  background-color: #574436;
-  color: #ebe6e1;
+  background-color: #dbc5b2;
 }
 .tab.activeTab {
   background-color: #574436;
@@ -80,8 +97,16 @@
   font-size: 2.5vmin;
   text-transform: capitalize;
 }
+.itemsSection {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5vmin;
+}
 .itemsContainer {
   width: 100%;
+  height: fit-content;
   display: flex;
   flex-wrap: wrap;
   gap: 1.5vmin;
@@ -91,7 +116,7 @@
   height: 8vmin;
   border: 2px solid #574436;
   border-radius: 12px;
-  background-color: #ada39a;
+  background-color: #dbc5b2;
   overflow: hidden;
 }
 .item:hover {
@@ -137,7 +162,7 @@
   width: 100%;
   padding: 1vmin 2vmin;
   border: none;
-  background-color: #ada39a;
+  background-color: #dbc5b2;
   color: #2b201c;
   font-size: 2.5vmin;
   text-align: center;
@@ -147,33 +172,37 @@
   width: 100%;
   padding: 1vmin 2vmin;
   border: none;
+  border-radius: 4px;
   font-size: 2.5vmin;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .buyButton {
-  background-color: #ebbf2d;
+  background-color: #ffbb34;
   color: #2b201c;
 }
 .buyButton:hover {
-  background-color: #d6ba56;
+  background-color: #ffaa00;
 }
 .buyButton:disabled {
-  background-color: #ada39a;
+  background-color: #dbc5b2;
   color: #574436;
   cursor: not-allowed;
 }
 .closeButton {
-  background-color: #ada39a;
-  color: #2b201c;
-}
-.closeButton:hover {
   background-color: #574436;
   color: #ebe6e1;
+}
+.closeButton:hover {
+  background-color: #3d2e22;
 }
 .alreadyBought {
   margin-top: auto;
   width: 100%;
   padding: 1vmin 2vmin;
+  border-radius: 4px;
   border: none;
   background-color: #5e8e54;
   color: #ebe6e1;
@@ -183,21 +212,21 @@
 
 /* Rarity colors for items */
 :global(.rarity-common) {
-  color: #b0b0b0;
+  color: #848484;
 }
 
 :global(.rarity-uncommon) {
-  color: #2cce2c;
+  color: #298729;
 }
 
 :global(.rarity-rare) {
-  color: #2c8ece;
+  color: #1482cc;
 }
 
 :global(.rarity-epic) {
-  color: #9b2cce;
+  color: #9720ce;
 }
 
 :global(.rarity-legendary) {
-  color: #e6cc2c;
+  color: #ddb30b;
 }

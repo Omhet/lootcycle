@@ -118,7 +118,7 @@ export const generateJunkLicenses = (purchasedJunkLicenses: string[] = []): Junk
         name: junkPiece.name,
         imageUrl: `/assets/junk/${junkId}.png`, // Assuming junk images follow this pattern
         price: Math.floor(JUNK_LICENSE_BASE_PRICE * junkPiece.sellPriceCoefficient),
-        description: `License to collect ${junkPiece.name} from the junk pipe.<br><br><b>Rarity:</b> ${rarityDisplay}<br>${sellPriceInfo}<br><br>${craftingDescription}`,
+        description: `<b>Rarity:</b> ${rarityDisplay}<br>${sellPriceInfo}<br><br>${craftingDescription}`,
         alreadyBought: purchasedJunkLicenses.includes(junkId),
         sellPriceCoefficient: junkPiece.sellPriceCoefficient, // Store this for sorting
       });

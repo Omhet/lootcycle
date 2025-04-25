@@ -27,12 +27,14 @@ export const JunkLicensesTab = ({ junkLicenses, balance, onBuy, onClose }: JunkL
 
   return (
     <div className={s.tabContainer}>
-      <div className={s.itemsContainer}>
-        {junkLicenses.map((item) => (
-          <div key={item.name} className={`${s.item} ${selectedItem.id === item.id ? s.active : ""}`} onClick={() => setSelectedItem(item)}>
-            <img src={item.imageUrl} alt={item.name} className={s.itemImage} />
-          </div>
-        ))}
+      <div className={s.itemsSection}>
+        <div className={s.itemsContainer}>
+          {junkLicenses.map((item) => (
+            <div key={item.name} className={`${s.item} ${selectedItem.id === item.id ? s.active : ""}`} onClick={() => setSelectedItem(item)}>
+              <img src={item.imageUrl} alt={item.name} className={s.itemImage} />
+            </div>
+          ))}
+        </div>
         <button className={`${s.button} ${s.closeButton}`} onClick={onClose}>
           I got all I need, thanks!
         </button>
@@ -46,7 +48,8 @@ export const JunkLicensesTab = ({ junkLicenses, balance, onBuy, onClose }: JunkL
           <div className={s.alreadyBought}>Already purchased</div>
         ) : (
           <button className={`${s.button} ${s.buyButton}`} onClick={() => onBuy(selectedItem.id)} disabled={selectedItem.price > balance}>
-            Buy {selectedItem.price}
+            {selectedItem.price > balance ? "Not enough money" : "Buy"} ({selectedItem.price}
+            <img className={s.coinImage} src="/assets/junk/golden_coin.png" />){" "}
           </button>
         )}
       </div>

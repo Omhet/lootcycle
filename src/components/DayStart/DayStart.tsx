@@ -7,13 +7,15 @@ type DayStartProps = {
 
 export const DayStart = ({ dayNumber, onStartDay }: DayStartProps) => {
   return (
-    <div className={s.dayStartContainer}>
-      <div className={s.header}>
-        <span className={s.headerTitle}>Day {dayNumber}</span>
+    <div className={s.container}>
+      <div className={s.dayStartContainer}>
+        <div className={s.header}>
+          <span className={s.headerTitle}>Day {dayNumber}</span>
+        </div>
+        <button className={s.button} onClick={onStartDay}>
+          Start Day
+        </button>
       </div>
-      <button className={s.button} onClick={onStartDay}>
-        Start Day
-      </button>
     </div>
   );
 };

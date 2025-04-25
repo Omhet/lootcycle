@@ -10,9 +10,7 @@ import { StallScreenContainer } from "../containers/StallScreenContainer/StallSc
 import { IRefPhaserGame, PhaserGame } from "../game/PhaserGame";
 import { GameState, useGameFlowStore } from "../store/useGameFlowStore";
 import { ScreenId } from "../store/useScreenStore";
-import { useGameControls } from "./hooks/useGameControls";
 import { useScreenEvents } from "./hooks/useScreenEvents";
-import { useTestControls } from "./hooks/useTestControls";
 import { useToastMessages } from "./hooks/useToastMessages";
 
 function App() {
@@ -23,11 +21,7 @@ function App() {
 
   // Use custom hooks
   const { currentOpenedScreenId } = useScreenEvents();
-  const { handleDownloadLootImagesClick, handleDownloadJunkImagesClick } = useGameControls(phaserRef);
   const { startGame, currentState } = useGameFlowStore();
-
-  // Add test button for development
-  useTestControls();
 
   // Initialize toast messages handler
   useToastMessages();
@@ -88,12 +82,6 @@ function App() {
             <div id="menuButtonsContainer">
               <button className="button" onClick={handlePlay}>
                 Play
-              </button>
-              <button className="button" onClick={handleDownloadLootImagesClick}>
-                Download Loot Images
-              </button>
-              <button className="button" onClick={handleDownloadJunkImagesClick}>
-                Download Junk Images
               </button>
             </div>
           </div>

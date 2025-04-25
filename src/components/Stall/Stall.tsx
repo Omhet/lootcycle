@@ -38,17 +38,19 @@ export const Stall = ({ groups, moneyBalance, onSellAndClose, onClose }: StallPr
 
   return (
     <div className={s.stallContainer}>
-      <div className={s.moneyBalance}>
-        <span className={s.moneyBalanceValue}>{moneyBalance}</span>
-        <span className={s.moneyBalanceLabel}>gold</span>
-      </div>
-      <div className={s.stall}>
-        <div className={s.stallHeader}>
+      <div className={s.stallHeader}>
+        <div className={s.stallHeaderTitleContainer}>
           <span className={s.stallHeaderTitle}>Stall</span>
           <span className={s.stallHeaderDescription}>Items you crafted, ready for sale</span>
         </div>
+        <div className={s.moneyBalance}>
+          <span className={s.moneyBalanceValue}>{moneyBalance}</span>
+          <img className={s.coinImage} src="/assets/junk/golden_coin.png" />
+        </div>
+      </div>
+      <div className={s.stall}>
         {hasItems ? (
-          <>
+          <div className={s.stallContent}>
             <div className={s.groupsContainer}>
               {groups.map((group) => (
                 <div key={group.name} className={s.group}>
@@ -67,42 +69,41 @@ export const Stall = ({ groups, moneyBalance, onSellAndClose, onClose }: StallPr
                 </div>
               ))}
             </div>
-            <div className={s.buttonsContainer}>
-              <button className={`${s.button} ${s.sellButton}`} onClick={onSellAndClose}>
-                {`Sell everything (${totalProfit} gold) & call it a day`}
-              </button>
-              <button className={`${s.button} ${s.closeButton}`} onClick={onClose}>
-                Close
-              </button>
-            </div>
-          </>
+          </div>
         ) : (
           <div className={s.emptyStateContainer}>
             <p className={s.emptyStateMessage}>You have no items to sell</p>
             <p className={s.emptyStateSubMessage}>Craft some items first to display them here</p>
-            <div className={s.buttonsContainer}>
-              <button className={s.button} onClick={onSellAndClose}>
-                Call it a day
-              </button>
-              <button className={`${s.button} ${s.closeButton}`} onClick={onClose}>
-                Close
-              </button>
-            </div>
           </div>
         )}
+        <div className={s.lootDetailsContainer}>
+          {highlightedLootItem ? (
+            <LootDescription
+              name={highlightedLootItem.name}
+              category={highlightedLootItem.category}
+              details={highlightedLootItem.lootDetails}
+              price={highlightedLootItem.price}
+              imageUrl={highlightedLootItem.imageUrl}
+            />
+          ) : (
+            <div className={s.emptyDetailsMessage}>Select an item to see details</div>
+          )}
+        </div>
       </div>
-      <div className={s.lootDetailsContainer}>
-        {highlightedLootItem ? (
-          <>
-            <div className={s.imageContainer}>
-              <img className={s.image} src={highlightedLootItem.imageUrl} />
-              <span className={s.price}>{highlightedLootItem.price}</span>
-            </div>
-            <LootDescription name={highlightedLootItem.name} category={highlightedLootItem.category} details={highlightedLootItem.lootDetails} />
-          </>
-        ) : (
-          <div className={s.emptyDetailsMessage}>Select an item to see details</div>
-        )}
+      <div className={s.buttonsContainer}>
+        <button className={`${s.button} ${s.sellButton}`} onClick={onSellAndClose}>
+          {hasItems ? (
+            <span className={s.sellButtonText}>
+              Sell everything ({totalProfit}
+              <img className={s.coinImage} src="/assets/junk/golden_coin.png" />) & call it a day
+            </span>
+          ) : (
+            "Call it a day"
+          )}
+        </button>
+        <button className={`${s.button} ${s.closeButton}`} onClick={onClose}>
+          Back to crafting
+        </button>
       </div>
     </div>
   );
