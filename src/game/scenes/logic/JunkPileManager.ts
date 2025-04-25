@@ -3,6 +3,7 @@ import { lootConfig } from "../../../lib/craft/config";
 import { JunkPiece } from "../../../lib/craft/craftModel";
 import { getJunkPortion } from "../../../lib/craft/getJunkPortion";
 import { JUNK_PIPE_UPGRADES, JunkPipeUpgradeType } from "../../../lib/shop/config";
+import { useCraftStore } from "../../../store/useCraftStore";
 import { usePlayerProgressStore } from "../../../store/usePlayerProgressStore";
 import { EventBus } from "../../EventBus";
 import { CollisionCategories, CollisionMasks } from "../../physics/CollisionCategories";
@@ -149,23 +150,32 @@ export class JunkPileManager {
   public generateJunkPortion(): void {
     // Get player progress store for upgrade values
     const playerProgress = usePlayerProgressStore.getState();
+    const craftState = useCraftStore.getState();
 
-    // Get the current level for portion size
+    // Get the current level for all upgrades
     const portionSizeLevel = playerProgress.getPipeUpgradeLevel(JunkPipeUpgradeType.PORTION_SIZE);
-
-    // Get the portion size value from the config
     const portionSizeValue = JUNK_PIPE_UPGRADES[JunkPipeUpgradeType.PORTION_SIZE].levels[portionSizeLevel].value;
 
-    // Get the fluff ratio value
     const fluffRatioLevel = playerProgress.getPipeUpgradeLevel(JunkPipeUpgradeType.FLUFF_RATIO);
     const fluffRatio = JUNK_PIPE_UPGRADES[JunkPipeUpgradeType.FLUFF_RATIO].levels[fluffRatioLevel].value;
 
-    // Get the next portion percentage value
     const nextPortionPercentLevel = playerProgress.getPipeUpgradeLevel(JunkPipeUpgradeType.NEXT_PORTION_PERCENT);
     const nextPortionPercent = JUNK_PIPE_UPGRADES[JunkPipeUpgradeType.NEXT_PORTION_PERCENT].levels[nextPortionPercentLevel].value;
 
-    // Generate the junk portion with the player's current upgrade values
-    const newJunkPortion = getJunkPortion(lootConfig, this.portionNumber, portionSizeValue, fluffRatio, nextPortionPercent);
+    // Get the current recipe ID and purchased junk licenses
+    const currentRecipeId = craftState.currentRecipeId;
+    const purchasedJunkLicenses = playerProgress.purchasedJunkLicenses;
+
+    // Generate the junk portion with the player's current upgrade values and state
+    const newJunkPortion = getJunkPortion(
+      lootConfig,
+      this.portionNumber,
+      portionSizeValue,
+      fluffRatio,
+      nextPortionPercent,
+      currentRecipeId,
+      purchasedJunkLicenses
+    );
 
     // Emit the junk-received event with the count of junk pieces
     EventBus.emit("junk-received", newJunkPortion.length);
