@@ -2,6 +2,7 @@ import { Scene } from "phaser";
 import { lootConfig } from "../../../../lib/craft/config";
 import { craftLootItem, getTemperatureRangeForCrafting } from "../../../../lib/craft/craftLootItem";
 import { CraftingFailureReason, JunkPiece, LootItem, TemperatureRange } from "../../../../lib/craft/craftModel";
+import { usePlayerProgressStore } from "../../../../store/usePlayerProgressStore";
 import { EventBus } from "../../../EventBus";
 import { CollisionCategories, CollisionMasks } from "../../../physics/CollisionCategories";
 import { DepthLayers } from "../../Game";
@@ -38,6 +39,9 @@ export class CauldronManager {
     // Initialize component managers
     this.junkDetector = new CauldronJunkDetector(scene, this.cauldronSprite, this.thresholdY);
     this.craftingManager = new CauldronCraftingManager(scene, this.cauldronSprite);
+
+    // Select the first random recipe
+    this.selectRandomRecipe();
   }
 
   /**
@@ -65,6 +69,26 @@ export class CauldronManager {
 
     // Calculate threshold line position (around 60% from the bottom of the cauldron)
     this.thresholdY = yPos + frame.height * 0.2;
+  }
+
+  /**
+   * Selects a random recipe from the player's purchased recipes
+   */
+  private selectRandomRecipe(): void {
+    // Get purchased recipes from the player progress store
+    const { purchasedRecipes } = usePlayerProgressStore.getState();
+
+    // If there are no purchased recipes, default to axe (which should be available by default)
+    if (purchasedRecipes.length === 0) {
+      console.warn("No purchased recipes found. Defaulting to 'axe'.");
+      this.currentRecipeItemId = "axe";
+    } else {
+      // Select a random recipe from the purchased ones
+      const randomIndex = Math.floor(Math.random() * purchasedRecipes.length);
+      this.currentRecipeItemId = purchasedRecipes[randomIndex];
+    }
+
+    console.log(`Selected recipe for next crafting: ${this.currentRecipeItemId}`);
   }
 
   // === Delegated JunkDetector methods ===
@@ -113,10 +137,6 @@ export class CauldronManager {
     // Change cauldron sprite to filled version
     this.cauldronSprite.setTexture("cauldron_filled");
 
-    // Determine which item to craft based on probability (60% short_sword, 40% axe)
-    const randomValue = Math.random();
-    this.currentRecipeItemId = randomValue < 0.6 ? "short_sword" : "axe";
-
     const temperatureRange = getTemperatureRangeForCrafting({
       recipeItemId: this.currentRecipeItemId,
       junkPieces: this.getJunkPiecesInside(),
@@ -137,6 +157,9 @@ export class CauldronManager {
     this.cauldronSprite.setTexture("cauldron");
 
     const temperature = this.craftingManager.stopCrafting();
+
+    // Select a new random recipe for next crafting
+    this.selectRandomRecipe();
 
     // Not successful crafting cases first
     if (temperature < this.craftedItemTemperatureRange.min) {
@@ -198,6 +221,9 @@ export class CauldronManager {
     console.log("Cauldron overheated! Junk pieces destroyed.");
 
     EventBus.emit("loot-screwed-up", 1);
+
+    // Select a new random recipe for next crafting
+    this.selectRandomRecipe();
 
     // TODO: Create explosion effect
   }
