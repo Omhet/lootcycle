@@ -31,7 +31,7 @@ export const generateRecipes = (purchasedRecipes: string[] = []): RecipeCategory
       name: recipe.name,
       category: typeName,
       description: `A recipe for crafting ${recipe.name}`,
-      imageUrl: `/assets/craftedLootItems/${recipe.id.toLowerCase()}-12879803.png`, // Default image
+      imageUrl: `/assets/recipes/${recipe.id.toLowerCase()}.png`, // Default image
       price: recipe.baseSellPrice * RECIPE_PRICE_MULTIPLIER,
       priceForCraftedBaseItem: recipe.baseSellPrice,
       alreadyBought: purchasedRecipes.includes(recipe.id),
