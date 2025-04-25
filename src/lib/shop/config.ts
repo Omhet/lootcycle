@@ -142,8 +142,8 @@ export enum JunkPipeUpgradeType {
 export const JUNK_PIPE_UPGRADES: Record<JunkPipeUpgradeType, { levels: Array<{ value: number; price: number }> }> = {
   [JunkPipeUpgradeType.PORTION_SIZE]: {
     levels: [
-      { value: 50, price: 0 }, // Default level (free)
-      { value: 75, price: 100 },
+      { value: 60, price: 0 }, // Default level (free)
+      { value: 80, price: 100 },
       { value: 100, price: 200 },
       { value: 150, price: 400 },
       { value: 200, price: 800 },
