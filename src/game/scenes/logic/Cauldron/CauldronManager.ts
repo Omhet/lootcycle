@@ -67,7 +67,6 @@ export class CauldronManager {
     this.cauldronSprite.setName("cauldron");
     this.cauldronSprite.setDepth(DepthLayers.Foreground);
 
-    // Calculate threshold line position (around 60% from the bottom of the cauldron)
     this.thresholdY = yPos + frame.height * 0.2;
   }
 
