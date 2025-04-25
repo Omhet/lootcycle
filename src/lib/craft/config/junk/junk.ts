@@ -6,8 +6,8 @@ registerJunkPiece("bone", {
   name: "Bone",
   rarity: Rarity.Common,
   durability: Durability.Medium,
-  sellPriceCoefficient: 0.5,
-  temperatureCoefficient: 0.5,
+  sellPriceCoefficient: 1.5,
+  temperatureCoefficient: 1.5,
 });
 
 // Fluff items
@@ -43,8 +43,8 @@ registerJunkPiece("green_fluff", {
 //   name: "Banana Peel",
 //   rarity: Rarity.Common,
 //   durability: Durability.Low,
-//   sellPriceCoefficient: 1,
-//   temperatureCoefficient: 1,
+//   sellPriceCoefficient: 2,
+//   temperatureCoefficient: 2,
 // });
 
 registerJunkPiece("log", {
@@ -59,8 +59,8 @@ registerJunkPiece("log", {
   name: "Log",
   rarity: Rarity.Common,
   durability: Durability.Medium,
-  sellPriceCoefficient: 0.8,
-  temperatureCoefficient: 0.5,
+  sellPriceCoefficient: 1.8,
+  temperatureCoefficient: 1.5,
 });
 
 // registerJunkPiece("dead_fish", {
@@ -68,8 +68,8 @@ registerJunkPiece("log", {
 //   name: "Dead Fish",
 //   rarity: Rarity.Common,
 //   durability: Durability.Low,
-//   sellPriceCoefficient: 0.5,
-//   temperatureCoefficient: 0.3,
+//   sellPriceCoefficient: 1.5,
+//   temperatureCoefficient: 1.3,
 // });
 
 registerJunkPiece("horse_shoe", {
@@ -77,8 +77,8 @@ registerJunkPiece("horse_shoe", {
   name: "Horse Shoe",
   rarity: Rarity.Common,
   durability: Durability.Medium,
-  sellPriceCoefficient: 1.2,
-  temperatureCoefficient: 1.5,
+  sellPriceCoefficient: 2.2,
+  temperatureCoefficient: 2.5,
 });
 
 registerJunkPiece("golden_ring", {
@@ -86,8 +86,8 @@ registerJunkPiece("golden_ring", {
   name: "Golden Ring",
   rarity: Rarity.Rare,
   durability: Durability.Medium,
-  sellPriceCoefficient: 3,
-  temperatureCoefficient: 1.5,
+  sellPriceCoefficient: 4,
+  temperatureCoefficient: 2.5,
 });
 
 registerJunkPiece("golden_cup", {
@@ -101,8 +101,8 @@ registerJunkPiece("golden_cup", {
   name: "Golden Cup",
   rarity: Rarity.Rare,
   durability: Durability.Medium,
-  sellPriceCoefficient: 2.5,
-  temperatureCoefficient: 1.5,
+  sellPriceCoefficient: 3.5,
+  temperatureCoefficient: 2.5,
 });
 
 registerJunkPiece("golden_necklace", {
@@ -116,8 +116,8 @@ registerJunkPiece("golden_necklace", {
   name: "Golden Necklace",
   rarity: Rarity.Rare,
   durability: Durability.Low,
-  sellPriceCoefficient: 2.5,
-  temperatureCoefficient: 1.5,
+  sellPriceCoefficient: 3.5,
+  temperatureCoefficient: 2.5,
 });
 
 registerJunkPiece("silver_cup", {
@@ -131,8 +131,8 @@ registerJunkPiece("silver_cup", {
   name: "Silver Cup",
   rarity: Rarity.Uncommon,
   durability: Durability.Medium,
-  sellPriceCoefficient: 1.8,
-  temperatureCoefficient: 1.3,
+  sellPriceCoefficient: 2.8,
+  temperatureCoefficient: 2.3,
 });
 
 registerJunkPiece("silver_necklace", {
@@ -146,8 +146,8 @@ registerJunkPiece("silver_necklace", {
   name: "Silver Necklace",
   rarity: Rarity.Uncommon,
   durability: Durability.Low,
-  sellPriceCoefficient: 1.8,
-  temperatureCoefficient: 1.3,
+  sellPriceCoefficient: 2.8,
+  temperatureCoefficient: 2.3,
 });
 
 registerJunkPiece("lollipop", {
@@ -155,8 +155,8 @@ registerJunkPiece("lollipop", {
   name: "Lollipop",
   rarity: Rarity.Common,
   durability: Durability.Low,
-  sellPriceCoefficient: 0.5,
-  temperatureCoefficient: 0.3,
+  sellPriceCoefficient: 1.5,
+  temperatureCoefficient: 1.3,
 });
 
 registerJunkPiece("rope", {
@@ -164,8 +164,8 @@ registerJunkPiece("rope", {
   name: "Rope",
   rarity: Rarity.Common,
   durability: Durability.Medium,
-  sellPriceCoefficient: 0.8,
-  temperatureCoefficient: 0.4,
+  sellPriceCoefficient: 1.8,
+  temperatureCoefficient: 1.4,
 });
 
 registerJunkPiece("saw", {
@@ -173,8 +173,8 @@ registerJunkPiece("saw", {
   name: "Saw",
   rarity: Rarity.Uncommon,
   durability: Durability.Medium,
-  sellPriceCoefficient: 1.5,
-  temperatureCoefficient: 1.2,
+  sellPriceCoefficient: 2.5,
+  temperatureCoefficient: 2.2,
 });
 
 // registerJunkPiece("bolt", {
@@ -182,8 +182,8 @@ registerJunkPiece("saw", {
 //   name: "Bolt",
 //   rarity: Rarity.Common,
 //   durability: Durability.High,
-//   sellPriceCoefficient: 0.7,
-//   temperatureCoefficient: 1.2,
+//   sellPriceCoefficient: 1.7,
+//   temperatureCoefficient: 2.2,
 // });
 
 registerJunkPiece("shell", {
@@ -191,8 +191,8 @@ registerJunkPiece("shell", {
   name: "Shell",
   rarity: Rarity.Uncommon,
   durability: Durability.Medium,
-  sellPriceCoefficient: 1.2,
-  temperatureCoefficient: 0.6,
+  sellPriceCoefficient: 2.2,
+  temperatureCoefficient: 1.6,
 });
 
 // registerJunkPiece("old_shoe", {
@@ -200,8 +200,8 @@ registerJunkPiece("shell", {
 //   name: "Old Shoe",
 //   rarity: Rarity.Common,
 //   durability: Durability.Low,
-//   sellPriceCoefficient: 0.3,
-//   temperatureCoefficient: 0.4,
+//   sellPriceCoefficient: 1.3,
+//   temperatureCoefficient: 1.4,
 // });
 
 registerJunkPiece("golden_coin", {
@@ -215,8 +215,8 @@ registerJunkPiece("golden_coin", {
   name: "Golden Coin",
   rarity: Rarity.Rare,
   durability: Durability.Medium,
-  sellPriceCoefficient: 2.5,
-  temperatureCoefficient: 1.5,
+  sellPriceCoefficient: 3.5,
+  temperatureCoefficient: 2.5,
 });
 
 registerJunkPiece("silver_coin", {
@@ -230,8 +230,8 @@ registerJunkPiece("silver_coin", {
   name: "Silver Coin",
   rarity: Rarity.Uncommon,
   durability: Durability.Medium,
-  sellPriceCoefficient: 1.8,
-  temperatureCoefficient: 1.2,
+  sellPriceCoefficient: 2.8,
+  temperatureCoefficient: 2.2,
 });
 
 // registerJunkPiece("mushroom", {
@@ -239,8 +239,8 @@ registerJunkPiece("silver_coin", {
 //   name: "Mushroom",
 //   rarity: Rarity.Common,
 //   durability: Durability.Low,
-//   sellPriceCoefficient: 0.6,
-//   temperatureCoefficient: 0.3,
+//   sellPriceCoefficient: 1.6,
+//   temperatureCoefficient: 1.3,
 // });
 
 registerJunkPiece("button", {
@@ -248,8 +248,8 @@ registerJunkPiece("button", {
   name: "Button",
   rarity: Rarity.Common,
   durability: Durability.Low,
-  sellPriceCoefficient: 0.5,
-  temperatureCoefficient: 0.5,
+  sellPriceCoefficient: 1.5,
+  temperatureCoefficient: 1.5,
 });
 
 registerJunkPiece("robo_hand", {
@@ -257,8 +257,8 @@ registerJunkPiece("robo_hand", {
   name: "Robo Hand",
   rarity: Rarity.Rare,
   durability: Durability.High,
-  sellPriceCoefficient: 2.2,
-  temperatureCoefficient: 1.8,
+  sellPriceCoefficient: 3.2,
+  temperatureCoefficient: 2.8,
 });
 
 registerJunkPiece("nut", {
@@ -266,8 +266,8 @@ registerJunkPiece("nut", {
   name: "Nut",
   rarity: Rarity.Common,
   durability: Durability.High,
-  sellPriceCoefficient: 0.7,
-  temperatureCoefficient: 1.3,
+  sellPriceCoefficient: 1.7,
+  temperatureCoefficient: 2.3,
 });
 
 registerJunkPiece("silver_ring", {
@@ -275,8 +275,8 @@ registerJunkPiece("silver_ring", {
   name: "Silver Ring",
   rarity: Rarity.Uncommon,
   durability: Durability.Medium,
-  sellPriceCoefficient: 2,
-  temperatureCoefficient: 1.2,
+  sellPriceCoefficient: 3,
+  temperatureCoefficient: 2.2,
 });
 
 registerJunkPiece("deer_hoof", {
@@ -284,8 +284,8 @@ registerJunkPiece("deer_hoof", {
   name: "Deer Hoof",
   rarity: Rarity.Uncommon,
   durability: Durability.Medium,
-  sellPriceCoefficient: 1.2,
-  temperatureCoefficient: 0.7,
+  sellPriceCoefficient: 2.2,
+  temperatureCoefficient: 1.7,
 });
 
 // registerJunkPiece("empty_bottle", {
@@ -293,6 +293,6 @@ registerJunkPiece("deer_hoof", {
 //   name: "Empty Bottle",
 //   rarity: Rarity.Common,
 //   durability: Durability.Low,
-//   sellPriceCoefficient: 0.5,
-//   temperatureCoefficient: 0.8,
+//   sellPriceCoefficient: 1.5,
+//   temperatureCoefficient: 1.8,
 // });
