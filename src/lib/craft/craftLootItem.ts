@@ -143,72 +143,95 @@ function distributeJunkToDetails(
   // Create a copy of junk pieces to track available ones
   const availableJunkPieces = [...junkPieces];
 
-  // Create a map of detail type to junk pieces that can be used for it
-  const detailTypeToJunk = new Map<RecipeDetailType, JunkPiece[]>();
+  // Map to track which detail types each junk piece can be used for
+  const junkToDetailTypes = new Map<JunkPiece, RecipeDetailType[]>();
 
-  // Initialize the map with empty arrays
-  detailTypes.forEach((detailType) => {
-    detailTypeToJunk.set(detailType, []);
+  // First pass: identify which detail types each junk piece can be used for
+  availableJunkPieces.forEach((junk) => {
+    const compatibleDetailTypes = junk.suitableForRecipeDetails.filter((detailType) => detailTypes.includes(detailType));
+    junkToDetailTypes.set(junk, compatibleDetailTypes);
   });
 
-  // First pass: identify which junk pieces can be used for which detail types
-  availableJunkPieces.forEach((junk) => {
-    junk.suitableForRecipeDetails.forEach((detailType) => {
-      if (detailTypes.includes(detailType)) {
-        const currentJunk = detailTypeToJunk.get(detailType) || [];
-        currentJunk.push(junk);
-        detailTypeToJunk.set(detailType, currentJunk);
+  // Count how many junk pieces are available for each detail type
+  const detailTypeToJunkCount = new Map<RecipeDetailType, number>();
+  detailTypes.forEach((detailType) => {
+    let count = 0;
+    availableJunkPieces.forEach((junk) => {
+      if (junk.suitableForRecipeDetails.includes(detailType)) {
+        count++;
       }
     });
+    detailTypeToJunkCount.set(detailType, count);
   });
 
   // Sort detail types by how many junk pieces are available for them (ascending)
   // This prioritizes detail types with fewer available junk pieces
   const sortedDetailTypes = [...detailTypes].sort((a, b) => {
-    const aCount = detailTypeToJunk.get(a)?.length || 0;
-    const bCount = detailTypeToJunk.get(b)?.length || 0;
+    const aCount = detailTypeToJunkCount.get(a) || 0;
+    const bCount = detailTypeToJunkCount.get(b) || 0;
     return aCount - bCount;
   });
 
   // For each detail type, try to assign a junk piece that hasn't been used yet
   for (const detailType of sortedDetailTypes) {
-    const suitableJunk = detailTypeToJunk.get(detailType) || [];
+    if (availableJunkPieces.length === 0) continue;
 
-    // Find junk pieces that are still available
-    const availableJunk = suitableJunk.filter((junk) => availableJunkPieces.some((available) => available.id === junk.id));
+    // Find junk pieces that are suitable for this detail type
+    const suitableJunk = availableJunkPieces.filter((junk) => junk.suitableForRecipeDetails.includes(detailType));
 
-    if (availableJunk.length === 0) continue;
+    if (suitableJunk.length === 0) continue;
 
-    // Group by junk ID to consolidate identical junk pieces
+    // Group junk by ID to identify pieces of the same type
     const junkById = new Map<JunkPiece["id"], JunkPiece[]>();
-    availableJunk.forEach((junk) => {
+    suitableJunk.forEach((junk) => {
       if (!junkById.has(junk.id)) {
         junkById.set(junk.id, []);
       }
       junkById.get(junk.id)?.push(junk);
     });
 
-    // Select a random junk piece for this detail type
-    const randomJunkId = Array.from(junkById.keys())[Math.floor(Math.random() * junkById.size)];
-    const selectedJunk = junkById.get(randomJunkId) || [];
-    if (selectedJunk.length === 0) continue;
+    // Prioritize junk pieces that can be used for fewer detail types
+    // This helps distribute identical junk across different detail types
+    const junkEntries = Array.from(junkById.entries()).sort((a, b) => {
+      const aDetailTypesCount = a[1][0].suitableForRecipeDetails.length;
+      const bDetailTypesCount = b[1][0].suitableForRecipeDetails.length;
+      // If tie, prioritize by compatibility with more valuable details (higher index)
+      if (aDetailTypesCount === bDetailTypesCount) {
+        return 0; // Random selection is fine for ties
+      }
+      return aDetailTypesCount - bDetailTypesCount;
+    });
 
-    // Find loot details that can be crafted from this junk
-    const possibleDetails = getLootDetailsForJunk(selectedJunk[0], detailType, config);
-    const selectedDetail = selectLootDetail(possibleDetails, selectedJunk[0]);
+    // Select the first junk ID from our sorted list
+    if (junkEntries.length > 0) {
+      const [junkId, junkList] = junkEntries[0];
+      const selectedJunk = junkList[0]; // Take just one junk piece
 
-    if (selectedDetail) {
-      result.set(detailType, {
-        lootDetail: selectedDetail,
-        junkPieces: selectedJunk,
-      });
+      // Find loot details that can be crafted from this junk
+      const possibleDetails = getLootDetailsForJunk(selectedJunk, detailType, config);
+      const selectedDetail = selectLootDetail(possibleDetails, selectedJunk);
 
-      // Remove used junk pieces from the available pool
-      const usedJunkIds = new Set(selectedJunk.map((j) => j.id));
-      for (let i = availableJunkPieces.length - 1; i >= 0; i--) {
-        if (usedJunkIds.has(availableJunkPieces[i].id)) {
-          availableJunkPieces.splice(i, 1);
+      if (selectedDetail) {
+        // Add the selected junk piece to the result
+        result.set(detailType, {
+          lootDetail: selectedDetail,
+          junkPieces: [selectedJunk],
+        });
+
+        // Remove this junk piece from the available pool
+        const index = availableJunkPieces.findIndex((j) => j === selectedJunk);
+        if (index !== -1) {
+          availableJunkPieces.splice(index, 1);
         }
+
+        // Update junkToDetailTypes for remaining junk pieces
+        availableJunkPieces.forEach((junk) => {
+          if (junk.id === junkId) {
+            const detailsList = junkToDetailTypes.get(junk) || [];
+            const updatedList = detailsList.filter((dt) => dt !== detailType);
+            junkToDetailTypes.set(junk, updatedList);
+          }
+        });
       }
     }
   }
