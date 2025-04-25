@@ -32,6 +32,12 @@ export class CauldronManager {
   craftedItemTemperatureRange: TemperatureRange;
   private currentRecipeItemId: string;
 
+  // Shake properties
+  private shakeTimer: Phaser.Time.TimerEvent | null = null;
+  private originalPosition: { x: number; y: number } = { x: 0, y: 0 };
+  private maxShakeIntensity: number = 5; // Maximum shake in pixels
+  private shakeIntensity: number = 0;
+
   constructor(scene: Scene) {
     this.scene = scene;
     this.createCauldron();
@@ -68,6 +74,9 @@ export class CauldronManager {
     this.cauldronSprite.setDepth(DepthLayers.Foreground);
 
     this.thresholdY = yPos + frame.height * 0.2;
+
+    // Store original position for shake reference
+    this.originalPosition = { x: xPos, y: yPos };
   }
 
   /**
@@ -154,6 +163,9 @@ export class CauldronManager {
 
     this.craftedItemTemperatureRange = temperatureRange;
 
+    // Start shaking the cauldron
+    this.startShaking();
+
     // Pass the temperature exceeded handler to the crafting manager
     this.craftingManager.startCrafting(temperatureRange, this.handleTemperatureExceeded.bind(this));
   }
@@ -162,6 +174,9 @@ export class CauldronManager {
    * Stops the crafting process
    */
   public stopCrafting(): CraftingResult {
+    // Stop shaking the cauldron
+    this.stopShaking();
+
     // Change cauldron sprite back to empty version
     this.cauldronSprite.setTexture("cauldron");
 
@@ -217,6 +232,9 @@ export class CauldronManager {
    * Handles when temperature exceeds the maximum allowed
    */
   private handleTemperatureExceeded(): void {
+    // Stop shaking
+    this.stopShaking();
+
     // Change cauldron sprite back to empty version
     this.cauldronSprite.setTexture("cauldron");
 
@@ -269,6 +287,9 @@ export class CauldronManager {
    * Cleanup resources when destroying this object
    */
   public destroy(): void {
+    // Stop shaking
+    this.stopShaking();
+
     // Destroy component managers
     this.junkDetector.destroy();
     this.craftingManager.destroy();
@@ -277,5 +298,71 @@ export class CauldronManager {
     if (this.cauldronSprite) {
       this.cauldronSprite.destroy();
     }
+  }
+
+  /**
+   * Starts shaking the cauldron
+   */
+  private startShaking(): void {
+    // Stop any existing shake
+    this.stopShaking();
+
+    // Set up timer to shake the cauldron every 50ms
+    this.shakeTimer = this.scene.time.addEvent({
+      delay: 50,
+      callback: this.shakeUpdate,
+      callbackScope: this,
+      loop: true,
+    });
+  }
+
+  /**
+   * Updates the shake effect based on current temperature
+   */
+  private shakeUpdate(): void {
+    if (!this.isCraftingInProgress()) return;
+
+    // Update shake intensity based on current temperature
+    this.updateShakeIntensity();
+
+    // Apply shake effect
+    if (this.shakeIntensity > 0) {
+      const randX = (Math.random() * 2 - 1) * this.shakeIntensity;
+      const randY = (Math.random() * 2 - 1) * this.shakeIntensity;
+
+      this.cauldronSprite.setPosition(this.originalPosition.x + randX, this.originalPosition.y + randY);
+    }
+  }
+
+  /**
+   * Updates the shake intensity based on current temperature and range
+   */
+  private updateShakeIntensity(): void {
+    const range = this.getTemperatureRange();
+    if (!range) return;
+
+    const currentTemp = this.getCurrentTemperature();
+    const tempRange = range.max - range.min;
+    const currentProgress = (currentTemp - range.min) / tempRange;
+
+    // Shake intensity increases with temperature but is limited
+    this.shakeIntensity = Math.min(this.maxShakeIntensity, currentProgress * this.maxShakeIntensity);
+  }
+
+  /**
+   * Stops the cauldron from shaking
+   */
+  private stopShaking(): void {
+    if (this.shakeTimer) {
+      this.shakeTimer.destroy();
+      this.shakeTimer = null;
+    }
+
+    // Reset position to original
+    if (this.cauldronSprite && this.cauldronSprite.active) {
+      this.cauldronSprite.setPosition(this.originalPosition.x, this.originalPosition.y);
+    }
+
+    this.shakeIntensity = 0;
   }
 }
