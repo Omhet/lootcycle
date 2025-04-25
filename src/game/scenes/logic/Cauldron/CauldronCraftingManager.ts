@@ -42,19 +42,31 @@ export class CauldronCraftingManager {
   private setupSmokeParticles(): void {
     // Position above the cauldron
     const emitterX = this.cauldronSprite.x + 10;
-    const emitterY = this.cauldronSprite.y - 130;
+    const emitterY = this.cauldronSprite.y - 140;
 
     this.smokeParticles = this.scene.add.particles(emitterX, emitterY, "smoke", {
       frame: ["smoke_1.png", "smoke_2.png", "smoke_3.png"],
-      lifespan: { min: 2000, max: 4000 },
+      lifespan: { min: 2000, max: 6000 },
       speed: { min: 20, max: 40 },
-      scale: { start: 0.3, end: 1.5 },
+      scale: { start: 0.3, end: 2 },
       quantity: 1,
       frequency: -1, // explode mode
-      alpha: { start: 1, end: 0 },
+      alpha: { start: 0.9, end: 0 },
       angle: { min: 250, max: 290 },
       rotate: { min: -10, max: 10 },
       tint: 0xffffff,
+      gravityY: -30, // Negative gravity to make smoke naturally rise
+      maxVelocityY: 100, // Limit the maximum upward velocity
+    });
+
+    // Create a vertically aligned gravity well above the cauldron
+    // This will create a rising column effect for the smoke
+    this.smokeParticles.createGravityWell({
+      x: emitterX,
+      y: emitterY - 300, // Position well high above the cauldron
+      power: 0.5, // Gentle pull
+      epsilon: 100, // Wider radius of influence for column shape
+      gravity: 40, // Moderate pull strength
     });
 
     this.smokeParticles.setDepth(DepthLayers.Foreground + 1);
