@@ -254,8 +254,6 @@ export class CauldronManager {
 
     // Select a new random recipe for next crafting
     this.selectRandomRecipe();
-
-    // TODO: Create explosion effect
   }
 
   /**
