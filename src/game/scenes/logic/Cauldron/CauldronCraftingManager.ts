@@ -32,7 +32,6 @@ export class CauldronCraftingManager {
   constructor(scene: Scene, cauldronSprite: Phaser.Physics.Matter.Sprite) {
     this.scene = scene;
     this.cauldronSprite = cauldronSprite;
-    this.createTemperatureBar();
     this.setupSmokeParticles();
   }
 
@@ -193,8 +192,6 @@ export class CauldronCraftingManager {
     // Stop update loop
     this.scene.events.off("update", this.updateTemperature, this);
 
-    this.updateTemperatureBar();
-
     return finalTemperature;
   }
 
@@ -206,9 +203,6 @@ export class CauldronCraftingManager {
 
     // Increase temperature
     this.currentTemperature += this.temperatureIncreaseRate;
-
-    // Update visual elements
-    this.updateTemperatureBar();
 
     // Check if in ideal temperature range for smoke
     if (this.temperatureRange) {
