@@ -72,7 +72,8 @@ export class CraftedItemManager {
 
     // Set up timers to add each part with a random delay
     let currentIndex = 0;
-    const partAppearSound = this.scene.sound.add("part_appear", { volume: 0.6 });
+    const partAppearSound = this.scene.sound.add("part_appear");
+    const completionSound = this.scene.sound.add("crafted_loot_item");
 
     // Function to add the next part
     const addNextPart = () => {
@@ -83,8 +84,25 @@ export class CraftedItemManager {
       // Draw the part onto the render texture
       this.craftedItemRT.draw(detailInfo.sprite, centerX, centerY);
 
-      // Play sound effect when part appears
-      partAppearSound.play();
+      // Play appropriate sound effect when part appears with randomized properties
+      const isLastPart = currentIndex === detailsToDraw.length - 1;
+      if (isLastPart) {
+        // Play completion sound for the final part with slight randomization
+        const randomVolume = Phaser.Math.FloatBetween(0.55, 0.65);
+        const randomRate = Phaser.Math.FloatBetween(0.95, 1.05);
+        completionSound.play({
+          volume: randomVolume,
+          rate: randomRate,
+        });
+      } else {
+        // Play normal part appear sound for all other parts with slight randomization
+        const randomVolume = Phaser.Math.FloatBetween(0.55, 0.65);
+        const randomRate = Phaser.Math.FloatBetween(0.98, 1.02);
+        partAppearSound.play({
+          volume: randomVolume,
+          rate: randomRate,
+        });
+      }
 
       // Clean up the temporary sprite
       detailInfo.sprite.destroy();
