@@ -93,8 +93,7 @@ export class CraftedItemManager {
 
       // Schedule the next part if there are more
       if (currentIndex < detailsToDraw.length) {
-        // Random delay between 150ms and 450ms for each part
-        const randomDelay = Phaser.Math.Between(150, 450);
+        const randomDelay = Phaser.Math.Between(250, 650);
         this.scene.time.delayedCall(randomDelay, addNextPart);
       }
     };
