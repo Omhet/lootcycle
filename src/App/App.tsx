@@ -78,11 +78,10 @@ function App() {
   return (
     <div id="app">
       <PhaserGame ref={phaserRef} currentActiveScene={handleSceneChange} />
-
-      {currentSceneKey === "Game" && <CurrentRecipeContainer />}
-
       {/* UI Container */}
       <div id="uiContainer">
+        {currentSceneKey === "Game" && <CurrentRecipeContainer />}
+
         {/* Main Menu Container - Visible only when in MainMenu scene */}
         {currentSceneKey === "MainMenu" && (
           <div id="mainMenuContainer">

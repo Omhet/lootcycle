@@ -7,12 +7,11 @@
 }
 
 .current-recipe-card {
-  width: 128px;
-  height: 148px; /* 128px + room for label */
+  width: 8vmax;
   background-color: rgba(87, 68, 54, 0.8); /* Brown background with opacity */
   border: 2px solid #7b6e65;
   border-radius: 8px;
-  padding: 10px;
+  padding: 0.5vmax;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -20,8 +19,7 @@
 }
 
 .current-recipe-image {
-  width: 100px;
-  height: 100px;
+  width: 100%;
   object-fit: contain;
 }
 
