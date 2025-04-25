@@ -90,7 +90,7 @@
 }
 .lootDetailsContainer {
   width: 100%;
-  max-width: 40vmin;
+  max-width: 60vmin;
   display: flex;
   flex-direction: column;
   gap: 3vmin;

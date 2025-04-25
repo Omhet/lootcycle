@@ -53,7 +53,7 @@ const transformLootItemsToStallFormat = (lootItems: LootItem[]) => {
 
         return {
           lootDetailName: detail ? detail.name : `Detail ${detailId}`,
-          junkImageUrl: "/assets/game/details/junk-details-sprites.png",
+          junkImageUrl: junkPieceId ? `/assets/junk/${junkPieceId}.png` : undefined,
           junkPieceName,
         };
       }),

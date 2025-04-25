@@ -2,7 +2,7 @@ import s from "./LootDescription.module.css";
 
 type LootDetail = {
   lootDetailName: string;
-  junkImageUrl: string;
+  junkImageUrl?: string;
   junkPieceName?: string;
 };
 
@@ -26,9 +26,11 @@ export const LootDescription = ({ name, category, details }: LootDescriptionProp
               {item.lootDetailName}
               {item.junkPieceName && <span className={s.junkPieceName}> was crafted from {item.junkPieceName}</span>}
             </span>
-            <div className={s.junkImageContainer}>
-              <img className={s.junkImage} src={item.junkImageUrl} />
-            </div>
+            {item.junkImageUrl && (
+              <div className={s.junkImageContainer}>
+                <img className={s.junkImage} src={item.junkImageUrl} />
+              </div>
+            )}
           </div>
         ))}
       </div>
