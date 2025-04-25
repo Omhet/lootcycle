@@ -1,0 +1,62 @@
+{
+	"textures": [
+		{
+			"image": "furnace_fire.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 370,
+				"h": 152
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "furnace_fire_1.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 324,
+						"h": 288
+					},
+					"spriteSourceSize": {
+						"x": 15,
+						"y": 46,
+						"w": 183,
+						"h": 150
+					},
+					"frame": {
+						"x": 1,
+						"y": 1,
+						"w": 183,
+						"h": 150
+					}
+				},
+				{
+					"filename": "furnace_fire_2.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 324,
+						"h": 288
+					},
+					"spriteSourceSize": {
+						"x": 16,
+						"y": 45,
+						"w": 183,
+						"h": 150
+					},
+					"frame": {
+						"x": 186,
+						"y": 1,
+						"w": 183,
+						"h": 150
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:4b9ee61e59913afccbdb7c3af89dd2d2:7f0629cfcc5e65d24226ecd6beafdad4:ca6c2317a16682b48b96a8d053e3e777$"
+	}
+}

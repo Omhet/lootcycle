@@ -65,9 +65,13 @@ export class Preloader extends Scene {
 
     // Load furnace resource
     this.load.image("furnace", "game/elements/furnace.png");
+    this.load.atlas("furnace_fire", "game/elements/furnace_fire.png", "game/elements/furnace_fire.json");
 
     // Smoke
     this.load.atlas("smoke", "game/elements/smoke.png", "game/elements/smoke.json");
+
+    // Bubbles
+    this.load.atlas("bubbles", "game/elements/bubbles.png", "game/elements/bubbles.json");
 
     // Load pipe assets
     this.load.image("pipe_back", "game/elements/pipe_back.png");
