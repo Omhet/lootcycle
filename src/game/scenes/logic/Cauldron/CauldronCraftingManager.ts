@@ -16,7 +16,6 @@ export class CauldronCraftingManager {
 
   // Temperature tracking properties
   private currentTemperature: number = 0;
-  private defaultMaxTemperature: number = 200;
   private temperatureIncreaseRate: number = 0.5;
   private isCrafting: boolean = false;
   private temperatureRange: TemperatureRange | null = null;
@@ -35,27 +34,6 @@ export class CauldronCraftingManager {
     this.cauldronSprite = cauldronSprite;
     this.setupSmokeParticles();
     this.setupBubblesParticles();
-  }
-
-  /**
-   * Creates a temperature progress bar for visual feedback
-   */
-  private createTemperatureBar(): void {
-    // Create a temperature bar at the bottom of the screen
-    this.temperatureBar = this.scene.add.graphics();
-    this.temperatureBar.setDepth(DepthLayers.UI);
-
-    // Add temperature text display
-    this.temperatureText = this.scene.add.text(20, this.scene.cameras.main.height - 50, "Temperature: 20°C", {
-      fontFamily: "Arial",
-      fontSize: "16px",
-      color: "#ffffff",
-    });
-    this.temperatureText.setDepth(DepthLayers.UI);
-
-    // Update the temperature bar initially
-    this.updateTemperatureBar();
-    this.temperatureRange = { min: 50, max: this.defaultMaxTemperature }; // Set a default range for the bar
   }
 
   /**
@@ -83,25 +61,51 @@ export class CauldronCraftingManager {
   }
 
   private setupBubblesParticles(): void {
-    // Position above the cauldron
-    const emitterX = this.cauldronSprite.x + 10;
-    const emitterY = this.cauldronSprite.y - 130;
+    // Calculate positioning based on cauldron sprite
+    const cauldronX = this.cauldronSprite.x;
+    const cauldronY = this.cauldronSprite.y;
+    const cauldronWidth = this.cauldronSprite.width * 0.6; // Use 60% of width for emission zone
 
-    this.bubbleParticles = this.scene.add.particles(emitterX, emitterY, "bubbles", {
+    // Create an emission zone at the bottom of the cauldron
+    const emissionZone = new Phaser.Geom.Rectangle(
+      cauldronX - cauldronWidth / 2,
+      cauldronY - 145, // Slightly below the visual top of liquid
+      cauldronWidth,
+      20 // Height of emission zone
+    );
+
+    this.bubbleParticles = this.scene.add.particles(0, 0, "bubbles", {
       frame: ["bubble_1.png", "bubble_2.png", "bubble_3.png"],
-      lifespan: { min: 2000, max: 4000 },
-      speed: { min: 20, max: 40 },
-      scale: { start: 0.3, end: 1 },
-      quantity: 1,
-      frequency: 500,
-      alpha: { start: 1, end: 0 },
-      angle: { min: 250, max: 290 },
+      lifespan: { min: 500, max: 1800 },
+      speed: { min: 10, max: 30 },
+      scale: { start: 0.2, end: 0.9 },
+      quantity: 2,
+      frequency: 300,
+      alpha: { start: 0.8, end: 0 },
+      gravityY: -50, // Negative gravity to make bubbles rise
+      maxVelocityX: 50,
+      maxVelocityY: 100,
       rotate: { min: -10, max: 10 },
       tint: 0xffffff,
+      emitZone: {
+        type: "random",
+        source: emissionZone,
+        quantity: 8,
+        stepRate: 0,
+      },
+    });
+
+    // Create a subtle gravity well above the cauldron to make bubbles gather
+    this.bubbleParticles.createGravityWell({
+      x: cauldronX,
+      y: cauldronY - 220, // Well positioned above the cauldron
+      power: 0.8, // Subtle pull
+      epsilon: 100, // Radius of influence
+      gravity: 50, // Strength of the well
     });
 
     this.bubbleParticles.setDepth(DepthLayers.Foreground + 1);
-    this.bubbleParticles.start();
+    this.bubbleParticles.emitting = false; // Start with no emission
   }
 
   private changeSmokeEmission(intensity: number = 1): void {
@@ -123,69 +127,6 @@ export class CauldronCraftingManager {
   }
 
   /**
-   * Updates the temperature progress bar display
-   */
-  private updateTemperatureBar(): void {
-    const barWidth = 200;
-    const barHeight = 20;
-    const x = 20;
-    const y = this.scene.cameras.main.height - 30;
-
-    this.temperatureBar.clear();
-
-    // Background bar
-    this.temperatureBar.fillStyle(0x333333);
-    this.temperatureBar.fillRect(x, y, barWidth, barHeight);
-
-    // Determine the max temperature to use for scaling the UI
-    const maxTemp = this.temperatureRange ? Math.max(this.temperatureRange.max, this.defaultMaxTemperature) : this.defaultMaxTemperature;
-
-    // Temperature fill
-    const percentage = this.currentTemperature / maxTemp;
-    const fillWidth = barWidth * percentage;
-
-    // Choose color based on temperature range (if set)
-    let fillColor = 0x3498db; // Default blue
-
-    if (this.temperatureRange) {
-      // Calculate if current temperature is in the ideal range
-      if (this.currentTemperature >= this.temperatureRange.min && this.currentTemperature <= this.temperatureRange.max) {
-        fillColor = 0x2ecc71; // Green for good range
-      } else if (this.currentTemperature < this.temperatureRange.min) {
-        fillColor = 0x3498db; // Blue for too cold
-      } else {
-        fillColor = 0xe74c3c; // Red for too hot
-      }
-
-      // Draw range indicators on the bar
-      const minX = x + barWidth * (this.temperatureRange.min / maxTemp);
-      const maxX = x + barWidth * (this.temperatureRange.max / maxTemp);
-
-      // Draw range markers
-      this.temperatureBar.lineStyle(2, 0xf1c40f); // Yellow line
-      this.temperatureBar.beginPath();
-      this.temperatureBar.moveTo(minX, y - 5);
-      this.temperatureBar.lineTo(minX, y + barHeight + 5);
-      this.temperatureBar.moveTo(maxX, y - 5);
-      this.temperatureBar.lineTo(maxX, y + barHeight + 5);
-      this.temperatureBar.strokePath();
-    }
-
-    // Draw current fill
-    this.temperatureBar.fillStyle(fillColor);
-    this.temperatureBar.fillRect(x, y, fillWidth, barHeight);
-
-    // Update temperature text
-    if (this.temperatureRange) {
-      this.temperatureText.setText(
-        `Temperature: ${Math.floor(this.currentTemperature)}°C (Range: ${Math.floor(this.temperatureRange.min)}-${Math.floor(this.temperatureRange.max)}°C)`
-      );
-    } else {
-      this.temperatureText.setText(`Temperature: ${Math.floor(this.currentTemperature)}°C`);
-    }
-  }
-
-  /**
    * Starts the crafting process, increasing temperature over time
    */
   public startCrafting(temperatureRange: TemperatureRange, onTemperatureExceeded?: OnTemperatureExceededCallback): void {
@@ -197,6 +138,8 @@ export class CauldronCraftingManager {
 
     // Reset temperature to starting point
     this.currentTemperature = 0;
+
+    this.bubbleParticles.emitting = true;
 
     // Start update loop
     this.scene.events.on("update", this.updateTemperature, this);
@@ -212,6 +155,8 @@ export class CauldronCraftingManager {
 
     const finalTemperature = this.currentTemperature;
     this.currentTemperature = 0; // Reset temperature for next crafting session
+
+    this.bubbleParticles.emitting = false;
 
     // Stop update loop
     this.scene.events.off("update", this.updateTemperature, this);
