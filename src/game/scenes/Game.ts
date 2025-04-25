@@ -76,7 +76,7 @@ export class Game extends Scene {
       volume: 0.05,
       loop: true,
     });
-    this.backgroundMusic.play();
+    // this.backgroundMusic.play();
 
     // Instantiate Managers (Order might matter for dependencies or visual layering setup)
     this.backgroundManager = new BackgroundManager(this);
