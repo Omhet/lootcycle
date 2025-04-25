@@ -27,6 +27,7 @@ export class CauldronCraftingManager {
 
   // Smoke particles
   private smokeParticles: Phaser.GameObjects.Particles.ParticleEmitter | null = null;
+  private explosionSmokeParticles: Phaser.GameObjects.Particles.ParticleEmitter | null = null;
   bubbleParticles: Phaser.GameObjects.Particles.ParticleEmitter;
 
   constructor(scene: Scene, cauldronSprite: Phaser.Physics.Matter.Sprite) {
@@ -34,6 +35,34 @@ export class CauldronCraftingManager {
     this.cauldronSprite = cauldronSprite;
     this.setupSmokeParticles();
     this.setupBubblesParticles();
+    this.setupExplosionSmokeParticles();
+  }
+
+  /**
+   * Sets up the explosion smoke particle system for temperature exceeded effect
+   */
+  private setupExplosionSmokeParticles(): void {
+    // Position inside the cauldron
+    const emitterX = this.cauldronSprite.x;
+    const emitterY = this.cauldronSprite.y - 150;
+
+    this.explosionSmokeParticles = this.scene.add.particles(emitterX, emitterY, "smoke", {
+      frame: ["smoke_1.png", "smoke_2.png", "smoke_3.png"],
+      lifespan: { min: 800, max: 2000 },
+      speed: { min: 100, max: 200 },
+      scale: { start: 0.5, end: 3 },
+      quantity: 10,
+      frequency: -1, // explode mode - only emit when triggered
+      alpha: { start: 0.9, end: 0 },
+      angle: { min: 0, max: 360 }, // Emit in all directions
+      rotate: { min: -90, max: 90 },
+      tint: 0x111111, // Dark smoke
+      gravityY: -40, // Negative gravity to make smoke rise
+      blendMode: Phaser.BlendModes.MULTIPLY,
+    });
+
+    this.explosionSmokeParticles.setDepth(DepthLayers.Foreground + 2);
+    this.explosionSmokeParticles.stop(); // Start with particles disabled
   }
 
   /**
@@ -188,6 +217,9 @@ export class CauldronCraftingManager {
     // Check if in ideal temperature range for smoke
     if (this.temperatureRange) {
       if (this.currentTemperature > this.temperatureRange.max) {
+        // Trigger explosion effect
+        this.triggerExplosionEffect();
+
         // Notify the parent manager that temperature exceeded maximum
         if (this.onTemperatureExceeded) {
           this.onTemperatureExceeded();
@@ -202,6 +234,22 @@ export class CauldronCraftingManager {
       }
     }
   };
+
+  /**
+   * Triggers the explosion effect when temperature exceeds maximum
+   */
+  private triggerExplosionEffect(): void {
+    if (!this.explosionSmokeParticles) return;
+
+    // Emit a large burst of particles in all directions
+    this.explosionSmokeParticles.explode(30);
+
+    // Add camera shake for more impact
+    this.scene.cameras.main.shake(500, 0.01);
+
+    // You could also add a sound effect here
+    // this.scene.sound.play('explosion');
+  }
 
   /**
    * Calculates the smoke intensity based on how close the temperature is to the maximum range
