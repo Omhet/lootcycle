@@ -160,14 +160,13 @@
 }
 
 .emptyStateMessage {
+  margin: 0;
   font-size: 3vmin;
-  font-weight: bold;
-  color: #ebe6e1;
 }
 
 .emptyStateSubMessage {
+  margin: 0;
   font-size: 2vmin;
-  color: #d6cfc9;
 }
 
 .emptyDetailsMessage {
@@ -178,5 +177,4 @@
   justify-content: center;
   text-align: center;
   font-size: 2.5vmin;
-  color: #d6cfc9;
 }

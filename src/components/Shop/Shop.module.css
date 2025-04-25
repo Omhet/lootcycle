@@ -212,21 +212,21 @@
 
 /* Rarity colors for items */
 :global(.rarity-common) {
-  color: #b0b0b0;
+  color: #848484;
 }
 
 :global(.rarity-uncommon) {
-  color: #2cce2c;
+  color: #298729;
 }
 
 :global(.rarity-rare) {
-  color: #2c8ece;
+  color: #1482cc;
 }
 
 :global(.rarity-epic) {
-  color: #9b2cce;
+  color: #9720ce;
 }
 
 :global(.rarity-legendary) {
-  color: #e6cc2c;
+  color: #ddb30b;
 }
