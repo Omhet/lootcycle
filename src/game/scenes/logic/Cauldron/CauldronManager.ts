@@ -91,6 +91,13 @@ export class CauldronManager {
     console.log(`Selected recipe for next crafting: ${this.currentRecipeItemId}`);
   }
 
+  /**
+   * Returns the ID of the currently selected recipe
+   */
+  public getCurrentRecipeId(): string {
+    return this.currentRecipeItemId;
+  }
+
   // === Delegated JunkDetector methods ===
 
   /**
