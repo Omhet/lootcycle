@@ -28,11 +28,13 @@ export class CauldronCraftingManager {
 
   // Smoke particles
   private smokeParticles: Phaser.GameObjects.Particles.ParticleEmitter | null = null;
+  bubbleParticles: Phaser.GameObjects.Particles.ParticleEmitter;
 
   constructor(scene: Scene, cauldronSprite: Phaser.Physics.Matter.Sprite) {
     this.scene = scene;
     this.cauldronSprite = cauldronSprite;
     this.setupSmokeParticles();
+    this.setupBubblesParticles();
   }
 
   /**
@@ -78,6 +80,28 @@ export class CauldronCraftingManager {
     });
 
     this.smokeParticles.setDepth(DepthLayers.Foreground + 1);
+  }
+
+  private setupBubblesParticles(): void {
+    // Position above the cauldron
+    const emitterX = this.cauldronSprite.x + 10;
+    const emitterY = this.cauldronSprite.y - 130;
+
+    this.bubbleParticles = this.scene.add.particles(emitterX, emitterY, "bubbles", {
+      frame: ["bubble_1.png", "bubble_2.png", "bubble_3.png"],
+      lifespan: { min: 2000, max: 4000 },
+      speed: { min: 20, max: 40 },
+      scale: { start: 0.3, end: 1 },
+      quantity: 1,
+      frequency: 500,
+      alpha: { start: 1, end: 0 },
+      angle: { min: 250, max: 290 },
+      rotate: { min: -10, max: 10 },
+      tint: 0xffffff,
+    });
+
+    this.bubbleParticles.setDepth(DepthLayers.Foreground + 1);
+    this.bubbleParticles.start();
   }
 
   private changeSmokeEmission(intensity: number = 1): void {
