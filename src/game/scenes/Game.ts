@@ -49,6 +49,9 @@ export class Game extends Scene {
   private clawManager: ClawManager;
   private inputManager: InputManager; // Add InputManager
 
+  // Particle effects
+  private spotlightParticles: Phaser.GameObjects.Particles.ParticleEmitter | null = null;
+
   // Physics bodies (Scene specific)
   private groundHeight = 38;
   // @ts-ignore
@@ -197,6 +200,15 @@ export class Game extends Scene {
 
     if (result.item) {
       const craftedLootItem = result.item;
+
+      // Get the position of where the crafted item will be displayed
+      const centerX = this.cameras.main.width / 2;
+      const centerY = this.cameras.main.height / 2;
+
+      // Create the spotlight particle effect behind the item
+      this.createSpotlightEffect(centerX, centerY);
+
+      // Display the crafted item
       this.craftedItemManager.displayItem(craftedLootItem);
 
       // Emit event with crafting result
@@ -247,5 +259,36 @@ export class Game extends Scene {
     this.intakeManager.stopCrafting();
     this.furnaceManager.stopCrafting();
     EventBus.emit("crafting-failure", { reason: CraftingFailureReason.TooHighTemperature, message: "Temperature in cauldron exceeded" });
+  }
+
+  /**
+   * Create particle effects using spotlight_circle image that fades in and moves around
+   * This is displayed behind the crafted item for visual flair
+   */
+  private createSpotlightEffect(x: number, y: number): void {
+    // Clean up previous particles if they exist
+    if (this.spotlightParticles) {
+      this.spotlightParticles.destroy();
+    }
+
+    // Create new particle emitter for the spotlights
+    this.spotlightParticles = this.add.particles(0, 0, "spotlight_circle", {
+      x: x,
+      y: y,
+      lifespan: { min: 3000, max: 5000 },
+      scale: { start: 0.1, end: 0.6 },
+      alpha: { start: 1, end: 0 },
+      speed: { min: 20, max: 40 },
+      angle: { min: 0, max: 360 },
+      frequency: 200,
+      quantity: 1,
+      rotate: { min: -10, max: 10 },
+      // Let the particles move slightly in a circular pattern
+      moveToX: { min: x - 20, max: x + 20 },
+      moveToY: { min: y - 20, max: y + 20 },
+    });
+
+    // Set the depth to be just below the crafted item
+    this.spotlightParticles.setDepth(DepthLayers.UI - 1);
   }
 }
