@@ -1,47 +1,51 @@
 {
-    "name": "lootcycle",
-    "description": "This is a repo for a game made in less than 14 days for my favourite Gamedev.js (2025 Edition)",
-    "version": "0.0.1",
-    "author": "Possum Riot <hello@possumriot.com> (https://possumriot.com/)",
-    "license": "MIT",
-    "licenseUrl": "http://www.opensource.org/licenses/mit-license.php",
-    "type": "module",
-    "keywords": [
-        "phaser",
-        "phaser3",
-        "react",
-        "vite",
-        "typescript"
-    ],
-    "scripts": {
-        "dev": "node log.js dev & vite --config vite/config.dev.mjs",
-        "build": "node log.js build & vite build --config vite/config.prod.mjs",
-        "dev-nolog": "vite --config vite/config.dev.mjs",
-        "build-nolog": "vite build --config vite/config.prod.mjs"
-    },
-    "dependencies": {
-        "@types/file-saver": "^2.0.7",
-        "@types/jszip": "^3.4.1",
-        "file-saver": "^2.0.5",
-        "jszip": "^3.10.1",
-        "phaser": "3.88.2",
-        "react": "18.2.0",
-        "react-dom": "18.2.0",
-        "react-toastify": "^11.0.5",
-        "zustand": "^5.0.3"
-    },
-    "devDependencies": {
-        "@types/node": "^22.14.1",
-        "@types/react": "18.3.3",
-        "@types/react-dom": "18.3.0",
-        "@typescript-eslint/eslint-plugin": "7.13.1",
-        "@typescript-eslint/parser": "7.13.1",
-        "@vitejs/plugin-react": "4.3.1",
-        "eslint": "8.57.0",
-        "eslint-plugin-react-hooks": "4.6.2",
-        "eslint-plugin-react-refresh": "0.4.7",
-        "terser": "5.28.1",
-        "typescript": "5.2.2",
-        "vite": "5.3.1"
-    }
+  "name": "lootcycle",
+  "description": "This is a repo for a game made in less than 14 days for my favourite Gamedev.js (2025 Edition)",
+  "version": "0.0.1",
+  "author": "Possum Riot <hello@possumriot.com> (https://possumriot.com/)",
+  "license": "MIT",
+  "licenseUrl": "http://www.opensource.org/licenses/mit-license.php",
+  "type": "module",
+  "keywords": [
+    "phaser",
+    "phaser3",
+    "react",
+    "vite",
+    "typescript"
+  ],
+  "scripts": {
+    "dev": "node log.js dev & vite --config vite/config.dev.mjs",
+    "build": "node log.js build & vite build --config vite/config.prod.mjs",
+    "dev-nolog": "vite --config vite/config.dev.mjs",
+    "build-nolog": "vite build --config vite/config.prod.mjs",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@types/file-saver": "^2.0.7",
+    "@types/jszip": "^3.4.1",
+    "file-saver": "^2.0.5",
+    "jszip": "^3.10.1",
+    "phaser": "3.88.2",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-toastify": "^11.0.5",
+    "zustand": "^5.0.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.1",
+    "@types/react": "18.3.3",
+    "@types/react-dom": "18.3.0",
+    "@typescript-eslint/eslint-plugin": "7.13.1",
+    "@typescript-eslint/parser": "7.13.1",
+    "@vitejs/plugin-react": "4.3.1",
+    "eslint": "8.57.0",
+    "eslint-plugin-react-hooks": "4.6.2",
+    "eslint-plugin-react-refresh": "0.4.7",
+    "terser": "5.28.1",
+    "typescript": "5.2.2",
+    "vite": "5.3.1",
+    "vitest": "^1.1.0"
+  }
 }
+
