@@ -1,40 +1,48 @@
+.container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image: url("/assets/background_ui.png");
+  background-size: 100%;
+}
+
 .dayStartContainer {
-  background-color: rgba(30, 30, 30, 0.9);
-  border-radius: 8px;
-  padding: 2rem;
+  min-width: 50%;
+  background-color: #e4d3c4;
+  color: #2b201c;
+  padding: 5vmin 3vmin;
   display: flex;
   flex-direction: column;
-  gap: 2rem;
-  width: 400px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  gap: 5vmin;
+  border-radius: 8px;
+  border: 3px solid #574436;
 }
 
 .header {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.5rem;
+  gap: 2vmin;
 }
 
 .headerTitle {
-  font-size: 2.5rem;
-  font-weight: bold;
-  color: #f8f8f8;
+  font-size: 4vmin;
 }
 
 .button {
-  background-color: #4a934a;
-  color: white;
+  background-color: #ffbb34;
+  color: #2b201c;
   border: none;
   border-radius: 4px;
-  padding: 0.75rem 1.5rem;
-  font-size: 1.1rem;
-  font-weight: bold;
+  padding: 1vmin 2vmin;
+  font-size: 2.5vmin;
   cursor: pointer;
   transition: background-color 0.3s;
   align-self: center;
 }
 
 .button:hover {
-  background-color: #3a7a3a;
+  background-color: #ffaa00;
 }

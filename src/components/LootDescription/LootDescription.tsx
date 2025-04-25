@@ -10,14 +10,25 @@ type LootDescriptionProps = {
   name: string;
   category: string;
   details: LootDetail[];
+  price: number;
+  imageUrl: string;
 };
 
-export const LootDescription = ({ name, category, details }: LootDescriptionProps) => {
+export const LootDescription = ({ name, category, details, price, imageUrl }: LootDescriptionProps) => {
   return (
-    <div className={s.textContainer}>
-      <div className={s.titleContainer}>
-        <span className={s.name}>{name}</span>
-        <span className={s.category}>{category}</span>
+    <>
+      <div className={s.headerContainer}>
+        <div className={s.imageContainer}>
+          <img className={s.image} src={imageUrl} />
+          <div className={s.price}>
+            <span className={s.moneyBalanceValue}>{price}</span>
+            <img className={s.coinImage} src="/assets/junk/golden_coin.png" />
+          </div>
+        </div>
+        <div className={s.titleContainer}>
+          <span className={s.name}>{name}</span>
+          <span className={s.category}>{category}</span>
+        </div>
       </div>
       <div className={s.detailsContainer}>
         {details.map((item) => (
@@ -34,6 +45,6 @@ export const LootDescription = ({ name, category, details }: LootDescriptionProp
           </div>
         ))}
       </div>
-    </div>
+    </>
   );
 };

@@ -27,7 +27,10 @@ export const Shop = ({ recipes, upgrades, junkLicenses, balance, onBuy, onClose 
     <div className={s.shopContainer}>
       <div className={s.shopHeader}>
         <span className={s.shopHeaderTitle}>Shop</span>
-        <span>Balance: {balance}</span>
+        <div className={s.moneyBalance}>
+          <span className={s.moneyBalanceValue}>{balance}</span>
+          <img className={s.coinImage} src="/assets/junk/golden_coin.png" />
+        </div>
       </div>
       <div className={s.tabs}>
         <button className={`${s.tab} ${selectedTab === Tabs.RECIPES ? s.activeTab : ""}`} onClick={() => setSelectedTab(Tabs.RECIPES)}>
