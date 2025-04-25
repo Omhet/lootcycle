@@ -1,17 +1,4 @@
-import { JunkPiece, LootConfig, Quality, RecipeItemId } from "./craftModel";
-
-/**
- * Determines the quality level based on the sell price coefficient
- * @param sellPriceCoefficient The sell price coefficient of the junk piece
- * @returns The corresponding quality level
- */
-function determineQuality(sellPriceCoefficient: number): Quality {
-  if (sellPriceCoefficient < 0.5) return Quality.Worst;
-  if (sellPriceCoefficient < 1.0) return Quality.Bad;
-  if (sellPriceCoefficient < 1.5) return Quality.Good;
-  if (sellPriceCoefficient < 2.0) return Quality.Better;
-  return Quality.Best;
-}
+import { JunkPiece, LootConfig } from "./craftModel";
 
 /**
  * Calculates the current portion size based on the portion number and first portion size
@@ -77,21 +64,11 @@ function shuffleArray<T>(array: T[]): T[] {
 /**
  * Gets a portion of junk items based on player preferences and game settings
  * @param lootConfig The global loot configuration
- * @param favoriteRecipes The player's favorite recipe IDs
  * @param portionNumber The current portion number (starts at 1)
  * @param firstPortionSize The size of the first junk portion
- * @param qualityChanceLevel The level determining which quality chance table to use
- * @param rarityChanceLevel The level determining which rarity chance table to use
  * @returns An array of junk details for the player to collect
  */
-export function getJunkPortion(
-  lootConfig: LootConfig,
-  favoriteRecipes: RecipeItemId[],
-  portionNumber: number,
-  firstPortionSize: number,
-  qualityChanceLevel: number,
-  rarityChanceLevel: number
-): JunkPiece[] {
+export function getJunkPortion(lootConfig: LootConfig, portionNumber: number, firstPortionSize: number): JunkPiece[] {
   // Calculate the size of the current portion
   const portionSize = calculatePortionSize(portionNumber, firstPortionSize);
   if (portionSize <= 0) return [];

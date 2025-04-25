@@ -1,6 +1,6 @@
 import { Scene } from "phaser";
 import { lootConfig } from "../../../lib/craft/config";
-import { JunkPiece, RecipeItemId, RecipeItemType } from "../../../lib/craft/craftModel";
+import { JunkPiece } from "../../../lib/craft/craftModel";
 import { getJunkPortion } from "../../../lib/craft/getJunkPortion";
 import { EventBus } from "../../EventBus";
 import { CollisionCategories, CollisionMasks } from "../../physics/CollisionCategories";
@@ -145,27 +145,11 @@ export class JunkPileManager {
    * Generates a new junk portion based on current game state and adds it to junkPile
    */
   public generateJunkPortion(): void {
-    // Find recipe IDs for testing
-    // This finds the first recipe ID of a BladeWeapon type in the config
-    let recipeIds: RecipeItemId[] = [];
-
-    // Get the first available recipe from the config
-    for (const recipeType in lootConfig.recipeItems) {
-      const typedRecipeType = recipeType as RecipeItemType;
-      const recipes = lootConfig.recipeItems[typedRecipeType];
-      if (recipes && recipes.length > 0) {
-        recipeIds = recipes.slice(0, 1).map((recipe) => recipe.id);
-        break;
-      }
-    }
-
     // For demonstration, using hardcoded values with found recipe IDs
     const firstPortionSize = 60;
-    const qualityChanceLevel = 1;
-    const rarityChanceLevel = 1;
 
     // Generate the junk portion
-    const newJunkPortion = getJunkPortion(lootConfig, recipeIds, this.portionNumber, firstPortionSize, qualityChanceLevel, rarityChanceLevel);
+    const newJunkPortion = getJunkPortion(lootConfig, this.portionNumber, firstPortionSize);
 
     // Emit the junk-received event with the count of junk pieces
     EventBus.emit("junk-received", newJunkPortion.length);
@@ -199,7 +183,6 @@ export class JunkPileManager {
 
     console.log(`Generated junk portion #${this.portionNumber}:`, newJunkPortion);
     console.log(`Total junk pile size will be: ${this.junkPile.length + newJunkPortion.length}`);
-    console.log(`Using recipe IDs:`, recipeIds);
   }
 
   /**
