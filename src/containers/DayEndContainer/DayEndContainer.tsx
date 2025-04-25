@@ -23,6 +23,7 @@ export const DayEndContainer = () => {
         balance={balance}
         junkRecycled={dayStats.junkRecycled}
         junkBurnt={dayStats.junkBurnt}
+        junkReceived={dayStats.junkReceived}
         lootCrafted={dayStats.lootCrafted}
         lootScrewedUp={dayStats.lootScrewedUp}
         profit={dayStats.profit}

@@ -9,6 +9,7 @@ export interface DayStatistics {
   lootCrafted: number;
   lootScrewedUp: number;
   profit: number;
+  junkReceived: number;
 }
 
 // Default/empty statistics for a new day
@@ -18,6 +19,7 @@ export const defaultDayStatistics: DayStatistics = {
   lootCrafted: 0,
   lootScrewedUp: 0,
   profit: 0,
+  junkReceived: 0,
 };
 
 interface StatisticsState {
@@ -29,6 +31,7 @@ interface StatisticsState {
   incrementJunkBurnt: (amount?: number) => void;
   incrementLootCrafted: (amount?: number) => void;
   incrementLootScrewedUp: (amount?: number) => void;
+  incrementJunkReceived: (amount?: number) => void;
   addProfit: (amount: number) => void;
 
   // Get statistics for a specific day
@@ -67,11 +70,17 @@ export const useStatisticsStore = create<StatisticsState>((set, get) => {
       get().incrementLootScrewedUp(amount);
     };
 
+    // Handle junk received event
+    const handleJunkReceived = (amount = 1) => {
+      get().incrementJunkReceived(amount);
+    };
+
     // Subscribe to events
     EventBus.on("junk-recycled", handleJunkRecycled);
     EventBus.on("junk-burnt", handleJunkBurnt);
     EventBus.on("loot-crafted", handleLootCrafted);
     EventBus.on("loot-screwed-up", handleLootScrewedUp);
+    EventBus.on("junk-received", handleJunkReceived);
 
     // No need to clean up since the store persists for the lifetime of the application
   };
@@ -143,6 +152,22 @@ export const useStatisticsStore = create<StatisticsState>((set, get) => {
             [currentDay]: {
               ...currentStats,
               lootScrewedUp: currentStats.lootScrewedUp + amount,
+            },
+          },
+        };
+      });
+    },
+
+    incrementJunkReceived: (amount = 1) => {
+      const currentDay = getCurrentDay();
+      set((state) => {
+        const currentStats = state.statisticsByDay[currentDay] || { ...defaultDayStatistics };
+        return {
+          statisticsByDay: {
+            ...state.statisticsByDay,
+            [currentDay]: {
+              ...currentStats,
+              junkReceived: currentStats.junkReceived + amount,
             },
           },
         };

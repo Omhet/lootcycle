@@ -2,6 +2,7 @@ import { Scene } from "phaser";
 import { lootConfig } from "../../../lib/craft/config";
 import { JunkPiece, RecipeItemId, RecipeItemType } from "../../../lib/craft/craftModel";
 import { getJunkPortion } from "../../../lib/craft/getJunkPortion";
+import { EventBus } from "../../EventBus";
 import { CollisionCategories, CollisionMasks } from "../../physics/CollisionCategories";
 import { DepthLayers } from "../Game";
 
@@ -165,6 +166,9 @@ export class JunkPileManager {
 
     // Generate the junk portion
     const newJunkPortion = getJunkPortion(lootConfig, recipeIds, this.portionNumber, firstPortionSize, qualityChanceLevel, rarityChanceLevel);
+
+    // Emit the junk-received event with the count of junk pieces
+    EventBus.emit("junk-received", newJunkPortion.length);
 
     // Clear any existing spawn timers
     this.spawnTimers.forEach((timer) => timer.destroy());
