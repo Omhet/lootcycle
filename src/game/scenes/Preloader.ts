@@ -92,8 +92,10 @@ export class Preloader extends Scene {
       "game/elements/claw-parts-sprites.png",
       "game/elements/claw-parts-sprites.json"
     );
-
     this.load.json("clawPhysics", "game/elements/claw-parts-shapes.json"); // Load claw physics
+
+    // Sound effects
+    this.load.audio("part-appear", "sounds/part_appear.mp3"); // Sound for item part appearance
 
     this.load.image("axe_recipe", "recipes/axe.png");
     this.load.image("short_sword_recipe", "recipes/short_sword.png");

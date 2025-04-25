@@ -23,16 +23,17 @@ export class CraftedItemRenderer extends ImageRenderer {
   }
 
   /**
-   * Renders a given LootItem onto the provided RenderTexture.
-   * @param item The LootItem to render.
-   * @param targetRT The RenderTexture to draw onto.
-   * @param clearTexture Should the texture be cleared before drawing? Defaults to true.
+   * Prepares the parts of a loot item for rendering without actually drawing them.
+   * Used for gradual rendering of parts with animations.
+   *
+   * @param item The LootItem to prepare for rendering.
+   * @returns Array of RenderedDetailInfo objects ready for drawing.
    */
-  public renderToTexture(item: LootItem, targetRT: GameObjects.RenderTexture, clearTexture: boolean = true): void {
+  public prepareItemForRendering(item: LootItem): RenderedDetailInfo[] {
     const recipeItem = this.findRecipeItem(item.recipeId);
     if (!recipeItem) {
       console.error(`RecipeItem not found for id: ${item.recipeId}`);
-      return;
+      return [];
     }
 
     // Clear the detail map cache
@@ -42,7 +43,18 @@ export class CraftedItemRenderer extends ImageRenderer {
     const lootDetailMap = this.getLootDetailMap();
 
     // Prepare details for drawing - gather all sprites with their positions and zIndices
-    const detailsToDraw = this.prepareDetailsForDrawing(item, recipeItem, lootDetailMap);
+    return this.prepareDetailsForDrawing(item, recipeItem, lootDetailMap);
+  }
+
+  /**
+   * Renders a given LootItem onto the provided RenderTexture.
+   * @param item The LootItem to render.
+   * @param targetRT The RenderTexture to draw onto.
+   * @param clearTexture Should the texture be cleared before drawing? Defaults to true.
+   */
+  public renderToTexture(item: LootItem, targetRT: GameObjects.RenderTexture, clearTexture: boolean = true): void {
+    // Prepare details for drawing - gather all sprites with their positions and zIndices
+    const detailsToDraw = this.prepareItemForRendering(item);
 
     // Prepare the render texture
     this.prepareRenderTexture(targetRT, clearTexture);

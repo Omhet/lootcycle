@@ -46,16 +46,61 @@ export class CraftedItemManager {
   }
 
   /**
-   * Uses the CraftedItemRenderer to draw the current item onto the managed RenderTexture.
+   * Uses the CraftedItemRenderer to draw the current item onto the managed RenderTexture,
+   * with parts appearing one by one with random delays and sound effects.
    */
   private renderCraftedItem(): void {
     if (!this.craftedItem) return;
 
-    // Delegate rendering to the service
-    this.renderer.renderToTexture(this.craftedItem, this.craftedItemRT, true); // Pass the item and the target RT
+    // Clear any existing render texture content
+    this.craftedItemRT.clear();
 
-    // Any additional logic specific to the *display* in the Game scene can go here
-    // (e.g., triggering animations on the RT, scaling, etc.)
+    // Get the details to draw from the renderer, but don't draw them yet
+    const detailsToDraw = this.renderer.prepareItemForRendering(this.craftedItem);
+
+    if (detailsToDraw.length === 0) {
+      console.warn("No details to render for the crafted item");
+      return;
+    }
+
+    // Sort by zIndex for proper layering
+    detailsToDraw.sort((a, b) => a.zIndex - b.zIndex);
+
+    // Calculate center of the render texture for positioning
+    const centerX = this.craftedItemRT.width / 2;
+    const centerY = this.craftedItemRT.height / 2;
+
+    // Set up timers to add each part with a random delay
+    let currentIndex = 0;
+    const partAppearSound = this.scene.sound.add("part-appear", { volume: 0.6 });
+
+    // Function to add the next part
+    const addNextPart = () => {
+      if (currentIndex >= detailsToDraw.length) return;
+
+      const detailInfo = detailsToDraw[currentIndex];
+
+      // Draw the part onto the render texture
+      this.craftedItemRT.draw(detailInfo.sprite, centerX, centerY);
+
+      // Play sound effect when part appears
+      partAppearSound.play();
+
+      // Clean up the temporary sprite
+      detailInfo.sprite.destroy();
+
+      currentIndex++;
+
+      // Schedule the next part if there are more
+      if (currentIndex < detailsToDraw.length) {
+        // Random delay between 150ms and 450ms for each part
+        const randomDelay = Phaser.Math.Between(150, 450);
+        this.scene.time.delayedCall(randomDelay, addNextPart);
+      }
+    };
+
+    // Start the sequence
+    addNextPart();
   }
 
   /**
