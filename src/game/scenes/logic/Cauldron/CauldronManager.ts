@@ -247,6 +247,9 @@ export class CauldronManager {
     // You could add effects, sounds, or other feedback here
     console.log("Cauldron overheated! Junk pieces destroyed.");
 
+    // Notify the Game scene that temperature exceeded
+    EventBus.emit("temperature-exceeded");
+
     EventBus.emit("loot-screwed-up", 1);
 
     // Select a new random recipe for next crafting

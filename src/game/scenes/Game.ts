@@ -135,6 +135,7 @@ export class Game extends Scene {
     EventBus.on("toggle-claw", () => this.clawManager.toggleClaw());
     EventBus.on("claw-move-horizontal", this.moveClaw, this);
     EventBus.on("crafting-success-inspect-finish", this.craftingSuccessInspectFinish, this);
+    EventBus.on("temperature-exceeded", this.handleTemperatureExceeded, this);
     // Generate the initial junk portion
     this.junkPileManager.generateJunkPortion();
 
@@ -236,5 +237,15 @@ export class Game extends Scene {
     this.furnaceManager?.destroy();
     this.clawManager?.destroy();
     this.inputManager?.destroy();
+  }
+
+  /**
+   * Handles temperature exceeded event from the cauldron manager
+   */
+  private handleTemperatureExceeded(): void {
+    console.log("Game: Temperature exceeded, stopping all crafting");
+    this.intakeManager.stopCrafting();
+    this.furnaceManager.stopCrafting();
+    EventBus.emit("crafting-failure", { reason: CraftingFailureReason.TooHighTemperature, message: "Temperature in cauldron exceeded" });
   }
 }
