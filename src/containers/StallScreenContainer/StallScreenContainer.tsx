@@ -6,6 +6,7 @@ import { useGameFlowStore } from "../../store/useGameFlowStore";
 import { useMoneyStore } from "../../store/useMoneyStore";
 import { useScreenStore } from "../../store/useScreenStore";
 import { useStallStore } from "../../store/useStallStore";
+import { useStatisticsStore } from "../../store/useStatisticsStore";
 
 /**
  * Transforms LootItem[] from store into the format needed by the Stall component
@@ -83,6 +84,7 @@ export const StallScreenContainer = () => {
   const closeScreen = useScreenStore((state) => state.closeScreen);
   const { craftedLootItems, clearCraftedLootItems } = useStallStore();
   const { addMoney, balance } = useMoneyStore();
+  const { addProfit } = useStatisticsStore();
   const { endDay } = useGameFlowStore();
 
   // If no crafted items, use a fallback item for development
@@ -97,6 +99,7 @@ export const StallScreenContainer = () => {
     // Add money to player's balance
     if (totalValue > 0) {
       addMoney(totalValue);
+      addProfit(totalValue); // Add profit to statistics
     }
 
     // Clear the crafted items after selling

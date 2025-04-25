@@ -1,4 +1,5 @@
 import { Scene } from "phaser";
+import { EventBus } from "../../../EventBus";
 import { CollisionCategories, CollisionMasks } from "../../../physics/CollisionCategories";
 import { DepthLayers } from "../../Game";
 import { JunkPileItem } from "../JunkPileManager";
@@ -47,6 +48,13 @@ export class IntakeManager {
 
   public stopCrafting(): void {
     this.intakeSprite.setTexture("intake");
+
+    // When starting crafting, we're burning all junk pieces in the intake (the burning is visualised in Furnace, but actual logic is here)
+    const junkCount = this.getJunkPiecesCount();
+    if (junkCount > 0) {
+      EventBus.emit("junk-burnt", junkCount);
+    }
+
     this.destroyJunkPieces();
   }
 

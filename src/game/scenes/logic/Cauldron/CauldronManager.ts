@@ -2,6 +2,7 @@ import { Scene } from "phaser";
 import { lootConfig } from "../../../../lib/craft/config";
 import { craftLootItem, getTemperatureRangeForCrafting } from "../../../../lib/craft/craftLootItem";
 import { CraftingFailureReason, JunkPiece, LootItem, TemperatureRange } from "../../../../lib/craft/craftModel";
+import { EventBus } from "../../../EventBus";
 import { CollisionCategories, CollisionMasks } from "../../../physics/CollisionCategories";
 import { DepthLayers } from "../../Game";
 import { CauldronCraftingManager } from "./CauldronCraftingManager";
@@ -148,6 +149,7 @@ export class CauldronManager {
       };
     } else if (temperature > this.craftedItemTemperatureRange.max) {
       this.destroyJunkPieces();
+      EventBus.emit("loot-screwed-up", 1);
 
       return {
         success: false,
@@ -161,6 +163,8 @@ export class CauldronManager {
     // Successful crafting
     const junkPieces = this.getJunkPiecesInside();
 
+    EventBus.emit("junk-recycled", junkPieces.length);
+
     const craftedLootItem = craftLootItem({
       recipeItemId: this.currentRecipeItemId,
       junkPieces,
@@ -168,6 +172,8 @@ export class CauldronManager {
     });
 
     this.destroyJunkPieces();
+
+    EventBus.emit("loot-crafted", 1);
 
     return {
       success: true,
@@ -190,6 +196,8 @@ export class CauldronManager {
 
     // You could add effects, sounds, or other feedback here
     console.log("Cauldron overheated! Junk pieces destroyed.");
+
+    EventBus.emit("loot-screwed-up", 1);
 
     // TODO: Create explosion effect
   }
