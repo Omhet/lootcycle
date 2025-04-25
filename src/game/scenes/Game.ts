@@ -54,6 +54,7 @@ export class Game extends Scene {
 
   // Particle effects
   private spotlightParticles: Phaser.GameObjects.Particles.ParticleEmitter | null = null;
+  private spotlightBackground: Phaser.GameObjects.Graphics | null = null;
 
   // Physics bodies (Scene specific)
   private groundHeight = 38;
@@ -216,6 +217,9 @@ export class Game extends Scene {
 
       this.spotlightParticles?.setActive(true);
       this.spotlightParticles!.emitting = true;
+      // Show the background rectangle
+      this.spotlightBackground?.setVisible(true);
+
       // Display the crafted item
       this.craftedItemManager.displayItem(craftedLootItem);
 
@@ -230,6 +234,8 @@ export class Game extends Scene {
     this.junkPileManager.generateNextPortion();
     this.spotlightParticles!.emitting = false;
     this.spotlightParticles?.setActive(false);
+    // Hide the background rectangle
+    this.spotlightBackground?.setVisible(false);
   }
 
   update() {
@@ -289,6 +295,25 @@ export class Game extends Scene {
     if (this.spotlightParticles) {
       this.spotlightParticles.destroy();
     }
+
+    // Clean up previous background if it exists
+    if (this.spotlightBackground) {
+      this.spotlightBackground.destroy();
+    }
+
+    // Create the background rectangle with rounded corners using Graphics
+    this.spotlightBackground = this.add.graphics();
+    this.spotlightBackground.setDepth(DepthLayers.UI - 2);
+
+    // Draw a rounded rectangle
+    const rectWidth = 1080;
+    const rectHeight = 1000;
+    const cornerRadius = 40;
+
+    this.spotlightBackground.fillStyle(0x574436, 1);
+    this.spotlightBackground.fillRoundedRect(x - rectWidth / 2, y - rectHeight / 2, rectWidth, rectHeight, cornerRadius);
+
+    this.spotlightBackground.setVisible(false);
 
     // Create new particle emitter for the spotlights
     this.spotlightParticles = this.add.particles(0, 0, "spotlight_circle", {
