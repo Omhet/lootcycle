@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { ScreenContainer } from "../../components/ScreenContainer/ScreenContainer";
 import { Shop } from "../../components/Shop/Shop";
 import { generateJunkLicenses, generateRecipes, generateUpgrades } from "../../lib/shop/config";
@@ -11,9 +10,6 @@ export const ShopContainer = () => {
   const { balance } = useMoneyStore();
   const { purchasedRecipes, purchasedJunkLicenses, junkPipeUpgradeLevels, purchaseRecipe, purchaseJunkLicense, purchasePipeUpgrade } = usePlayerProgressStore();
 
-  // Use state to track when a purchase happens to force re-rendering
-  const [purchaseCounter, setPurchaseCounter] = useState(0);
-
   // Generate shop items using real game data
   const recipes = generateRecipes(purchasedRecipes);
   const junkLicenses = generateJunkLicenses(purchasedJunkLicenses);
@@ -25,22 +21,15 @@ export const ShopContainer = () => {
     const junkLicense = junkLicenses.find((license) => license.id === purchaseItemId);
     const upgrade = upgrades.find((upgrade) => upgrade.id === purchaseItemId);
 
-    let purchased = false;
-
     if (recipe) {
       // Use the store action to purchase the recipe
-      purchased = purchaseRecipe(recipe.id, recipe.price);
+      purchaseRecipe(recipe.id, recipe.price);
     } else if (junkLicense) {
       // Use the store action to purchase the junk license
-      purchased = purchaseJunkLicense(junkLicense.id, junkLicense.price);
+      purchaseJunkLicense(junkLicense.id, junkLicense.price);
     } else if (upgrade) {
       // Use the store action to purchase the junk pipe upgrade
-      purchased = purchasePipeUpgrade(upgrade.upgradeType, upgrade.level, upgrade.price);
-    }
-
-    // Increment the counter to force re-rendering when a purchase is made
-    if (purchased) {
-      setPurchaseCounter((prev) => prev + 1);
+      purchasePipeUpgrade(upgrade.upgradeType, upgrade.level, upgrade.price);
     }
   };
 
@@ -51,15 +40,7 @@ export const ShopContainer = () => {
 
   return (
     <ScreenContainer>
-      <Shop
-        recipes={recipes}
-        junkLicenses={junkLicenses}
-        upgrades={upgrades}
-        balance={balance}
-        onBuy={handleBuy}
-        onClose={handleClose}
-        key={`shop-${purchaseCounter}`}
-      />
+      <Shop recipes={recipes} junkLicenses={junkLicenses} upgrades={upgrades} balance={balance} onBuy={handleBuy} onClose={handleClose} />
     </ScreenContainer>
   );
 };
