@@ -9,10 +9,22 @@ type DayResultsProps = {
   lootCrafted: number;
   lootScrewedUp: number;
   profit: number;
+  junkLeft: number;
   onClose: () => void;
 };
 
-export const DayResults = ({ dayNumber, balance, junkRecycled, junkBurnt, junkReceived, lootCrafted, lootScrewedUp, profit, onClose }: DayResultsProps) => {
+export const DayResults = ({
+  dayNumber,
+  balance,
+  junkRecycled,
+  junkBurnt,
+  junkReceived,
+  lootCrafted,
+  lootScrewedUp,
+  profit,
+  junkLeft,
+  onClose,
+}: DayResultsProps) => {
   return (
     <div className={s.dayResultsContainer}>
       <div className={s.header}>
@@ -27,8 +39,9 @@ export const DayResults = ({ dayNumber, balance, junkRecycled, junkBurnt, junkRe
       <div className={s.stats}>
         <span>Junk received: {junkReceived} items</span>
         <span>Junk recycled: {junkRecycled} items</span>
-        <span>Profit: {profit} gold</span>
         <span>Junk burnt: {junkBurnt} items</span>
+        <span>Junk left: {junkLeft} items</span>
+        <span>Profit: {profit} gold</span>
         <span>Loot crafted: {lootCrafted} items</span>
         <span>Loot screwed up: {lootScrewedUp} items</span>
       </div>

@@ -27,6 +27,7 @@ export const DayEndContainer = () => {
         lootCrafted={dayStats.lootCrafted}
         lootScrewedUp={dayStats.lootScrewedUp}
         profit={dayStats.profit}
+        junkLeft={dayStats.junkLeft}
         onClose={handleClose}
       />
     </ScreenContainer>

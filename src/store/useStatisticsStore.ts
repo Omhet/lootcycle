@@ -10,6 +10,8 @@ export interface DayStatistics {
   lootScrewedUp: number;
   profit: number;
   junkReceived: number;
+  // Derived statistic: how much junk is left at the end of the day
+  readonly junkLeft: number;
 }
 
 // Default/empty statistics for a new day
@@ -20,6 +22,10 @@ export const defaultDayStatistics: DayStatistics = {
   lootScrewedUp: 0,
   profit: 0,
   junkReceived: 0,
+  // Getter for the derived statistic
+  get junkLeft() {
+    return this.junkReceived - (this.junkRecycled + this.junkBurnt);
+  },
 };
 
 interface StatisticsState {
@@ -191,7 +197,15 @@ export const useStatisticsStore = create<StatisticsState>((set, get) => {
     },
 
     getDayStatistics: (day) => {
-      return get().statisticsByDay[day] || { ...defaultDayStatistics };
+      const stats = get().statisticsByDay[day] || { ...defaultDayStatistics };
+
+      // Calculate junkLeft manually here to ensure it's always correct
+      const junkLeft = stats.junkReceived - (stats.junkRecycled + stats.junkBurnt);
+
+      return {
+        ...stats,
+        junkLeft,
+      };
     },
 
     initDayStatistics: (day) => {
