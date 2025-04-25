@@ -192,17 +192,17 @@ export const generateUpgrades = (purchasedUpgradeLevels: Record<string, number> 
       if (upgradeType === JunkPipeUpgradeType.PORTION_SIZE) {
         name = "Junk Portion Size";
         description = `Increases the amount of junk received at once from ${currentValue} to ${upgrade.value} pieces`;
-        imageUrl = "/assets/game/upgrades/portion_size.png";
+        imageUrl = "/assets/junk/green_fluff.png";
       } else if (upgradeType === JunkPipeUpgradeType.NEXT_PORTION_PERCENT) {
         name = "Next Portion Speed";
         description = `Increases the rate at which new junk arrives from ${currentValue * 100}% to ${upgrade.value * 100}%`;
-        imageUrl = "/assets/game/upgrades/portion_speed.png";
+        imageUrl = "/assets/junk/yellow_fluff.png";
       } else if (upgradeType === JunkPipeUpgradeType.FLUFF_RATIO) {
         const currentUsefulPercent = Math.round((1 - currentValue) * 100);
         const newUsefulPercent = Math.round((1 - upgrade.value) * 100);
         name = "Junk Quality";
         description = `Increases the quality of useful junk from ${currentUsefulPercent}% to ${newUsefulPercent}%`;
-        imageUrl = "/assets/game/upgrades/junk_quality.png";
+        imageUrl = "/assets/junk/blue_fluff.png";
       }
 
       upgrades.push({

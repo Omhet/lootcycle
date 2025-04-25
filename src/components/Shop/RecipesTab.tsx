@@ -10,6 +10,7 @@ type RecipesTabProps = {
 };
 
 export const RecipesTab = ({ recipes, balance, onBuy, onClose }: RecipesTabProps) => {
+  const [purchaseCounter, setPurchaseCounter] = useState(0);
   const [selectedItem, setSelectedItem] = useState<RecipeItem>(recipes[0]?.items[0] || null);
 
   if (!selectedItem || recipes.length === 0) {
@@ -24,6 +25,11 @@ export const RecipesTab = ({ recipes, balance, onBuy, onClose }: RecipesTabProps
       </div>
     );
   }
+
+  const handleBuy = (itemId: string) => {
+    setPurchaseCounter((prev) => prev + 1); // Increment the purchase counter
+    onBuy(itemId); // Call the onBuy function with the item ID
+  };
 
   return (
     <div className={s.tabContainer}>
@@ -46,7 +52,7 @@ export const RecipesTab = ({ recipes, balance, onBuy, onClose }: RecipesTabProps
           I got all I need, thanks!
         </button>
       </div>
-      <div className={s.recipeDetailsContainer}>
+      <div className={s.recipeDetailsContainer} key={purchaseCounter}>
         <div className={s.recipeTitleContainer}>
           <span className={s.recipeName}>{selectedItem.name}</span>
           <span className={s.recipeCategory}>{selectedItem.category} recipe</span>
@@ -60,7 +66,7 @@ export const RecipesTab = ({ recipes, balance, onBuy, onClose }: RecipesTabProps
         {selectedItem.alreadyBought ? (
           <div className={s.alreadyBought}>Already purchased</div>
         ) : (
-          <button className={`${s.button} ${s.buyButton}`} onClick={() => onBuy(selectedItem.id)} disabled={selectedItem.price > balance}>
+          <button className={`${s.button} ${s.buyButton}`} onClick={() => handleBuy(selectedItem.id)} disabled={selectedItem.price > balance}>
             {selectedItem.price > balance ? "Not enough money" : "Buy"} ({selectedItem.price}
             <img className={s.coinImage} src="/assets/junk/golden_coin.png" />){" "}
           </button>
