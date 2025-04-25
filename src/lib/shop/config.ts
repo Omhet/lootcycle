@@ -1,7 +1,7 @@
 // Shop configuration
 import { JunkLicense, RecipeCategory, RecipeItem, Upgrade } from "../../components/Shop/types";
 import { lootConfig } from "../craft/config";
-import { JunkPieceId, RecipeItemType } from "../craft/craftModel";
+import { JunkPieceId, RecipeDetailType, RecipeItemType } from "../craft/craftModel";
 
 // Base price multiplier for recipes (based on the item's base sell price)
 const RECIPE_PRICE_MULTIPLIER = 5;
@@ -48,6 +48,26 @@ export const generateRecipes = (purchasedRecipes: string[] = []): RecipeCategory
   return categories;
 };
 
+// Function to get a user-friendly name for a recipe detail type
+const getDetailTypeName = (detailType: RecipeDetailType): string => {
+  switch (detailType) {
+    case RecipeDetailType.Pommel:
+      return "Sword Pommel";
+    case RecipeDetailType.Grip:
+      return "Sword Grip";
+    case RecipeDetailType.Guard:
+      return "Sword Guard";
+    case RecipeDetailType.ShortSwordBlade:
+      return "Sword Blade";
+    case RecipeDetailType.AxeHandle:
+      return "Axe Handle";
+    case RecipeDetailType.AxeHead:
+      return "Axe Head";
+    default:
+      return detailType;
+  }
+};
+
 // Function to generate junk licenses for the shop
 export const generateJunkLicenses = (purchasedJunkLicenses: string[] = []): JunkLicense[] => {
   const junkLicenses: JunkLicense[] = [];
@@ -63,12 +83,20 @@ export const generateJunkLicenses = (purchasedJunkLicenses: string[] = []): Junk
         return; // Skip this junk piece
       }
 
+      // Create a description of what this junk piece can be crafted into
+      let craftingDescription = "";
+      if (junkPiece.suitableForRecipeDetails.length > 0) {
+        // Format the craftable items as an HTML unordered list for UI display
+        const detailNames = junkPiece.suitableForRecipeDetails.map(getDetailTypeName);
+        craftingDescription = `Can be used to craft:\n<ul>${detailNames.map((name) => `<li>${name}</li>`).join("")}</ul>`;
+      }
+
       junkLicenses.push({
         id: junkId as JunkPieceId,
         name: junkPiece.name,
         imageUrl: `/assets/junk/${junkId}.png`, // Assuming junk images follow this pattern
         price: JUNK_LICENSE_BASE_PRICE * RARITY_PRICE_MULTIPLIERS[junkPiece.rarity],
-        description: `License to collect ${junkPiece.name} from the junk pipe`,
+        description: `License to collect ${junkPiece.name} from the junk pipe. ${craftingDescription}`,
         alreadyBought: purchasedJunkLicenses.includes(junkId),
       });
     }

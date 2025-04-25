@@ -21,20 +21,21 @@ export const JunkLicensesTab = ({ junkLicenses, balance, onBuy, onClose }: JunkL
           </div>
         ))}
         <button className={s.button} onClick={onClose}>
-          I gol all I need, thanks!
+          I got all I need, thanks!
         </button>
       </div>
       <div className={s.recipeDetailsContainer}>
         <div className={s.recipeTitleContainer}>
           <span className={s.recipeName}>{selectedItem.name}</span>
         </div>
-        <span className={s.recipeDescription}>{selectedItem.description}</span>
+        <div className={s.recipeDescription} dangerouslySetInnerHTML={{ __html: selectedItem.description || "" }} />
         {selectedItem.price > balance && <span className={s.buttonReplacement}>Not enough gold {selectedItem.price}</span>}
-        {selectedItem.price <= balance && (
+        {selectedItem.price <= balance && !selectedItem.alreadyBought && (
           <button className={s.button} onClick={() => onBuy(selectedItem.id)}>
             Buy {selectedItem.price}
           </button>
         )}
+        {selectedItem.alreadyBought && <span className={s.buttonReplacement}>Already purchased</span>}
       </div>
     </div>
   );
