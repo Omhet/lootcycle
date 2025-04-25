@@ -59,7 +59,7 @@ export const usePlayerProgressStore = create<PlayerProgressState>((set, get) => 
   initEventListeners();
 
   return {
-    purchasedRecipes: [],
+    purchasedRecipes: ["axe"],
     purchasedJunkLicenses: [],
     junkPipeUpgradeLevels: {
       [JunkPipeUpgradeType.PORTION_SIZE]: 0,
@@ -175,7 +175,7 @@ export const usePlayerProgressStore = create<PlayerProgressState>((set, get) => 
 
     resetProgress: () => {
       set({
-        purchasedRecipes: [],
+        purchasedRecipes: ["axe"],
         purchasedJunkLicenses: [],
         junkPipeUpgradeLevels: {
           [JunkPipeUpgradeType.PORTION_SIZE]: 0,
