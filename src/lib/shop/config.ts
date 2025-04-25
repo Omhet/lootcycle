@@ -9,15 +9,6 @@ const RECIPE_PRICE_MULTIPLIER = 5;
 // Base price for junk licenses
 const JUNK_LICENSE_BASE_PRICE = 50;
 
-// Price multiplier based on rarity
-const RARITY_PRICE_MULTIPLIERS = {
-  common: 1,
-  uncommon: 2,
-  rare: 4,
-  epic: 8,
-  legendary: 16,
-};
-
 // Function to generate recipe items for the shop
 export const generateRecipes = (purchasedRecipes: string[] = []): RecipeCategory[] => {
   const categories: RecipeCategory[] = [];
@@ -126,7 +117,7 @@ export const generateJunkLicenses = (purchasedJunkLicenses: string[] = []): Junk
         id: junkId as JunkPieceId,
         name: junkPiece.name,
         imageUrl: `/assets/junk/${junkId}.png`, // Assuming junk images follow this pattern
-        price: JUNK_LICENSE_BASE_PRICE * RARITY_PRICE_MULTIPLIERS[junkPiece.rarity],
+        price: Math.floor(JUNK_LICENSE_BASE_PRICE * junkPiece.sellPriceCoefficient),
         description: `License to collect ${junkPiece.name} from the junk pipe.<br><br><b>Rarity:</b> ${rarityDisplay}<br>${sellPriceInfo}<br><br>${craftingDescription}`,
         alreadyBought: purchasedJunkLicenses.includes(junkId),
         sellPriceCoefficient: junkPiece.sellPriceCoefficient, // Store this for sorting
