@@ -49,7 +49,7 @@ export const generateRecipes = (purchasedRecipes: string[] = []): RecipeCategory
 };
 
 // Function to generate junk licenses for the shop
-export const generateJunkLicenses = (purchasedLicenses: string[] = []): JunkLicense[] => {
+export const generateJunkLicenses = (purchasedJunkLicenses: string[] = []): JunkLicense[] => {
   const junkLicenses: JunkLicense[] = [];
 
   // Process all junk pieces
@@ -69,7 +69,7 @@ export const generateJunkLicenses = (purchasedLicenses: string[] = []): JunkLice
         imageUrl: `/assets/junk/${junkId}.png`, // Assuming junk images follow this pattern
         price: JUNK_LICENSE_BASE_PRICE * RARITY_PRICE_MULTIPLIERS[junkPiece.rarity],
         description: `License to collect ${junkPiece.name} from the junk pipe`,
-        alreadyBought: purchasedLicenses.includes(junkId),
+        alreadyBought: purchasedJunkLicenses.includes(junkId),
       });
     }
   });
@@ -128,6 +128,7 @@ export const generateUpgrades = (purchasedUpgradeLevels: Record<string, number> 
 
     if (nextLevel < levels.length) {
       const upgrade = levels[nextLevel];
+      const currentValue = levels[currentLevel].value;
 
       let name = "";
       let description = "";
@@ -136,16 +137,17 @@ export const generateUpgrades = (purchasedUpgradeLevels: Record<string, number> 
       // Set name, description and image based on upgrade type
       if (upgradeType === JunkPipeUpgradeType.PORTION_SIZE) {
         name = "Junk Portion Size";
-        description = `Increases the amount of junk received at once to ${upgrade.value} pieces`;
+        description = `Increases the amount of junk received at once from ${currentValue} to ${upgrade.value} pieces`;
         imageUrl = "/assets/game/upgrades/portion_size.png";
       } else if (upgradeType === JunkPipeUpgradeType.NEXT_PORTION_PERCENT) {
         name = "Next Portion Speed";
-        description = `Increases the rate at which new junk arrives to ${upgrade.value * 100}%`;
+        description = `Increases the rate at which new junk arrives from ${currentValue * 100}% to ${upgrade.value * 100}%`;
         imageUrl = "/assets/game/upgrades/portion_speed.png";
       } else if (upgradeType === JunkPipeUpgradeType.FLUFF_RATIO) {
-        const usefulPercent = Math.round((1 - upgrade.value) * 100);
+        const currentUsefulPercent = Math.round((1 - currentValue) * 100);
+        const newUsefulPercent = Math.round((1 - upgrade.value) * 100);
         name = "Junk Quality";
-        description = `Increases the quality of junk to ${usefulPercent}% useful items`;
+        description = `Increases the quality of useful junk from ${currentUsefulPercent}% to ${newUsefulPercent}%`;
         imageUrl = "/assets/game/upgrades/junk_quality.png";
       }
 
