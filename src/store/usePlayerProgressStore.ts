@@ -60,7 +60,7 @@ export const usePlayerProgressStore = create<PlayerProgressState>((set, get) => 
 
   return {
     purchasedRecipes: ["axe"],
-    purchasedJunkLicenses: [],
+    purchasedJunkLicenses: ["bone"],
     junkPipeUpgradeLevels: {
       [JunkPipeUpgradeType.PORTION_SIZE]: 0,
       [JunkPipeUpgradeType.NEXT_PORTION_PERCENT]: 0,
@@ -176,7 +176,7 @@ export const usePlayerProgressStore = create<PlayerProgressState>((set, get) => 
     resetProgress: () => {
       set({
         purchasedRecipes: ["axe"],
-        purchasedJunkLicenses: [],
+        purchasedJunkLicenses: ["bone"],
         junkPipeUpgradeLevels: {
           [JunkPipeUpgradeType.PORTION_SIZE]: 0,
           [JunkPipeUpgradeType.NEXT_PORTION_PERCENT]: 0,
