@@ -37,7 +37,7 @@ export const useMoneyStore = create<MoneyState>((set) => {
   initEventListeners();
 
   return {
-    balance: 0,
+    balance: 500,
 
     addMoney: (amount) => {
       if (amount <= 0) return;
