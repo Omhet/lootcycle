@@ -24,7 +24,7 @@ registerRecipeItem(RecipeItemType.Axe, {
       },
     },
   ],
-  baseSellPrice: 5,
+  baseSellPrice: 30,
   perfectTemperature: 500,
   baseTemperatureOffset: 200,
 });

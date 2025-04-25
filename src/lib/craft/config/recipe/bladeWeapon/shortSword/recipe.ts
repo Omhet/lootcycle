@@ -24,7 +24,7 @@ registerRecipeItem(RecipeItemType.BladeWeapon, {
       },
     },
   ],
-  baseSellPrice: 10,
+  baseSellPrice: 50,
   perfectTemperature: 500,
   baseTemperatureOffset: 200,
 });
