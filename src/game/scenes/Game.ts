@@ -214,6 +214,7 @@ export class Game extends Scene {
     if (result.item) {
       const craftedLootItem = result.item;
 
+      this.spotlightParticles?.setActive(true);
       this.spotlightParticles!.emitting = true;
       // Display the crafted item
       this.craftedItemManager.displayItem(craftedLootItem);
@@ -228,6 +229,7 @@ export class Game extends Scene {
     this.craftedItemManager.clearDisplay();
     this.junkPileManager.generateNextPortion();
     this.spotlightParticles!.emitting = false;
+    this.spotlightParticles?.setActive(false);
   }
 
   update() {
