@@ -68,6 +68,33 @@ const getDetailTypeName = (detailType: RecipeDetailType): string => {
   }
 };
 
+// Function to format rarity with proper capitalization and color tags
+const formatRarity = (rarity: string): string => {
+  const capitalizedRarity = rarity.charAt(0).toUpperCase() + rarity.slice(1).toLowerCase();
+
+  // Add color class based on rarity
+  let colorClass = "";
+  switch (rarity) {
+    case "common":
+      colorClass = "rarity-common";
+      break;
+    case "uncommon":
+      colorClass = "rarity-uncommon";
+      break;
+    case "rare":
+      colorClass = "rarity-rare";
+      break;
+    case "epic":
+      colorClass = "rarity-epic";
+      break;
+    case "legendary":
+      colorClass = "rarity-legendary";
+      break;
+  }
+
+  return `<span class="${colorClass}">${capitalizedRarity}</span>`;
+};
+
 // Function to generate junk licenses for the shop
 export const generateJunkLicenses = (purchasedJunkLicenses: string[] = []): JunkLicense[] => {
   const junkLicenses: JunkLicense[] = [];
@@ -91,16 +118,24 @@ export const generateJunkLicenses = (purchasedJunkLicenses: string[] = []): Junk
         craftingDescription = `Can be used to craft:\n<ul>${detailNames.map((name) => `<li>${name}</li>`).join("")}</ul>`;
       }
 
+      // Format the rarity and sell price information
+      const rarityDisplay = formatRarity(junkPiece.rarity);
+      const sellPriceInfo = `<b>Sell Value:</b> ${junkPiece.sellPriceCoefficient}x base price`;
+
       junkLicenses.push({
         id: junkId as JunkPieceId,
         name: junkPiece.name,
         imageUrl: `/assets/junk/${junkId}.png`, // Assuming junk images follow this pattern
         price: JUNK_LICENSE_BASE_PRICE * RARITY_PRICE_MULTIPLIERS[junkPiece.rarity],
-        description: `License to collect ${junkPiece.name} from the junk pipe. ${craftingDescription}`,
+        description: `License to collect ${junkPiece.name} from the junk pipe.<br><br><b>Rarity:</b> ${rarityDisplay}<br>${sellPriceInfo}<br><br>${craftingDescription}`,
         alreadyBought: purchasedJunkLicenses.includes(junkId),
+        sellPriceCoefficient: junkPiece.sellPriceCoefficient, // Store this for sorting
       });
     }
   });
+
+  // Sort junk licenses by sell price coefficient (ascending)
+  junkLicenses.sort((a, b) => a.sellPriceCoefficient - b.sellPriceCoefficient);
 
   return junkLicenses;
 };

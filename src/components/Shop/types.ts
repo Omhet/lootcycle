@@ -5,6 +5,7 @@ export type JunkLicense = {
   price: number;
   description?: string;
   alreadyBought: boolean;
+  sellPriceCoefficient: number; // Added for sorting
 };
 
 export type Upgrade = {

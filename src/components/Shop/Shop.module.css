@@ -180,3 +180,24 @@
   font-size: 2.5vmin;
   text-align: center;
 }
+
+/* Rarity colors for items */
+:global(.rarity-common) {
+  color: #b0b0b0;
+}
+
+:global(.rarity-uncommon) {
+  color: #2cce2c;
+}
+
+:global(.rarity-rare) {
+  color: #2c8ece;
+}
+
+:global(.rarity-epic) {
+  color: #9b2cce;
+}
+
+:global(.rarity-legendary) {
+  color: #e6cc2c;
+}
