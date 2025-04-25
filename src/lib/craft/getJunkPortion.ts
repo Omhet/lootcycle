@@ -2,15 +2,16 @@ import { JunkPiece, LootConfig } from "./craftModel";
 
 /**
  * Calculates the current portion size based on the portion number and first portion size
- * with a decrease factor of 0.8 for each subsequent portion
+ * with a decrease factor based on player upgrades
  * @param portionNumber The current portion number (starts at 1)
  * @param firstPortionSize The size of the first portion
+ * @param nextPortionPercentage The percentage of items carried over to next portion (from upgrades)
  * @returns The calculated size of the current portion
  */
-function calculatePortionSize(portionNumber: number, firstPortionSize: number): number {
+function calculatePortionSize(portionNumber: number, firstPortionSize: number, nextPortionPercentage: number = 0.3): number {
   let size = firstPortionSize;
   for (let i = 1; i < portionNumber; i++) {
-    size = Math.floor(size * 0.3);
+    size = Math.floor(size * nextPortionPercentage);
   }
   return size;
 }
@@ -65,12 +66,20 @@ function shuffleArray<T>(array: T[]): T[] {
  * Gets a portion of junk items based on player preferences and game settings
  * @param lootConfig The global loot configuration
  * @param portionNumber The current portion number (starts at 1)
- * @param firstPortionSize The size of the first junk portion
+ * @param firstPortionSize The size of the first junk portion (from player upgrades)
+ * @param fluffRatio The ratio of generic junk to specific junk (from player upgrades)
+ * @param nextPortionPercentage The percentage of items carried over to next portion (from upgrades)
  * @returns An array of junk details for the player to collect
  */
-export function getJunkPortion(lootConfig: LootConfig, portionNumber: number, firstPortionSize: number): JunkPiece[] {
-  // Calculate the size of the current portion
-  const portionSize = calculatePortionSize(portionNumber, firstPortionSize);
+export function getJunkPortion(
+  lootConfig: LootConfig,
+  portionNumber: number,
+  firstPortionSize: number,
+  fluffRatio: number = 0.95,
+  nextPortionPercentage: number = 0.3
+): JunkPiece[] {
+  // Calculate the size of the current portion using the player's next portion percentage upgrade
+  const portionSize = calculatePortionSize(portionNumber, firstPortionSize, nextPortionPercentage);
   if (portionSize <= 0) return [];
 
   // Get all junk details from the config
@@ -83,8 +92,8 @@ export function getJunkPortion(lootConfig: LootConfig, portionNumber: number, fi
   const genericJunk = alljunkPieces.filter((junk) => junk.suitableForRecipeDetails.length === 0);
   const recipeSpecificJunk = alljunkPieces.filter((junk) => junk.suitableForRecipeDetails.length > 0);
 
-  // Calculate how many of each type to include
-  const genericJunkCount = Math.round(portionSize * 0.95);
+  // Calculate how many of each type to include based on the player's fluff ratio upgrade
+  const genericJunkCount = Math.round(portionSize * fluffRatio);
   const recipeSpecificJunkCount = portionSize - genericJunkCount;
 
   const finalPortion: JunkPiece[] = [];
