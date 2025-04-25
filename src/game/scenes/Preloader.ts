@@ -90,6 +90,9 @@ export class Preloader extends Scene {
     );
 
     this.load.json("clawPhysics", "game/elements/claw-parts-shapes.json"); // Load claw physics
+
+    this.load.image("axe_recipe", "recipes/axe.png");
+    this.load.image("short_sword_recipe", "recipes/short_sword.png");
   }
 
   create() {
