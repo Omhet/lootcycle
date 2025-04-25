@@ -37,6 +37,9 @@ export class Game extends Scene {
   camera: Phaser.Cameras.Scene2D.Camera;
   gameText: Phaser.GameObjects.Text;
 
+  // Background music
+  private backgroundMusic: Phaser.Sound.BaseSound;
+
   // Game managers
   private backgroundManager: BackgroundManager;
   private pipeManager: PipeManager;
@@ -66,6 +69,13 @@ export class Game extends Scene {
 
   create() {
     this.camera = this.cameras.main;
+
+    // Initialize background music
+    this.backgroundMusic = this.sound.add("main_ost", {
+      volume: 0.5,
+      loop: true,
+    });
+    this.backgroundMusic.play();
 
     // Instantiate Managers (Order might matter for dependencies or visual layering setup)
     this.backgroundManager = new BackgroundManager(this);
@@ -147,6 +157,9 @@ export class Game extends Scene {
       this.shutdown();
     });
 
+    // Create the spotlight particle effect behind the item
+    this.setupSpotlightEffect();
+
     EventBus.emit("current-scene-ready", this);
   }
 
@@ -201,13 +214,7 @@ export class Game extends Scene {
     if (result.item) {
       const craftedLootItem = result.item;
 
-      // Get the position of where the crafted item will be displayed
-      const centerX = this.cameras.main.width / 2;
-      const centerY = this.cameras.main.height / 2;
-
-      // Create the spotlight particle effect behind the item
-      this.createSpotlightEffect(centerX, centerY);
-
+      this.spotlightParticles!.emitting = true;
       // Display the crafted item
       this.craftedItemManager.displayItem(craftedLootItem);
 
@@ -220,6 +227,7 @@ export class Game extends Scene {
   craftingSuccessInspectFinish() {
     this.craftedItemManager.clearDisplay();
     this.junkPileManager.generateNextPortion();
+    this.spotlightParticles!.emitting = false;
   }
 
   update() {
@@ -233,6 +241,11 @@ export class Game extends Scene {
    */
   private shutdown(): void {
     console.log("Game scene shutting down...");
+
+    // Stop background music
+    if (this.backgroundMusic) {
+      this.backgroundMusic.stop();
+    }
 
     // Remove event listeners
     EventBus.off("toggle-crafting", this.toggleCrafting, this);
@@ -265,7 +278,11 @@ export class Game extends Scene {
    * Create particle effects using spotlight_circle image that fades in and moves around
    * This is displayed behind the crafted item for visual flair
    */
-  private createSpotlightEffect(x: number, y: number): void {
+  private setupSpotlightEffect(): void {
+    // Get the position of where the crafted item will be displayed
+    const x = this.cameras.main.width / 2;
+    const y = this.cameras.main.height / 2;
+
     // Clean up previous particles if they exist
     if (this.spotlightParticles) {
       this.spotlightParticles.destroy();
@@ -290,5 +307,7 @@ export class Game extends Scene {
 
     // Set the depth to be just below the crafted item
     this.spotlightParticles.setDepth(DepthLayers.UI - 1);
+
+    this.spotlightParticles.emitting = false;
   }
 }

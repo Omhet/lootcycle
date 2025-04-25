@@ -116,8 +116,9 @@ export class CraftedItemManager {
       }
     };
 
-    // Start the sequence
-    addNextPart();
+    // Start the sequence with an initial random delay for the first part too
+    const initialRandomDelay = Phaser.Math.Between(500, 800);
+    this.scene.time.delayedCall(initialRandomDelay, addNextPart);
   }
 
   /**
