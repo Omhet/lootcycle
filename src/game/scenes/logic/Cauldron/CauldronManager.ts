@@ -342,11 +342,25 @@ export class CauldronManager {
     if (!range) return;
 
     const currentTemp = this.getCurrentTemperature();
-    const tempRange = range.max - range.min;
-    const currentProgress = (currentTemp - range.min) / tempRange;
 
-    // Shake intensity increases with temperature but is limited
-    this.shakeIntensity = Math.min(this.maxShakeIntensity, currentProgress * this.maxShakeIntensity);
+    // Start with a small base intensity (20% of max) from temperature 0
+    const baseIntensity = 0.2 * this.maxShakeIntensity;
+
+    // Calculate additional intensity based on temperature
+    let additionalIntensity = 0;
+
+    if (currentTemp < range.min) {
+      // Before min: gradually increase from 0 to 30% of max intensity
+      const preRangeProgress = currentTemp / range.min;
+      additionalIntensity = preRangeProgress * 0.3 * this.maxShakeIntensity;
+    } else {
+      // From min to max: increase from 30% to 100% of max intensity
+      const rangeProgress = Math.min(1, (currentTemp - range.min) / (range.max - range.min));
+      additionalIntensity = 0.3 * this.maxShakeIntensity + rangeProgress * 0.5 * this.maxShakeIntensity;
+    }
+
+    // Combined intensity (base + additional), capped at max
+    this.shakeIntensity = Math.min(this.maxShakeIntensity, baseIntensity + additionalIntensity);
   }
 
   /**
