@@ -86,7 +86,7 @@ registerJunkPiece("golden_ring", {
   name: "Golden Ring",
   rarity: Rarity.Rare,
   durability: Durability.Medium,
-  sellPriceCoefficient: 2,
+  sellPriceCoefficient: 3,
   temperatureCoefficient: 1.5,
 });
 
@@ -215,7 +215,7 @@ registerJunkPiece("golden_coin", {
   name: "Golden Coin",
   rarity: Rarity.Rare,
   durability: Durability.Medium,
-  sellPriceCoefficient: 1.8,
+  sellPriceCoefficient: 2.5,
   temperatureCoefficient: 1.5,
 });
 
@@ -230,7 +230,7 @@ registerJunkPiece("silver_coin", {
   name: "Silver Coin",
   rarity: Rarity.Uncommon,
   durability: Durability.Medium,
-  sellPriceCoefficient: 1.3,
+  sellPriceCoefficient: 1.8,
   temperatureCoefficient: 1.2,
 });
 
@@ -275,7 +275,7 @@ registerJunkPiece("silver_ring", {
   name: "Silver Ring",
   rarity: Rarity.Uncommon,
   durability: Durability.Medium,
-  sellPriceCoefficient: 1.5,
+  sellPriceCoefficient: 2,
   temperatureCoefficient: 1.2,
 });
 
