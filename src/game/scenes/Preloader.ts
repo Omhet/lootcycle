@@ -99,6 +99,8 @@ export class Preloader extends Scene {
 
     this.load.image("axe_recipe", "recipes/axe.png");
     this.load.image("short_sword_recipe", "recipes/short_sword.png");
+
+    this.load.image("spotlight_circle", "game/elements/spotlight_circle.png");
   }
 
   create() {
