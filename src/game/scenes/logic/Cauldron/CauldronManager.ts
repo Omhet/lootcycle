@@ -89,6 +89,9 @@ export class CauldronManager {
     }
 
     console.log(`Selected recipe for next crafting: ${this.currentRecipeItemId}`);
+
+    // Emit an event to notify the craft store about the recipe selection
+    EventBus.emit("recipe-selected", this.currentRecipeItemId);
   }
 
   /**

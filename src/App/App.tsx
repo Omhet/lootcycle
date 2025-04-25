@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { CurrentRecipeContainer } from "../containers/CurrentRecipe/CurrentRecipeContainer";
 import { DayEndContainer } from "../containers/DayEndContainer/DayEndContainer";
 import { DayStartContainer } from "../containers/DayStartContainer/DayStartContainer";
 import { NewLootInfoContainer } from "../containers/NewLootInfoContainer/NewLootInfoContainer";
@@ -77,6 +78,9 @@ function App() {
   return (
     <div id="app">
       <PhaserGame ref={phaserRef} currentActiveScene={handleSceneChange} />
+
+      {currentSceneKey === "Game" && <CurrentRecipeContainer />}
+
       {/* UI Container */}
       <div id="uiContainer">
         {/* Main Menu Container - Visible only when in MainMenu scene */}

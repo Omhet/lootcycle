@@ -4,8 +4,10 @@ import { LootItem } from "../lib/craft/craftModel";
 
 interface CraftState {
   lastCraftedItem: LootItem | null;
+  currentRecipeId: string | null;
   setLastCraftedItem: (item: LootItem) => void;
   clearLastCraftedItem: () => void;
+  setCurrentRecipeId: (recipeId: string) => void;
   initEventListeners: () => void;
 }
 
@@ -20,8 +22,14 @@ export const useCraftStore = create<CraftState>((set) => {
       EventBus.emit("open-screen", "newLootInfo");
     };
 
-    // Subscribe to the crafting-success event
+    // Handler for recipe selection updates from the game
+    const handleRecipeSelected = (recipeId: string) => {
+      set({ currentRecipeId: recipeId });
+    };
+
+    // Subscribe to events
     EventBus.on("crafting-success", handleCraftingSuccess);
+    EventBus.on("recipe-selected", handleRecipeSelected);
 
     // No need to clean up since the store persists for the lifetime of the application
   };
@@ -31,6 +39,7 @@ export const useCraftStore = create<CraftState>((set) => {
 
   return {
     lastCraftedItem: null,
+    currentRecipeId: null,
 
     setLastCraftedItem: (item) => {
       set({ lastCraftedItem: item });
@@ -38,6 +47,10 @@ export const useCraftStore = create<CraftState>((set) => {
 
     clearLastCraftedItem: () => {
       set({ lastCraftedItem: null });
+    },
+
+    setCurrentRecipeId: (recipeId) => {
+      set({ currentRecipeId: recipeId });
     },
 
     // Expose the initialization function for potential reuse

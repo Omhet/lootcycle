@@ -1,0 +1,34 @@
+.current-recipe-container {
+  position: absolute;
+  left: 20px;
+  bottom: 20px;
+  z-index: 100;
+  pointer-events: none; /* Let clicks pass through to the game */
+}
+
+.current-recipe-card {
+  width: 128px;
+  height: 148px; /* 128px + room for label */
+  background-color: rgba(87, 68, 54, 0.8); /* Brown background with opacity */
+  border: 2px solid #7b6e65;
+  border-radius: 8px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.current-recipe-image {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+}
+
+.current-recipe-label {
+  color: #ebe6e1; /* Light text color */
+  font-size: 14px;
+  margin-top: 8px;
+  text-align: center;
+  font-weight: bold;
+}

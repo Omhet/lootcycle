@@ -49,11 +49,6 @@ export class Game extends Scene {
   private clawManager: ClawManager;
   private inputManager: InputManager; // Add InputManager
 
-  // Recipe card UI elements
-  private recipeCardBackground: Phaser.GameObjects.Rectangle;
-  private recipeCardImage: Phaser.GameObjects.Image;
-  private recipeCardText: Phaser.GameObjects.Text;
-
   // Physics bodies (Scene specific)
   private groundHeight = 38;
   // @ts-ignore
@@ -135,9 +130,6 @@ export class Game extends Scene {
     // Pass the pipe spawn point from PipeManager to JunkPileManager
     this.junkPileManager.setSpawnPoint(this.pipeManager.getSpawnPoint().x, this.pipeManager.getSpawnPoint().y);
 
-    // Create the recipe card display
-    this.createRecipeCardDisplay();
-
     // Setup event listeners
     EventBus.on("toggle-crafting", this.toggleCrafting, this);
     EventBus.on("toggle-claw", () => this.clawManager.toggleClaw());
@@ -152,70 +144,6 @@ export class Game extends Scene {
     });
 
     EventBus.emit("current-scene-ready", this);
-  }
-
-  /**
-   * Creates a recipe card display in the bottom left corner to show the selected recipe
-   */
-  private createRecipeCardDisplay(): void {
-    const cardSize = 128;
-    const padding = 10;
-    const cornerOffset = 20;
-
-    // Create a background rectangle for the card
-    this.recipeCardBackground = this.add.rectangle(
-      cornerOffset + cardSize / 2,
-      this.cameras.main.height - cornerOffset - cardSize / 2,
-      cardSize + padding * 2,
-      cardSize + padding * 2,
-      0x574436, // Brown background color
-      0.8 // Alpha
-    );
-    this.recipeCardBackground.setStrokeStyle(2, 0x7b6e65); // Border
-    this.recipeCardBackground.setDepth(DepthLayers.UI);
-
-    // Get the current recipe ID from the cauldron manager
-    const recipeId = this.cauldronManager.getCurrentRecipeId();
-    const recipeImageKey = `${recipeId}_recipe`;
-
-    // Create an image for the recipe
-    this.recipeCardImage = this.add.image(
-      cornerOffset + cardSize / 2,
-      this.cameras.main.height - cornerOffset - cardSize / 2 - 10, // Slight offset for the text below
-      recipeImageKey
-    );
-    this.recipeCardImage.setDisplaySize(cardSize * 0.8, cardSize * 0.8); // 80% of the card size
-    this.recipeCardImage.setDepth(DepthLayers.UI);
-
-    // Add a text label below the image
-    const recipeName = recipeId.charAt(0).toUpperCase() + recipeId.slice(1).replace("_", " ");
-    this.recipeCardText = this.add.text(cornerOffset + cardSize / 2, this.cameras.main.height - cornerOffset - padding - 10, `${recipeName} Recipe`, {
-      fontSize: "14px",
-      color: "#ebe6e1", // Light text color
-      align: "center",
-    });
-    this.recipeCardText.setOrigin(0.5, 0);
-    this.recipeCardText.setDepth(DepthLayers.UI);
-
-    // Update the recipe card whenever the recipe changes
-    this.events.on("update", this.updateRecipeCard, this);
-  }
-
-  /**
-   * Updates the recipe card with the currently selected recipe
-   */
-  private updateRecipeCard(): void {
-    // Only update if the recipe has changed
-    const currentRecipeId = this.cauldronManager.getCurrentRecipeId();
-    if (this.recipeCardImage.texture.key !== `${currentRecipeId}_recipe`) {
-      // Update the image
-      const recipeImageKey = `${currentRecipeId}_recipe`;
-      this.recipeCardImage.setTexture(recipeImageKey);
-
-      // Update the text
-      const recipeName = currentRecipeId.charAt(0).toUpperCase() + currentRecipeId.slice(1).replace("_", " ");
-      this.recipeCardText.setText(`${recipeName} Recipe`);
-    }
   }
 
   changeScene(sceneName: string = "Idle") {
@@ -295,7 +223,6 @@ export class Game extends Scene {
     EventBus.off("toggle-crafting", this.toggleCrafting, this);
     EventBus.off("toggle-claw");
     EventBus.off("claw-move-horizontal", this.moveClaw, this);
-    this.events.off("update", this.updateRecipeCard, this);
 
     // Clean up managers
     this.backgroundManager?.destroy();
@@ -307,10 +234,5 @@ export class Game extends Scene {
     this.furnaceManager?.destroy();
     this.clawManager?.destroy();
     this.inputManager?.destroy();
-
-    // Clean up UI elements
-    this.recipeCardBackground?.destroy();
-    this.recipeCardImage?.destroy();
-    this.recipeCardText?.destroy();
   }
 }
