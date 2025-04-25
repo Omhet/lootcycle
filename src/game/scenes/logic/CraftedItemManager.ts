@@ -72,7 +72,7 @@ export class CraftedItemManager {
 
     // Set up timers to add each part with a random delay
     let currentIndex = 0;
-    const partAppearSound = this.scene.sound.add("part-appear", { volume: 0.6 });
+    const partAppearSound = this.scene.sound.add("part_appear", { volume: 0.6 });
 
     // Function to add the next part
     const addNextPart = () => {
