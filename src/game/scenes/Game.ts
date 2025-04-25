@@ -180,10 +180,12 @@ export class Game extends Scene {
 
     this.intakeManager?.startCrafting();
     this.cauldronManager?.startCrafting();
+    this.furnaceManager?.startCrafting(); // Start the furnace fire animation
   }
 
   private stopCrafting(): void {
     this.intakeManager.stopCrafting();
+    this.furnaceManager.stopCrafting(); // Stop the furnace fire animation
 
     const result = this.cauldronManager.stopCrafting();
 
