@@ -152,6 +152,13 @@ export class JunkPileManager {
     const playerProgress = usePlayerProgressStore.getState();
     const craftState = useCraftStore.getState();
 
+    // Play junk arrival sound effect
+    const junkArrivesSound = this.scene.sound.add("junk_arrives", {
+      volume: 0.3,
+      rate: Phaser.Math.FloatBetween(0.9, 1.1),
+    });
+    junkArrivesSound.play();
+
     // Get the current level for all upgrades
     const portionSizeLevel = playerProgress.getPipeUpgradeLevel(JunkPipeUpgradeType.PORTION_SIZE);
     const portionSizeValue = JUNK_PIPE_UPGRADES[JunkPipeUpgradeType.PORTION_SIZE].levels[portionSizeLevel].value;
