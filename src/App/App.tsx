@@ -83,6 +83,10 @@ function App() {
               <button className="button" onClick={handlePlay}>
                 Play
               </button>
+              <div className="logoContainer">
+                <span>Lootcycle inc.</span>
+                <span>Grip it, Rip it, Sort it!</span>
+              </div>
             </div>
           </div>
         )}
