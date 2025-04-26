@@ -257,8 +257,11 @@ export class CauldronCraftingManager {
     // Add camera shake for more impact
     this.scene.cameras.main.shake(500, 0.01);
 
-    // You could also add a sound effect here
-    // this.scene.sound.play('explosion');
+    const explode = this.scene.sound.add("explode", {
+      volume: 0.4,
+      rate: Phaser.Math.FloatBetween(0.9, 1.1),
+    });
+    explode.play();
   }
 
   /**
