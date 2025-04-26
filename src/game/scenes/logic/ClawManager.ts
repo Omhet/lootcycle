@@ -483,8 +483,7 @@ export class ClawManager {
 
     // Apply random detune for variation (-100 to 100 cents, about a semitone)
     const randomDetune = Phaser.Math.Between(-100, 100);
-    // Add slight random volume variation (0.4 to 0.6)
-    const randomVolume = 0.4 + Math.random() * 0.2;
+    const randomVolume = 0.5 + Math.random() * 0.2;
 
     // Play the sound with randomized properties
     this.movementSound.play({
@@ -512,8 +511,7 @@ export class ClawManager {
 
     // Apply new random detune (-100 to 100 cents)
     const newDetune = Phaser.Math.Between(-100, 100);
-    // Subtle volume changes (0.4 to 0.6)
-    const newVolume = 0.4 + Math.random() * 0.2;
+    const newVolume = 0.5 + Math.random() * 0.2;
 
     // Play again with new randomized properties
     this.movementSound.play({
