@@ -88,7 +88,7 @@ export class CraftedItemManager {
       const isLastPart = currentIndex === detailsToDraw.length - 1;
       if (isLastPart) {
         // Play completion sound for the final part with slight randomization
-        const randomVolume = Phaser.Math.FloatBetween(0.55, 0.65);
+        const randomVolume = Phaser.Math.FloatBetween(0.2, 0.3);
         const randomRate = Phaser.Math.FloatBetween(0.95, 1.05);
         completionSound.play({
           volume: randomVolume,
@@ -96,7 +96,7 @@ export class CraftedItemManager {
         });
       } else {
         // Play normal part appear sound for all other parts with slight randomization
-        const randomVolume = Phaser.Math.FloatBetween(0.55, 0.65);
+        const randomVolume = Phaser.Math.FloatBetween(0.2, 0.3);
         const randomRate = Phaser.Math.FloatBetween(0.98, 1.02);
         partAppearSound.play({
           volume: randomVolume,
