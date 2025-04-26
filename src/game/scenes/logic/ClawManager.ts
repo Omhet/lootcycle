@@ -38,7 +38,8 @@ export class ClawManager {
 
   // State machine for claw behavior
   private state: ClawState = ClawState.IDLE;
-  private autoMoveSpeed: number = 2; // Speed for automated movement
+  private speed = 0.2;
+  private autoMoveSpeed: number = 0.3; // Speed for automated movement
   private grabDelay: number = 500; // Delay in ms before ascending after grab
   private grabTimer: Phaser.Time.TimerEvent | null = null;
 
@@ -48,8 +49,6 @@ export class ClawManager {
 
   private readonly CLAW_MOVEMENT_VERTICAL_ZONE_START = 200;
   private readonly CLAW_MOVEMENT_VERTICAL_ZONE_END = 300;
-
-  private speed = 150;
 
   constructor(scene: Scene) {
     this.scene = scene;
@@ -401,7 +400,8 @@ export class ClawManager {
   private moveVerticalAuto(moveFactor: number): void {
     if (!this.anchor || !this.anchor.body) return;
 
-    const newY = this.anchor.y + moveFactor * this.autoMoveSpeed;
+    const deltaTime = this.scene.sys.game.loop.delta; // Convert ms to seconds
+    const newY = this.anchor.y + moveFactor * this.autoMoveSpeed * deltaTime;
 
     if (newY >= this.CLAW_MOVEMENT_VERTICAL_ZONE_START && newY <= this.scene.cameras.main.height - this.CLAW_MOVEMENT_VERTICAL_ZONE_END) {
       this.scene.matter.body.setPosition(this.anchor.body as MatterJS.BodyType, {
@@ -432,7 +432,8 @@ export class ClawManager {
     // Since the anchor is now static, we need to handle position changes directly
     if (this.anchor && this.anchor.body) {
       // For static bodies, we need to update position directly
-      const newX = this.anchor.x + moveFactor * this.speed * (1 / 60); // Assuming 60fps
+      const deltaTime = this.scene.sys.game.loop.delta; // Convert ms to seconds
+      const newX = this.anchor.x + moveFactor * this.speed * deltaTime;
 
       if (newX >= this.CLAW_MOVEMENT_HORIZONTAL_ZONE_START && newX <= this.scene.cameras.main.width - this.CLAW_MOVEMENT_HORIZONTAL_ZONE_END) {
         this.scene.matter.body.setPosition(this.anchor.body as MatterJS.BodyType, {
@@ -462,7 +463,8 @@ export class ClawManager {
 
     // Since the anchor is now static, we need to handle position changes directly
     if (this.anchor && this.anchor.body) {
-      const newY = this.anchor.y + moveFactor * this.speed * (1 / 60);
+      const deltaTime = this.scene.sys.game.loop.delta; // Convert ms to seconds
+      const newY = this.anchor.y + moveFactor * this.speed * deltaTime;
 
       if (newY >= this.CLAW_MOVEMENT_VERTICAL_ZONE_START && newY <= this.scene.cameras.main.height - this.CLAW_MOVEMENT_VERTICAL_ZONE_END) {
         this.scene.matter.body.setPosition(this.anchor.body as MatterJS.BodyType, {
