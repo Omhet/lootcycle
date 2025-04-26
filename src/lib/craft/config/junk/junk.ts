@@ -10,43 +10,6 @@ registerJunkPiece("bone", {
   temperatureCoefficient: 1.5,
 });
 
-// Fluff items
-registerJunkPiece("yellow_fluff", {
-  suitableForRecipeDetails: [],
-  name: "Yellow Fluff",
-  rarity: Rarity.Common,
-  durability: Durability.Low,
-  sellPriceCoefficient: 1,
-  temperatureCoefficient: 1,
-});
-
-registerJunkPiece("blue_fluff", {
-  suitableForRecipeDetails: [],
-  name: "Blue Fluff",
-  rarity: Rarity.Common,
-  durability: Durability.Low,
-  sellPriceCoefficient: 1,
-  temperatureCoefficient: 1,
-});
-
-registerJunkPiece("green_fluff", {
-  suitableForRecipeDetails: [],
-  name: "Green Fluff",
-  rarity: Rarity.Common,
-  durability: Durability.Low,
-  sellPriceCoefficient: 1,
-  temperatureCoefficient: 1,
-});
-
-// registerJunkPiece("banana_peel", {
-//   suitableForRecipeDetails: [],
-//   name: "Banana Peel",
-//   rarity: Rarity.Common,
-//   durability: Durability.Low,
-//   sellPriceCoefficient: 2,
-//   temperatureCoefficient: 2,
-// });
-
 registerJunkPiece("log", {
   suitableForRecipeDetails: [
     RecipeDetailType.Grip,
@@ -62,15 +25,6 @@ registerJunkPiece("log", {
   sellPriceCoefficient: 1.8,
   temperatureCoefficient: 1.5,
 });
-
-// registerJunkPiece("dead_fish", {
-//   suitableForRecipeDetails: [],
-//   name: "Dead Fish",
-//   rarity: Rarity.Common,
-//   durability: Durability.Low,
-//   sellPriceCoefficient: 1.5,
-//   temperatureCoefficient: 1.3,
-// });
 
 registerJunkPiece("horse_shoe", {
   suitableForRecipeDetails: [RecipeDetailType.Guard],
@@ -177,15 +131,6 @@ registerJunkPiece("saw", {
   temperatureCoefficient: 2.2,
 });
 
-// registerJunkPiece("bolt", {
-//   suitableForRecipeDetails: [],
-//   name: "Bolt",
-//   rarity: Rarity.Common,
-//   durability: Durability.High,
-//   sellPriceCoefficient: 1.7,
-//   temperatureCoefficient: 2.2,
-// });
-
 registerJunkPiece("shell", {
   suitableForRecipeDetails: [RecipeDetailType.Pommel, RecipeDetailType.AxeHead],
   name: "Shell",
@@ -194,15 +139,6 @@ registerJunkPiece("shell", {
   sellPriceCoefficient: 2.2,
   temperatureCoefficient: 1.6,
 });
-
-// registerJunkPiece("old_shoe", {
-//   suitableForRecipeDetails: [],
-//   name: "Old Shoe",
-//   rarity: Rarity.Common,
-//   durability: Durability.Low,
-//   sellPriceCoefficient: 1.3,
-//   temperatureCoefficient: 1.4,
-// });
 
 registerJunkPiece("golden_coin", {
   suitableForRecipeDetails: [
@@ -233,15 +169,6 @@ registerJunkPiece("silver_coin", {
   sellPriceCoefficient: 2.8,
   temperatureCoefficient: 2.2,
 });
-
-// registerJunkPiece("mushroom", {
-//   suitableForRecipeDetails: [],
-//   name: "Mushroom",
-//   rarity: Rarity.Common,
-//   durability: Durability.Low,
-//   sellPriceCoefficient: 1.6,
-//   temperatureCoefficient: 1.3,
-// });
 
 registerJunkPiece("button", {
   suitableForRecipeDetails: [RecipeDetailType.Pommel],
@@ -288,11 +215,30 @@ registerJunkPiece("deer_hoof", {
   temperatureCoefficient: 1.7,
 });
 
-// registerJunkPiece("empty_bottle", {
-//   suitableForRecipeDetails: [],
-//   name: "Empty Bottle",
-//   rarity: Rarity.Common,
-//   durability: Durability.Low,
-//   sellPriceCoefficient: 1.5,
-//   temperatureCoefficient: 1.8,
-// });
+// Fluff items
+registerJunkPiece("yellow_fluff", {
+  suitableForRecipeDetails: [],
+  name: "Yellow Fluff",
+  rarity: Rarity.Common,
+  durability: Durability.Low,
+  sellPriceCoefficient: 1,
+  temperatureCoefficient: 1,
+});
+
+registerJunkPiece("blue_fluff", {
+  suitableForRecipeDetails: [],
+  name: "Blue Fluff",
+  rarity: Rarity.Common,
+  durability: Durability.Low,
+  sellPriceCoefficient: 1,
+  temperatureCoefficient: 1,
+});
+
+registerJunkPiece("green_fluff", {
+  suitableForRecipeDetails: [],
+  name: "Green Fluff",
+  rarity: Rarity.Common,
+  durability: Durability.Low,
+  sellPriceCoefficient: 1,
+  temperatureCoefficient: 1,
+});
