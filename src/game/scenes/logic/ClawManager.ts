@@ -489,7 +489,7 @@ export class ClawManager {
 
     // Apply random detune for variation (-100 to 100 cents, about a semitone)
     const randomDetune = Phaser.Math.Between(-100, 100);
-    const randomVolume = 0.3 + Math.random() * 0.2;
+    const randomVolume = 0.15 + Math.random() * 0.2;
 
     // Play the sound with randomized properties
     this.ascendingSound.play({
@@ -517,7 +517,7 @@ export class ClawManager {
 
     // Apply new random detune (-100 to 100 cents)
     const newDetune = Phaser.Math.Between(-100, 100);
-    const newVolume = 0.3 + Math.random() * 0.2;
+    const newVolume = 0.15 + Math.random() * 0.2;
 
     // Play again with new randomized properties
     this.ascendingSound.play({
@@ -556,7 +556,7 @@ export class ClawManager {
 
     // Apply random detune for variation (-100 to 100 cents, about a semitone)
     const randomDetune = Phaser.Math.Between(-100, 100);
-    const randomVolume = 0.3 + Math.random() * 0.2;
+    const randomVolume = 0.15 + Math.random() * 0.2;
 
     // Play the sound with randomized properties
     this.descendingSound.play({
@@ -584,7 +584,7 @@ export class ClawManager {
 
     // Apply new random detune (-100 to 100 cents)
     const newDetune = Phaser.Math.Between(-100, 100);
-    const newVolume = 0.3 + Math.random() * 0.2;
+    const newVolume = 0.15 + Math.random() * 0.2;
 
     // Play again with new randomized properties
     this.descendingSound.play({
