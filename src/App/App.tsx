@@ -62,7 +62,7 @@ function App() {
         console.log(currentState);
         if (currentState === GameState.DayInProgress) {
           (scene as unknown as any).changeScene("Game");
-        } else {
+        } else if (currentSceneKey !== "Idle") {
           (scene as unknown as any).changeScene("Idle");
         }
       }
