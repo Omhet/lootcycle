@@ -185,12 +185,24 @@ export class Game extends Scene {
 
   private startCrafting(): void {
     if (!this.cauldronManager.hasEnoughJunkForCrafting()) {
+      const error = this.sound.add("error", {
+        volume: 0.3,
+        rate: Phaser.Math.FloatBetween(0.9, 1.1),
+      });
+      error.play();
+
       console.log("Not enough junk pieces in cauldron above the threshold line - cannot craft item");
       EventBus.emit("crafting-failure", { reason: CraftingFailureReason.NotEnoughJunk, message: "Not enough materials in cauldron" });
       return;
     }
 
     if (!this.intakeManager.hasEnoughJunkForCrafting()) {
+      const error = this.sound.add("error", {
+        volume: 0.3,
+        rate: Phaser.Math.FloatBetween(0.9, 1.1),
+      });
+      error.play();
+
       console.log("Not enough junk pieces in intake above the threshold line - cannot craft item");
       EventBus.emit("crafting-failure", { reason: CraftingFailureReason.NotEnoughJunk, message: "Not enough materials in intake" });
       return;
@@ -208,6 +220,12 @@ export class Game extends Scene {
     const result = this.cauldronManager.stopCrafting();
 
     if (!result.item && result.failure) {
+      const error = this.sound.add("error", {
+        volume: 0.3,
+        rate: Phaser.Math.FloatBetween(0.9, 1.1),
+      });
+      error.play();
+
       EventBus.emit("crafting-failure", { reason: result.failure.reason, message: result.failure.message });
       return;
     }
