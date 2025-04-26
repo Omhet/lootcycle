@@ -11,6 +11,8 @@ export class Preloader extends Scene {
     const centerX = this.cameras.main.width / 2;
     const centerY = this.cameras.main.height / 2;
 
+    this.cameras.main.setBackgroundColor(0xe4d3c4); // Set background color to match the game theme
+
     // Create a container centered on the screen
     this.container = this.add.container(centerX, centerY);
 
@@ -19,7 +21,7 @@ export class Preloader extends Scene {
     const barHeight = 32;
 
     // Outline rectangle centered at (0, 0) within the container
-    const progressBarOutline = this.add.rectangle(0, 0, barWidth + 4, barHeight + 4).setStrokeStyle(1, 0xffffff);
+    const progressBarOutline = this.add.rectangle(0, 0, barWidth + 4, barHeight + 4).setStrokeStyle(1, 0x574436);
     this.container.add(progressBarOutline);
 
     // Filling bar starting from the left edge relative to the container's center
@@ -28,7 +30,7 @@ export class Preloader extends Scene {
       0, // Center vertically
       4,
       barHeight,
-      0xffffff
+      0x2b201c
     );
     this.container.add(bar); // Add the bar itself to the container
 
