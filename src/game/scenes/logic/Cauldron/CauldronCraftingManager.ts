@@ -25,6 +25,10 @@ export class CauldronCraftingManager {
   private temperatureBar: Phaser.GameObjects.Graphics;
   private temperatureText: Phaser.GameObjects.Text;
 
+  // Sound effects
+  private boilingSound: Phaser.Sound.BaseSound | null = null;
+  private boilingSoundTimer: Phaser.Time.TimerEvent | null = null;
+
   // Smoke particles
   private smokeParticles: Phaser.GameObjects.Particles.ParticleEmitter | null = null;
   private explosionSmokeParticles: Phaser.GameObjects.Particles.ParticleEmitter | null = null;
@@ -182,6 +186,9 @@ export class CauldronCraftingManager {
 
     this.bubbleParticles.emitting = true;
 
+    // Start boiling sound
+    this.playBoilingSound();
+
     // Start update loop
     this.scene.events.on("update", this.updateTemperature, this);
   }
@@ -198,6 +205,9 @@ export class CauldronCraftingManager {
     this.currentTemperature = 0; // Reset temperature for next crafting session
 
     this.bubbleParticles.emitting = false;
+
+    // Stop boiling sound
+    this.stopBoilingSound();
 
     // Stop update loop
     this.scene.events.off("update", this.updateTemperature, this);
@@ -305,10 +315,84 @@ export class CauldronCraftingManager {
       this.temperatureText.destroy();
     }
 
+    // Stop and destroy sound resources
+    this.stopBoilingSound();
+    if (this.boilingSound) {
+      this.boilingSound.destroy();
+      this.boilingSound = null;
+    }
+
     // Destroy smoke particles
     if (this.smokeParticles) {
       this.smokeParticles.destroy();
       this.smokeParticles = null;
+    }
+  }
+
+  /**
+   * Plays the boiling sound with randomized properties
+   */
+  private playBoilingSound(): void {
+    // Stop any existing sound
+    this.stopBoilingSound();
+
+    // Create the sound if it doesn't exist
+    if (!this.boilingSound) {
+      this.boilingSound = this.scene.sound.add("boiling", {
+        loop: true,
+      });
+    }
+
+    // Apply random detune for variation (-100 to 100 cents, about a semitone)
+    const randomDetune = Phaser.Math.Between(-100, 100);
+    const randomVolume = 0.4 + Math.random() * 0.2;
+
+    // Play the sound with randomized properties
+    this.boilingSound.play({
+      detune: randomDetune,
+      volume: randomVolume,
+    });
+
+    // Set up a timer to add variation periodically
+    this.boilingSoundTimer = this.scene.time.addEvent({
+      delay: Phaser.Math.Between(1000, 3000), // Random interval between 1-3 seconds
+      callback: this.varyBoilingSound,
+      callbackScope: this,
+      loop: true,
+    });
+  }
+
+  /**
+   * Apply random variations to the boiling sound while it's playing
+   */
+  private varyBoilingSound(): void {
+    if (!this.boilingSound || !this.boilingSound.isPlaying) return;
+
+    // Stop current sound
+    this.boilingSound.stop();
+
+    // Apply new random detune (-100 to 100 cents)
+    const newDetune = Phaser.Math.Between(-100, 100);
+    const newVolume = 0.4 + Math.random() * 0.2;
+
+    // Play again with new randomized properties
+    this.boilingSound.play({
+      detune: newDetune,
+      volume: newVolume,
+    });
+  }
+
+  /**
+   * Stops the boiling sound
+   */
+  private stopBoilingSound(): void {
+    if (this.boilingSound && this.boilingSound.isPlaying) {
+      this.boilingSound.stop();
+    }
+
+    if (this.boilingSoundTimer) {
+      this.boilingSoundTimer.remove();
+      this.boilingSoundTimer = null;
     }
   }
 }
