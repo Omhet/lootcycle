@@ -38,7 +38,7 @@ export class ClawManager {
 
   // State machine for claw behavior
   private state: ClawState = ClawState.IDLE;
-  private speed = 0.2;
+  private speed = 0.3;
   private autoMoveSpeed: number = 0.3; // Speed for automated movement
   private grabDelay: number = 500; // Delay in ms before ascending after grab
   private grabTimer: Phaser.Time.TimerEvent | null = null;
