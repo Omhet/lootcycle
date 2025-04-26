@@ -22,6 +22,7 @@ export class JunkPileManager {
   private junkPile: JunkPileItem[] = []; // Total accumulated junk collection
   private spawnTimers: Phaser.Time.TimerEvent[] = [];
   private junkIdCounter: number = 0; // Counter for generating unique IDs
+  private collisionListener: ((event: any) => void) | null = null;
 
   // Spawn point coordinates
   private spawnX: number;
@@ -33,6 +34,59 @@ export class JunkPileManager {
     // Set default spawn point to top right corner with margin
     this.spawnX = this.scene.cameras.main.width - 200;
     this.spawnY = 100;
+
+    // Set up collision listener
+    this.setupCollisionListener();
+  }
+
+  /**
+   * Sets up the collision listener for junk pieces
+   */
+  private setupCollisionListener(): void {
+    // Create the collision handler function
+    this.collisionListener = (event: any) => {
+      // Loop through all collision pairs in this collision event
+      const pairs = event.pairs;
+
+      for (let i = 0; i < pairs.length; i++) {
+        const bodyA = pairs[i].bodyA;
+        const bodyB = pairs[i].bodyB;
+
+        // Check if one body is a junk piece and the other is an environment object
+        const isJunkWithEnvironment =
+          (bodyA.collisionFilter?.category === 1 && bodyB.collisionFilter?.category === 4) ||
+          (bodyB.collisionFilter?.category === 1 && bodyA.collisionFilter?.category === 4);
+        if (isJunkWithEnvironment) {
+          // Play collision sound with random pitch variation for natural effect
+          const collisionSound = this.scene.sound.add("junk_piece_collides", {
+            volume: Phaser.Math.FloatBetween(0.4, 0.6),
+            rate: Phaser.Math.FloatBetween(0.8, 1.2),
+          });
+
+          collisionSound.play();
+          // Limit how many sounds can play at once for performance
+          break;
+        }
+      }
+    };
+
+    // Register the collision listener with Matter.js events
+    this.scene.matter.world.on("collisionstart", this.collisionListener);
+  }
+
+  /**
+   * Cleans up event listeners to prevent memory leaks
+   */
+  public cleanup(): void {
+    // Remove collision listener
+    if (this.collisionListener) {
+      this.scene.matter.world.off("collisionstart", this.collisionListener);
+      this.collisionListener = null;
+    }
+
+    // Clear any existing spawn timers
+    this.spawnTimers.forEach((timer) => timer.destroy());
+    this.spawnTimers = [];
   }
 
   /**
