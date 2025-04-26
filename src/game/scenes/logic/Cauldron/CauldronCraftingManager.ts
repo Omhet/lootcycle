@@ -258,7 +258,7 @@ export class CauldronCraftingManager {
     this.scene.cameras.main.shake(500, 0.01);
 
     const explode = this.scene.sound.add("explode", {
-      volume: 0.4,
+      volume: 0.3,
       rate: Phaser.Math.FloatBetween(0.9, 1.1),
     });
     explode.play();
