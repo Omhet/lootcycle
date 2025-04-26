@@ -32,6 +32,10 @@ export class ClawManager {
   private ascendingSound: Phaser.Sound.BaseSound | null = null;
   private ascendingSoundTimer: Phaser.Time.TimerEvent | null = null;
 
+  // Descending sound
+  private descendingSound: Phaser.Sound.BaseSound | null = null;
+  private descendingSoundTimer: Phaser.Time.TimerEvent | null = null;
+
   // State machine for claw behavior
   private state: ClawState = ClawState.IDLE;
   private autoMoveSpeed: number = 2; // Speed for automated movement
@@ -201,6 +205,9 @@ export class ClawManager {
       if (this.isOpen) {
         // Start the descent and grab sequence
         this.state = ClawState.DESCENDING;
+
+        // Play the descending sound when the claw starts descending
+        this.playDescendingSound();
 
         // Set up collision detection for the claw parts
         this.setupCollisionDetection();
@@ -392,6 +399,8 @@ export class ClawManager {
     } else if (this.state === ClawState.DESCENDING && newY >= this.scene.cameras.main.height - this.CLAW_MOVEMENT_VERTICAL_ZONE_END) {
       // We've hit the bottom, start returning
       this.state = ClawState.GRABBING;
+      // Stop the descending sound when the claw reaches the bottom
+      this.stopDescendingSound();
       this.closeClaw();
 
       // Set a timer before ascending
@@ -468,7 +477,7 @@ export class ClawManager {
 
     // Apply random detune for variation (-100 to 100 cents, about a semitone)
     const randomDetune = Phaser.Math.Between(-100, 100);
-    const randomVolume = 0.5 + Math.random() * 0.2;
+    const randomVolume = 0.3 + Math.random() * 0.2;
 
     // Play the sound with randomized properties
     this.ascendingSound.play({
@@ -496,7 +505,7 @@ export class ClawManager {
 
     // Apply new random detune (-100 to 100 cents)
     const newDetune = Phaser.Math.Between(-100, 100);
-    const newVolume = 0.5 + Math.random() * 0.2;
+    const newVolume = 0.3 + Math.random() * 0.2;
 
     // Play again with new randomized properties
     this.ascendingSound.play({
@@ -516,6 +525,73 @@ export class ClawManager {
     if (this.ascendingSoundTimer) {
       this.ascendingSoundTimer.remove();
       this.ascendingSoundTimer = null;
+    }
+  }
+
+  /**
+   * Plays the claw descending sound with randomized properties
+   */
+  private playDescendingSound(): void {
+    // Stop any existing sound
+    this.stopDescendingSound();
+
+    // Create the sound if it doesn't exist
+    if (!this.descendingSound) {
+      this.descendingSound = this.scene.sound.add("claw_descend", {
+        loop: true,
+      });
+    }
+
+    // Apply random detune for variation (-100 to 100 cents, about a semitone)
+    const randomDetune = Phaser.Math.Between(-100, 100);
+    const randomVolume = 0.3 + Math.random() * 0.2;
+
+    // Play the sound with randomized properties
+    this.descendingSound.play({
+      detune: randomDetune,
+      volume: randomVolume,
+    });
+
+    // Set up a timer to add variation periodically
+    this.descendingSoundTimer = this.scene.time.addEvent({
+      delay: Phaser.Math.Between(300, 600), // Random interval between 0.3-0.6 seconds
+      callback: this.varyDescendingSound,
+      callbackScope: this,
+      loop: true,
+    });
+  }
+
+  /**
+   * Apply random variations to the descending sound while it's playing
+   */
+  private varyDescendingSound(): void {
+    if (!this.descendingSound || !this.descendingSound.isPlaying) return;
+
+    // Stop current sound
+    this.descendingSound.stop();
+
+    // Apply new random detune (-100 to 100 cents)
+    const newDetune = Phaser.Math.Between(-100, 100);
+    const newVolume = 0.3 + Math.random() * 0.2;
+
+    // Play again with new randomized properties
+    this.descendingSound.play({
+      detune: newDetune,
+      volume: newVolume,
+    });
+  }
+
+  /**
+   * Stops the claw descending sound
+   */
+  private stopDescendingSound(): void {
+    if (this.descendingSound && this.descendingSound.isPlaying) {
+      this.descendingSound.stop();
+    }
+
+    if (this.descendingSoundTimer) {
+      this.descendingSoundTimer.remove();
+      this.descendingSoundTimer = null;
     }
   }
 
@@ -548,6 +624,13 @@ export class ClawManager {
       this.ascendingSound = null;
     }
 
+    // Clean up descending sound resources
+    this.stopDescendingSound();
+    if (this.descendingSound) {
+      this.descendingSound.destroy();
+      this.descendingSound = null;
+    }
+
     console.log("ClawManager destroyed");
   }
 
@@ -567,7 +650,7 @@ export class ClawManager {
 
     // Apply random detune for variation (-100 to 100 cents, about a semitone)
     const randomDetune = Phaser.Math.Between(-100, 100);
-    const randomVolume = 0.5 + Math.random() * 0.2;
+    const randomVolume = 0.4 + Math.random() * 0.2;
 
     // Play the sound with randomized properties
     this.movementSound.play({
@@ -595,7 +678,7 @@ export class ClawManager {
 
     // Apply new random detune (-100 to 100 cents)
     const newDetune = Phaser.Math.Between(-100, 100);
-    const newVolume = 0.5 + Math.random() * 0.2;
+    const newVolume = 0.4 + Math.random() * 0.2;
 
     // Play again with new randomized properties
     this.movementSound.play({
