@@ -73,10 +73,10 @@ export class Game extends Scene {
 
     // Initialize background music
     this.backgroundMusic = this.sound.add("main_ost", {
-      volume: 0.05,
+      volume: 0.3,
       loop: true,
     });
-    // this.backgroundMusic.play();
+    this.backgroundMusic.play();
 
     // Instantiate Managers (Order might matter for dependencies or visual layering setup)
     this.backgroundManager = new BackgroundManager(this);
