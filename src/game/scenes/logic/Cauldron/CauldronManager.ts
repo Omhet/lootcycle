@@ -39,6 +39,10 @@ export class CauldronManager {
   private maxShakeIntensity: number = 5; // Maximum shake in pixels
   private shakeIntensity: number = 0;
 
+  // Shake sound properties
+  private shakeSound: Phaser.Sound.BaseSound | null = null;
+  private shakeSoundTimer: Phaser.Time.TimerEvent | null = null;
+
   constructor(scene: Scene) {
     this.scene = scene;
     this.createCauldron();
@@ -291,12 +295,18 @@ export class CauldronManager {
    * Cleanup resources when destroying this object
    */
   public destroy(): void {
-    // Stop shaking
+    // Stop shaking and related effects
     this.stopShaking();
 
     // Destroy component managers
     this.junkDetector.destroy();
     this.craftingManager.destroy();
+
+    // Clean up shake sound resources
+    if (this.shakeSound) {
+      this.shakeSound.destroy();
+      this.shakeSound = null;
+    }
 
     // Destroy the sprite
     if (this.cauldronSprite) {
@@ -318,6 +328,9 @@ export class CauldronManager {
       callbackScope: this,
       loop: true,
     });
+
+    // Start playing the shake sound
+    this.playShakeSound();
   }
 
   /**
@@ -382,5 +395,75 @@ export class CauldronManager {
     }
 
     this.shakeIntensity = 0;
+
+    // Stop the shake sound
+    this.stopShakeSound();
+  }
+
+  /**
+   * Plays the cauldron shake sound with randomized properties
+   */
+  private playShakeSound(): void {
+    // Stop any existing sound
+    this.stopShakeSound();
+
+    // Create the sound if it doesn't exist
+    if (!this.shakeSound) {
+      this.shakeSound = this.scene.sound.add("cauldron_shake", {
+        loop: true,
+      });
+    }
+
+    // Apply random detune for variation (-50 to 50 cents, about a quarter-semitone)
+    const randomDetune = Phaser.Math.Between(-50, 50);
+    const randomVolume = 0.3 + Math.random() * 0.2;
+
+    // Play the sound with randomized properties
+    this.shakeSound.play({
+      detune: randomDetune,
+      volume: randomVolume,
+    });
+
+    // Set up a timer to add variation periodically
+    this.shakeSoundTimer = this.scene.time.addEvent({
+      delay: Phaser.Math.Between(800, 2000), // Random interval between 0.8-2 seconds
+      callback: this.varyShakeSound,
+      callbackScope: this,
+      loop: true,
+    });
+  }
+
+  /**
+   * Apply random variations to the shake sound while it's playing
+   */
+  private varyShakeSound(): void {
+    if (!this.shakeSound || !this.shakeSound.isPlaying) return;
+
+    // Stop current sound
+    this.shakeSound.stop();
+
+    // Apply new random detune and volume, then play again
+    const newDetune = Phaser.Math.Between(-50, 50);
+    const newVolume = 0.5 + Math.random() * 0.2;
+
+    // Play again with new randomized properties
+    this.shakeSound.play({
+      detune: newDetune,
+      volume: newVolume,
+    });
+  }
+
+  /**
+   * Stops the cauldron shake sound
+   */
+  private stopShakeSound(): void {
+    if (this.shakeSound && this.shakeSound.isPlaying) {
+      this.shakeSound.stop();
+    }
+
+    if (this.shakeSoundTimer) {
+      this.shakeSoundTimer.remove();
+      this.shakeSoundTimer = null;
+    }
   }
 }
