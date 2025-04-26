@@ -215,7 +215,7 @@ export class Game extends Scene {
     if (result.item) {
       const craftedLootItem = result.item;
 
-      this.spotlightParticles?.setActive(true);
+      this.spotlightParticles?.setVisible(true);
       this.spotlightParticles!.emitting = true;
       // Show the background rectangle
       this.spotlightBackground?.setVisible(true);
@@ -233,7 +233,7 @@ export class Game extends Scene {
     this.craftedItemManager.clearDisplay();
     this.junkPileManager.generateNextPortion();
     this.spotlightParticles!.emitting = false;
-    this.spotlightParticles?.setActive(false);
+    this.spotlightParticles?.setVisible(false);
     // Hide the background rectangle
     this.spotlightBackground?.setVisible(false);
   }
