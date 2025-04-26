@@ -6,9 +6,9 @@ import { JunkPieceId, RecipeDetailType, RecipeItemType } from "../craft/craftMod
 // Table of prices for each junk piece
 export const JUNK_PRICES: Record<JunkPieceId, number> = {
   bone: 0,
+  log: 0,
   lollipop: 10,
   button: 10,
-  log: 10,
   nut: 15,
   rope: 15,
   horse_shoe: 15,
