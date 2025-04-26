@@ -408,6 +408,16 @@ export class ClawManager {
         x: this.anchor.x,
         y: newY,
       });
+    } else if (this.state === ClawState.ASCENDING && newY < this.CLAW_MOVEMENT_VERTICAL_ZONE_START) {
+      // We've hit the top boundary, reset to IDLE
+      this.scene.matter.body.setPosition(this.anchor.body as MatterJS.BodyType, {
+        x: this.anchor.x,
+        y: this.CLAW_MOVEMENT_VERTICAL_ZONE_START,
+      });
+      this.state = ClawState.IDLE;
+      // Stop the ascending sound when the claw returns to idle state
+      this.stopAscendingSound();
+      console.log("Claw returned to top - reset to IDLE");
     } else if (this.state === ClawState.DESCENDING && newY >= this.scene.cameras.main.height - this.CLAW_MOVEMENT_VERTICAL_ZONE_END) {
       // We've hit the bottom, start returning
       this.state = ClawState.GRABBING;
