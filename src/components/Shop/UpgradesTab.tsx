@@ -10,7 +10,6 @@ type UpgradesTabProps = {
 };
 
 export const UpgradesTab = ({ upgrades, balance, onBuy, onClose }: UpgradesTabProps) => {
-  const [purchaseCounter, setPurchaseCounter] = useState(0);
   const [selectedItem, setSelectedItem] = useState<Upgrade>(upgrades[0]);
 
   if (!selectedItem || upgrades.length === 0) {
@@ -27,8 +26,8 @@ export const UpgradesTab = ({ upgrades, balance, onBuy, onClose }: UpgradesTabPr
   }
 
   const handleBuy = (itemId: string) => {
-    setPurchaseCounter((prev) => prev + 1); // Increment the purchase counter
     onBuy(itemId); // Call the onBuy function with the item ID
+    setSelectedItem((prev) => ({ ...prev, alreadyBought: true })); // Update the selected item to reflect the purchase
   };
 
   return (
@@ -45,7 +44,7 @@ export const UpgradesTab = ({ upgrades, balance, onBuy, onClose }: UpgradesTabPr
           I got all I need, thanks!
         </button>
       </div>
-      <div className={s.recipeDetailsContainer} key={purchaseCounter}>
+      <div className={s.recipeDetailsContainer}>
         <div className={s.recipeTitleContainer}>
           <span className={s.recipeName}>{selectedItem.name}</span>
         </div>

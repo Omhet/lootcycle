@@ -57,9 +57,9 @@ export const Stall = ({ groups, moneyBalance, onSellAndClose, onClose }: StallPr
                   <div key={group.name} className={s.group}>
                     <span className={s.groupTitle}>{group.name}</span>
                     <div className={s.itemsContainer}>
-                      {group.items.map((item) => (
+                      {group.items.map((item, index) => (
                         <div
-                          key={item.name}
+                          key={`${item.name}-${index}`}
                           className={`${s.item} ${highlightedLootItem?.id === item.id ? s.active : ""}`}
                           onClick={() => setHighlightedLootItem(item)}
                         >
