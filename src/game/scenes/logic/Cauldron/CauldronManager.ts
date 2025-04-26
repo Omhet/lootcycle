@@ -31,6 +31,7 @@ export class CauldronManager {
   private craftingManager: CauldronCraftingManager;
   craftedItemTemperatureRange: TemperatureRange;
   private currentRecipeItemId: string;
+  private currentRecipeIndex: number = -1;
 
   // Shake properties
   private shakeTimer: Phaser.Time.TimerEvent | null = null;
@@ -46,8 +47,8 @@ export class CauldronManager {
     this.junkDetector = new CauldronJunkDetector(scene, this.cauldronSprite, this.thresholdY);
     this.craftingManager = new CauldronCraftingManager(scene, this.cauldronSprite);
 
-    // Select the first random recipe
-    this.selectRandomRecipe();
+    // Select the first recipe in sequence
+    this.selectNextRecipe();
   }
 
   /**
@@ -80,9 +81,9 @@ export class CauldronManager {
   }
 
   /**
-   * Selects a random recipe from the player's purchased recipes
+   * Selects the next recipe in sequence, cycling back to the beginning when reaching the end
    */
-  private selectRandomRecipe(): void {
+  private selectNextRecipe(): void {
     // Get purchased recipes from the player progress store
     const { purchasedRecipes } = usePlayerProgressStore.getState();
 
@@ -91,12 +92,14 @@ export class CauldronManager {
       console.warn("No purchased recipes found. Defaulting to 'axe'.");
       this.currentRecipeItemId = "axe";
     } else {
-      // Select a random recipe from the purchased ones
-      const randomIndex = Math.floor(Math.random() * purchasedRecipes.length);
-      this.currentRecipeItemId = purchasedRecipes[randomIndex];
+      // Increment the index to move to the next recipe
+      this.currentRecipeIndex = (this.currentRecipeIndex + 1) % purchasedRecipes.length;
+
+      // Select the recipe at the current index
+      this.currentRecipeItemId = purchasedRecipes[this.currentRecipeIndex];
     }
 
-    console.log(`Selected recipe for next crafting: ${this.currentRecipeItemId}`);
+    console.log(`Selected next recipe for crafting: ${this.currentRecipeItemId}`);
 
     // Emit an event to notify the craft store about the recipe selection
     EventBus.emit("recipe-selected", this.currentRecipeItemId);
@@ -182,8 +185,8 @@ export class CauldronManager {
 
     const temperature = this.craftingManager.stopCrafting();
 
-    // Select a new random recipe for next crafting
-    this.selectRandomRecipe();
+    // Select the next recipe in sequence for next crafting
+    this.selectNextRecipe();
 
     // Not successful crafting cases first
     if (temperature < this.craftedItemTemperatureRange.min) {
@@ -252,8 +255,8 @@ export class CauldronManager {
 
     EventBus.emit("loot-screwed-up", 1);
 
-    // Select a new random recipe for next crafting
-    this.selectRandomRecipe();
+    // Select the next recipe in sequence for next crafting
+    this.selectNextRecipe();
   }
 
   /**
