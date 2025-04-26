@@ -102,6 +102,7 @@ export class Preloader extends Scene {
     this.load.audio("boiling", "sounds/boiling.wav");
 
     this.load.audio("main_ost", "sounds/main_ost.mp3");
+    this.load.audio("menu", "sounds/menu.mp3");
 
     this.load.image("axe_recipe", "recipes/axe.png");
     this.load.image("short_sword_recipe", "recipes/short_sword.png");
