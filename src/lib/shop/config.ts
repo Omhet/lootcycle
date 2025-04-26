@@ -3,11 +3,34 @@ import { JunkLicense, RecipeCategory, RecipeItem, Upgrade } from "../../componen
 import { lootConfig } from "../craft/config";
 import { JunkPieceId, RecipeDetailType, RecipeItemType } from "../craft/craftModel";
 
-// Base price multiplier for recipes (based on the item's base sell price)
-const RECIPE_PRICE_MULTIPLIER = 5;
+// Table of prices for each junk piece
+export const JUNK_PRICES: Record<JunkPieceId, number> = {
+  bone: 0,
+  lollipop: 10,
+  button: 10,
+  log: 10,
+  nut: 15,
+  rope: 15,
+  horse_shoe: 15,
+  shell: 20,
+  deer_hoof: 20,
+  saw: 20,
+  silver_cup: 25,
+  silver_necklace: 25,
+  silver_coin: 25,
+  silver_ring: 30,
+  robo_hand: 30,
+  golden_cup: 35,
+  golden_necklace: 35,
+  golden_coin: 35,
+  golden_ring: 40,
+};
 
-// Base price for junk licenses
-const JUNK_LICENSE_BASE_PRICE = 50;
+// Table of prices for each recipe
+export const RECIPE_PRICES: Record<string, number> = {
+  short_sword: 150,
+  axe: 0,
+};
 
 // Function to generate recipe items for the shop
 export const generateRecipes = (purchasedRecipes: string[] = []): RecipeCategory[] => {
@@ -23,7 +46,7 @@ export const generateRecipes = (purchasedRecipes: string[] = []): RecipeCategory
       category: typeName,
       description: `A recipe for crafting ${recipe.name}`,
       imageUrl: `/assets/recipes/${recipe.id.toLowerCase()}.png`, // Default image
-      price: recipe.baseSellPrice * RECIPE_PRICE_MULTIPLIER,
+      price: RECIPE_PRICES[recipe.id],
       priceForCraftedBaseItem: recipe.baseSellPrice,
       alreadyBought: purchasedRecipes.includes(recipe.id),
     }));
@@ -117,7 +140,7 @@ export const generateJunkLicenses = (purchasedJunkLicenses: string[] = []): Junk
         id: junkId as JunkPieceId,
         name: junkPiece.name,
         imageUrl: `/assets/junk/${junkId}.png`, // Assuming junk images follow this pattern
-        price: Math.floor(JUNK_LICENSE_BASE_PRICE * junkPiece.sellPriceCoefficient),
+        price: JUNK_PRICES[junkId as JunkPieceId],
         description: `<b>Rarity:</b> ${rarityDisplay}<br>${sellPriceInfo}<br><br>${craftingDescription}`,
         alreadyBought: purchasedJunkLicenses.includes(junkId),
         sellPriceCoefficient: junkPiece.sellPriceCoefficient, // Store this for sorting
@@ -143,28 +166,28 @@ export const JUNK_PIPE_UPGRADES: Record<JunkPipeUpgradeType, { levels: Array<{ v
   [JunkPipeUpgradeType.PORTION_SIZE]: {
     levels: [
       { value: 60, price: 0 }, // Default level (free)
-      { value: 80, price: 100 },
-      { value: 100, price: 200 },
-      { value: 150, price: 400 },
-      { value: 200, price: 800 },
+      { value: 80, price: 50 },
+      { value: 100, price: 70 },
+      { value: 150, price: 95 },
+      { value: 200, price: 120 },
     ],
   },
   [JunkPipeUpgradeType.NEXT_PORTION_PERCENT]: {
     levels: [
       { value: 0.2, price: 0 }, // Default level (free)
-      { value: 0.3, price: 150 },
-      { value: 0.4, price: 300 },
-      { value: 0.6, price: 600 },
-      { value: 0.8, price: 1200 },
+      { value: 0.3, price: 50 },
+      { value: 0.4, price: 70 },
+      { value: 0.6, price: 95 },
+      { value: 0.8, price: 120 },
     ],
   },
   [JunkPipeUpgradeType.FLUFF_RATIO]: {
     levels: [
       { value: 0.95, price: 0 }, // Default level (free) - 95% fluff
-      { value: 0.85, price: 200 },
-      { value: 0.75, price: 400 },
-      { value: 0.65, price: 800 },
-      { value: 0.5, price: 1600 }, // 50% fluff, 50% useful junk
+      { value: 0.85, price: 50 },
+      { value: 0.75, price: 70 },
+      { value: 0.65, price: 95 },
+      { value: 0.5, price: 120 }, // 50% fluff, 50% useful junk
     ],
   },
 };
