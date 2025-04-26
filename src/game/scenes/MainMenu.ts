@@ -12,7 +12,6 @@ export class MainMenu extends Scene {
   title: GameObjects.Text;
   private recipeImageDownloader: RecipeImageDownloader;
   private junkImageDownloader: JunkImageDownloader;
-  private backgroundMusic: Phaser.Sound.BaseSound;
 
   constructor() {
     super("MainMenu");
@@ -26,12 +25,6 @@ export class MainMenu extends Scene {
     this.recipeImageDownloader = new RecipeImageDownloader(this);
     this.junkImageDownloader = new JunkImageDownloader(this);
 
-    this.backgroundMusic = this.sound.add("menu", {
-      volume: 0.4,
-      loop: true,
-    });
-    this.backgroundMusic.play();
-
     EventBus.emit("current-scene-ready", this);
 
     // Temporary start game right away to debug - REMOVE THIS LATER
@@ -42,10 +35,6 @@ export class MainMenu extends Scene {
 
   changeScene(sceneName: string = "Idle") {
     console.log(`MainMenu: Changing scene to ${sceneName}`);
-    if (this.backgroundMusic) {
-      this.backgroundMusic.stop();
-    }
-
     this.scene.start(sceneName);
   }
 
@@ -63,14 +52,5 @@ export class MainMenu extends Scene {
    */
   public async downloadJunkImages(): Promise<void> {
     await this.junkImageDownloader.downloadImages();
-  }
-
-  // --- Scene Shutdown ---
-  shutdown() {
-    // Clean up any resources if needed
-    // Stop background music
-    if (this.backgroundMusic) {
-      this.backgroundMusic.stop();
-    }
   }
 }
