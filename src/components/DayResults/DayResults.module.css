@@ -8,9 +8,9 @@
   background-size: 100%;
 }
 .dayResultsContainer {
-  width: 80%;
-  height: 70%;
-  padding: 3vmin;
+  width: 85%;
+  height: 80%;
+  padding: 2vmin;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
