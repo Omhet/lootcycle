@@ -28,6 +28,10 @@ export class ClawManager {
   private isMovingHorizontally: boolean = false;
   private movementSoundTimer: Phaser.Time.TimerEvent | null = null;
 
+  // Ascending sound
+  private ascendingSound: Phaser.Sound.BaseSound | null = null;
+  private ascendingSoundTimer: Phaser.Time.TimerEvent | null = null;
+
   // State machine for claw behavior
   private state: ClawState = ClawState.IDLE;
   private autoMoveSpeed: number = 2; // Speed for automated movement
@@ -258,7 +262,7 @@ export class ClawManager {
     this.grabTimer = this.scene.time.delayedCall(this.grabDelay, () => {
       this.state = ClawState.ASCENDING;
       // Play the ascending sound when the claw starts ascending
-      this.scene.sound.play("claw_ascend");
+      this.playAscendingSound();
       console.log("Grab complete - ascending");
     });
   }
@@ -358,6 +362,8 @@ export class ClawManager {
         // If we've reached the top, reset to IDLE state
         if (this.anchor.y <= this.CLAW_MOVEMENT_VERTICAL_ZONE_START) {
           this.state = ClawState.IDLE;
+          // Stop the ascending sound when the claw returns to idle state
+          this.stopAscendingSound();
           console.log("Claw returned to top - reset to IDLE");
         }
         break;
@@ -392,7 +398,7 @@ export class ClawManager {
       this.grabTimer = this.scene.time.delayedCall(this.grabDelay, () => {
         this.state = ClawState.ASCENDING;
         // Play the ascending sound when the claw starts ascending
-        this.scene.sound.play("claw_ascend");
+        this.playAscendingSound();
         console.log("Reached bottom - ascending");
       });
     }
@@ -446,6 +452,73 @@ export class ClawManager {
     }
   }
 
+  /**
+   * Plays the claw ascending sound with randomized properties
+   */
+  private playAscendingSound(): void {
+    // Stop any existing sound
+    this.stopAscendingSound();
+
+    // Create the sound if it doesn't exist
+    if (!this.ascendingSound) {
+      this.ascendingSound = this.scene.sound.add("claw_ascend", {
+        loop: true,
+      });
+    }
+
+    // Apply random detune for variation (-100 to 100 cents, about a semitone)
+    const randomDetune = Phaser.Math.Between(-100, 100);
+    const randomVolume = 0.5 + Math.random() * 0.2;
+
+    // Play the sound with randomized properties
+    this.ascendingSound.play({
+      detune: randomDetune,
+      volume: randomVolume,
+    });
+
+    // Set up a timer to add variation periodically
+    this.ascendingSoundTimer = this.scene.time.addEvent({
+      delay: Phaser.Math.Between(300, 600), // Random interval between 0.3-0.6 seconds
+      callback: this.varyAscendingSound,
+      callbackScope: this,
+      loop: true,
+    });
+  }
+
+  /**
+   * Apply random variations to the ascending sound while it's playing
+   */
+  private varyAscendingSound(): void {
+    if (!this.ascendingSound || !this.ascendingSound.isPlaying) return;
+
+    // Stop current sound
+    this.ascendingSound.stop();
+
+    // Apply new random detune (-100 to 100 cents)
+    const newDetune = Phaser.Math.Between(-100, 100);
+    const newVolume = 0.5 + Math.random() * 0.2;
+
+    // Play again with new randomized properties
+    this.ascendingSound.play({
+      detune: newDetune,
+      volume: newVolume,
+    });
+  }
+
+  /**
+   * Stops the claw ascending sound
+   */
+  private stopAscendingSound(): void {
+    if (this.ascendingSound && this.ascendingSound.isPlaying) {
+      this.ascendingSound.stop();
+    }
+
+    if (this.ascendingSoundTimer) {
+      this.ascendingSoundTimer.remove();
+      this.ascendingSoundTimer = null;
+    }
+  }
+
   public destroy(): void {
     // Clean up collision listener
     this.scene.matter.world?.off("collisionstart");
@@ -466,6 +539,13 @@ export class ClawManager {
     if (this.movementSound) {
       this.movementSound.destroy();
       this.movementSound = null;
+    }
+
+    // Clean up ascending sound resources
+    this.stopAscendingSound();
+    if (this.ascendingSound) {
+      this.ascendingSound.destroy();
+      this.ascendingSound = null;
     }
 
     console.log("ClawManager destroyed");
