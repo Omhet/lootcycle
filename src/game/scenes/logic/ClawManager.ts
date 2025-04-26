@@ -257,6 +257,8 @@ export class ClawManager {
     // Set a timer before ascending
     this.grabTimer = this.scene.time.delayedCall(this.grabDelay, () => {
       this.state = ClawState.ASCENDING;
+      // Play the ascending sound when the claw starts ascending
+      this.scene.sound.play("claw_ascend");
       console.log("Grab complete - ascending");
     });
   }
@@ -389,6 +391,8 @@ export class ClawManager {
       // Set a timer before ascending
       this.grabTimer = this.scene.time.delayedCall(this.grabDelay, () => {
         this.state = ClawState.ASCENDING;
+        // Play the ascending sound when the claw starts ascending
+        this.scene.sound.play("claw_ascend");
         console.log("Reached bottom - ascending");
       });
     }
