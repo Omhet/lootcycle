@@ -97,6 +97,7 @@ export class Preloader extends Scene {
     // Sound effects
     this.load.audio("part_appear", "sounds/part_appear.mp3");
     this.load.audio("crafted_loot_item", "sounds/crafted_loot_item.mp3");
+    this.load.audio("claw_move_horiz", "sounds/claw_move_horiz.wav");
 
     this.load.audio("main_ost", "sounds/main_ost.mp3");
 

@@ -23,6 +23,11 @@ export class ClawManager {
   private readonly CLOSED_ANGLE: number = -50;
   private angleAnimationTween: Phaser.Tweens.Tween | null = null;
 
+  // Sound effects
+  private movementSound: Phaser.Sound.BaseSound | null = null;
+  private isMovingHorizontally: boolean = false;
+  private movementSoundTimer: Phaser.Time.TimerEvent | null = null;
+
   // State machine for claw behavior
   private state: ClawState = ClawState.IDLE;
   private autoMoveSpeed: number = 2; // Speed for automated movement
@@ -403,6 +408,19 @@ export class ClawManager {
           x: newX,
           y: this.anchor.y,
         });
+
+        // Handle sound effects for movement
+        if (moveFactor !== 0) {
+          // Start playing sound if not already moving horizontally
+          if (!this.isMovingHorizontally) {
+            this.isMovingHorizontally = true;
+            this.playMovementSound();
+          }
+        } else if (this.isMovingHorizontally) {
+          // Stop sound when movement stops
+          this.isMovingHorizontally = false;
+          this.stopMovementSound();
+        }
       }
     }
   }
@@ -438,6 +456,83 @@ export class ClawManager {
       this.angleAnimationTween.stop();
       this.angleAnimationTween = null;
     }
+
+    // Clean up sound resources
+    this.stopMovementSound();
+    if (this.movementSound) {
+      this.movementSound.destroy();
+      this.movementSound = null;
+    }
+
     console.log("ClawManager destroyed");
+  }
+
+  /**
+   * Plays the claw movement sound with randomized properties
+   */
+  private playMovementSound(): void {
+    // Stop any existing sound
+    this.stopMovementSound();
+
+    // Create the sound if it doesn't exist
+    if (!this.movementSound) {
+      this.movementSound = this.scene.sound.add("claw_move_horiz", {
+        loop: true,
+      });
+    }
+
+    // Apply random detune for variation (-100 to 100 cents, about a semitone)
+    const randomDetune = Phaser.Math.Between(-100, 100);
+    // Add slight random volume variation (0.4 to 0.6)
+    const randomVolume = 0.4 + Math.random() * 0.2;
+
+    // Play the sound with randomized properties
+    this.movementSound.play({
+      detune: randomDetune,
+      volume: randomVolume,
+    });
+
+    // Set up a timer to add variation periodically
+    this.movementSoundTimer = this.scene.time.addEvent({
+      delay: Phaser.Math.Between(300, 600), // Random interval between 0.3-0.6 seconds
+      callback: this.varyMovementSound,
+      callbackScope: this,
+      loop: true,
+    });
+  }
+
+  /**
+   * Apply random variations to the movement sound while it's playing
+   */
+  private varyMovementSound(): void {
+    if (!this.movementSound || !this.movementSound.isPlaying) return;
+
+    // Stop current sound
+    this.movementSound.stop();
+
+    // Apply new random detune (-100 to 100 cents)
+    const newDetune = Phaser.Math.Between(-100, 100);
+    // Subtle volume changes (0.4 to 0.6)
+    const newVolume = 0.4 + Math.random() * 0.2;
+
+    // Play again with new randomized properties
+    this.movementSound.play({
+      detune: newDetune,
+      volume: newVolume,
+    });
+  }
+
+  /**
+   * Stops the claw movement sound
+   */
+  private stopMovementSound(): void {
+    if (this.movementSound && this.movementSound.isPlaying) {
+      this.movementSound.stop();
+    }
+
+    if (this.movementSoundTimer) {
+      this.movementSoundTimer.remove();
+      this.movementSoundTimer = null;
+    }
   }
 }
