@@ -100,11 +100,14 @@ export class Preloader extends Scene {
     this.load.audio("claw_move_horiz", "sounds/claw_move_horiz.wav");
     this.load.audio("claw_ascend", "sounds/claw_ascend.wav");
     this.load.audio("claw_descend", "sounds/claw_descend.wav");
+    this.load.audio("claw_closes", "sounds/claw_closes.wav");
+    this.load.audio("claw_opens", "sounds/claw_opens.wav");
     this.load.audio("boiling", "sounds/boiling.wav");
     this.load.audio("cauldron_shake", "sounds/cauldron_shake.wav");
     this.load.audio("junk_arrives", "sounds/junk_arrives.wav");
     this.load.audio("junk_piece_collides", "sounds/junk_piece_collides.wav");
     this.load.audio("crafting_finish", "sounds/crafting_finish.wav");
+    this.load.audio("crafting_success", "sounds/crafting_success.mp3");
 
     this.load.audio("main_ost", "sounds/main_ost.mp3");
     this.load.audio("menu", "sounds/menu.mp3");

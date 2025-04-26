@@ -283,6 +283,12 @@ export class ClawManager {
       this.angleAnimationTween.stop();
     }
 
+    const clawCloseSound = this.scene.sound.add("claw_closes", {
+      volume: 0.3,
+      rate: Phaser.Math.FloatBetween(0.9, 1.1),
+    });
+    clawCloseSound.play();
+
     this.isOpen = false;
     this.targetAngle = this.CLOSED_ANGLE;
 
@@ -316,6 +322,12 @@ export class ClawManager {
     if (this.angleAnimationTween) {
       this.angleAnimationTween.stop();
     }
+
+    const clawOpenSound = this.scene.sound.add("claw_opens", {
+      volume: 0.3,
+      rate: Phaser.Math.FloatBetween(0.9, 1.1),
+    });
+    clawOpenSound.play();
 
     this.isOpen = true;
     this.targetAngle = this.OPEN_ANGLE;

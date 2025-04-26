@@ -194,6 +194,12 @@ export class CauldronManager {
 
     // Not successful crafting cases first
     if (temperature < this.craftedItemTemperatureRange.min) {
+      const craftingFinish = this.scene.sound.add("crafting_finish", {
+        volume: 0.3,
+        rate: Phaser.Math.FloatBetween(0.9, 1.1),
+      });
+      craftingFinish.play();
+
       return {
         success: false,
         failure: {
@@ -228,6 +234,12 @@ export class CauldronManager {
     this.destroyJunkPieces();
 
     EventBus.emit("loot-crafted", 1);
+
+    const craftingSuccess = this.scene.sound.add("crafting_success", {
+      volume: 0.3,
+      rate: Phaser.Math.FloatBetween(0.9, 1.1),
+    });
+    craftingSuccess.play();
 
     return {
       success: true,
